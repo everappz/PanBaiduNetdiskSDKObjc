@@ -10,7 +10,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PanBaiduNetdiskSDKObjc:
-    :commit: b0514fed2109a735f4fc5dad04b1cc338b037fae
+    :commit: 7bd4f7e32c2a5b3589fc6680be84ba218d1772f5
     :git: https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc
 
 SPEC CHECKSUMS:
