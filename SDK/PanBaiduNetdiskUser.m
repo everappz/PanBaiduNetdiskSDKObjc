@@ -26,8 +26,8 @@
     return [self.class numberForKey:@"vip_type" inDictionary:self.dictionary];
 }
 
-- (NSNumber * _Nullable)userID{
-    return [self.class numberForKey:@"uk" inDictionary:self.dictionary];
+- (NSString * _Nullable)userID{
+    return [self.class stringForKey:@"uk" inDictionary:self.dictionary];
 }
 
 @end

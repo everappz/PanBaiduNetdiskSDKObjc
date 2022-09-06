@@ -6,17 +6,19 @@
 //  Copyright © 2020 Everappz. All rights reserved.
 //
 
-#import "ViewController.h"
-#import "MyCloudHomeAuthViewController.h"
-#import "MyCloudHomeHelper.h"
-#import "FolderContentViewController.h"
 #import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
+#import "ViewController.h"
+#import "PanBaiduNetdiskAuthViewController.h"
+#import "PanBaiduNetdiskHelper.h"
+#import "FolderContentViewController.h"
+#import "LSOnlineFile.h"
 
 
-NSString * const MCHAuthKey = @"MCHAuthKey";
 
 
-@interface ViewController ()<MyCloudHomeAuthViewControllerDelegate>
+NSString * const PanBaiduNetdiskAuthKey = @"PanBaiduNetdiskAuthKey";
+
+@interface ViewController ()<PanBaiduNetdiskAuthViewControllerDelegate>
 
 @property (nonatomic,strong)UIStackView *stackView;
 
@@ -69,7 +71,7 @@ NSString * const MCHAuthKey = @"MCHAuthKey";
                                                      requiringSecureCoding:YES
                                                                      error:nil];
             NSParameterAssert(authData);
-            [authResult setObject:authData?:[NSData data] forKey:MCHAuthDataKey];
+            [authResult setObject:authData?:[NSData data] forKey:PanBaiduNetdiskAuthDataKey];
         }
         [self saveAuth:authResult];
     }
@@ -96,9 +98,10 @@ NSString * const MCHAuthKey = @"MCHAuthKey";
     
     UIButton *startButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [startButton setTitle:@"Start" forState:UIControlStateNormal];
-    [startButton setTitleColor:[UIColor systemBlueColor] forState:UIControlStateNormal];
-    [startButton.titleLabel setFont:[UIFont systemFontOfSize:22.0 weight:UIFontWeightSemibold]];
-    [startButton setBackgroundColor:[UIColor lightGrayColor]];
+    [startButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [startButton.titleLabel setFont:[UIFont systemFontOfSize:25.0 weight:UIFontWeightSemibold]];
+    [startButton setBackgroundColor:[UIColor systemBlueColor]];
+    startButton.layer.cornerRadius = 20.0;
     [startButton addTarget:self action:@selector(actionStart:) forControlEvents:UIControlEventTouchUpInside];
     [stackView addArrangedSubview:startButton];
     startButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -108,9 +111,10 @@ NSString * const MCHAuthKey = @"MCHAuthKey";
     if ([self loadAuth]!=nil){
         UIButton *usePreviousAuthButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [usePreviousAuthButton setTitle:@"Continue" forState:UIControlStateNormal];
-        [usePreviousAuthButton setTitleColor:[UIColor systemBlueColor] forState:UIControlStateNormal];
-        [usePreviousAuthButton.titleLabel setFont:[UIFont systemFontOfSize:22.0 weight:UIFontWeightSemibold]];
-        [usePreviousAuthButton setBackgroundColor:[UIColor lightGrayColor]];
+        [usePreviousAuthButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [usePreviousAuthButton.titleLabel setFont:[UIFont systemFontOfSize:25.0 weight:UIFontWeightSemibold]];
+        [usePreviousAuthButton setBackgroundColor:[UIColor systemBlueColor]];
+        usePreviousAuthButton.layer.cornerRadius = 20.0;
         [usePreviousAuthButton addTarget:self action:@selector(actionContinue:) forControlEvents:UIControlEventTouchUpInside];
         [stackView addArrangedSubview:usePreviousAuthButton];
         usePreviousAuthButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -120,7 +124,7 @@ NSString * const MCHAuthKey = @"MCHAuthKey";
 
 - (void)actionStart:(id)sender
 {
-    MyCloudHomeAuthViewController *authController = [MyCloudHomeAuthViewController new];
+    PanBaiduNetdiskAuthViewController *authController = [PanBaiduNetdiskAuthViewController new];
     authController.delegate = self;
     __weak typeof (authController) weakAuthViewController = authController;
     [self presentViewController:authController animated:YES completion:^{
@@ -134,7 +138,7 @@ NSString * const MCHAuthKey = @"MCHAuthKey";
     [self showFolderContentWithAuth:savedAuth];
 }
 
-- (void)MCHAuthViewController:(MyCloudHomeAuthViewController *)viewController
+- (void)panBaiduNetdiskAuthViewController:(PanBaiduNetdiskAuthViewController *)viewController
              didFailWithError:(NSError *)error
 {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -149,7 +153,7 @@ NSString * const MCHAuthKey = @"MCHAuthKey";
     });
 }
 
-- (void)MCHAuthViewController:(MyCloudHomeAuthViewController *)viewController
+- (void)panBaiduNetdiskAuthViewController:(PanBaiduNetdiskAuthViewController *)viewController
            didSuccessWithAuth:(NSDictionary *)auth
 {
     [self saveAuth:auth];
@@ -162,11 +166,17 @@ NSString * const MCHAuthKey = @"MCHAuthKey";
         __weak typeof (self) weakSelf = self;
         [self dismissViewControllerAnimated:YES completion:^{
             NSString *userID = [auth objectForKey:PanBaiduNetdiskUserID];
-            PanBaiduNetdiskAPIClient *client = [MyCloudHomeHelper createClientWithAuthData:auth];
+            PanBaiduNetdiskAPIClient *client = [PanBaiduNetdiskHelper createClientWithAuthData:auth];
             
             FolderContentViewController *contentViewController = [FolderContentViewController new];
             contentViewController.client = client;
             contentViewController.userID = userID;
+            
+            LSOnlineFile *rootFile = [[LSOnlineFile alloc] init];
+            rootFile.url = [NSURL fileURLWithPath:@"/"];
+            rootFile.directory = YES;
+
+            contentViewController.rootDirectory = rootFile;
             
             UINavigationController *flowNavigationController =
             [[UINavigationController alloc] initWithRootViewController:contentViewController];
@@ -180,17 +190,17 @@ NSString * const MCHAuthKey = @"MCHAuthKey";
 - (void)saveAuth:(NSDictionary *)auth
 {
     if (auth) {
-        [[NSUserDefaults standardUserDefaults] setObject:auth forKey:MCHAuthKey];
+        [[NSUserDefaults standardUserDefaults] setObject:auth forKey:PanBaiduNetdiskAuthKey];
     }
     else{
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:MCHAuthKey];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:PanBaiduNetdiskAuthKey];
     }
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (nullable NSDictionary *)loadAuth
 {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:MCHAuthKey];
+    return [[NSUserDefaults standardUserDefaults] objectForKey:PanBaiduNetdiskAuthKey];
 }
 
 @end

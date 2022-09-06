@@ -19,15 +19,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)setSharedManagerWithClientID:(NSString *)clientID
                         clientSecret:(NSString *)clientSecret
+                               appID:(NSString *)appID
                          redirectURI:(NSString *)redirectURI;
 
 + (void)setSharedManagerWithClientID:(NSString *)clientID
                         clientSecret:(NSString *)clientSecret
+                               appID:(NSString *)appID
                          redirectURI:(NSString *)redirectURI
                               scopes:(NSArray<NSString *> *)scopes;
 
 @property(nonatomic, copy, readonly) NSString *clientID;
 @property(nonatomic, copy, readonly) NSString *clientSecret;
+@property(nonatomic, copy, readonly) NSString *appID;
 @property(nonatomic, copy, readonly) NSString *redirectURI;
 @property(nonatomic, copy, readonly) NSArray<NSString *> *scopes;
 
@@ -35,10 +38,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_UNAVAILABLE;
 
 - (PanBaiduAppAuthFlow *_Nullable )authFlowWithAutoCodeExchangeFromWebView:(WKWebView *)webView
-                                          webViewDidStartLoadingBlock:(PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock)webViewDidStartLoadingBlock
-                                         webViewDidFinishLoadingBlock:(PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock)webViewDidFinishLoadingBlock
-                                         webViewDidFailWithErrorBlock:(PanBaiduNetdiskAuthorizationWebViewCoordinatorErrorBlock)webViewDidFailWithErrorBlock
-                                                      completionBlock:(PanBaiduNetdiskAppAuthManagerAuthorizationBlock)completionBlock;
+                                               webViewDidStartLoadingBlock:(PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock)webViewDidStartLoadingBlock
+                                              webViewDidFinishLoadingBlock:(PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock)webViewDidFinishLoadingBlock
+                                              webViewDidFailWithErrorBlock:(PanBaiduNetdiskAuthorizationWebViewCoordinatorErrorBlock)webViewDidFailWithErrorBlock
+                                                           completionBlock:(PanBaiduNetdiskAppAuthManagerAuthorizationBlock)completionBlock;
 
 + (NSArray<NSString *> *)defaultScopes;
 

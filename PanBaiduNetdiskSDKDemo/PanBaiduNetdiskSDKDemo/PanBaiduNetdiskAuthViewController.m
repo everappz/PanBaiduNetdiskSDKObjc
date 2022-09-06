@@ -6,13 +6,13 @@
 //  Copyright © 2020 Everappz. All rights reserved.
 //
 
-#import "MyCloudHomeAuthViewController.h"
-#import "MyCloudHomeHelper.h"
+#import "PanBaiduNetdiskAuthViewController.h"
+#import "PanBaiduNetdiskHelper.h"
 #import <WebKit/WebKit.h>
 #import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
 
 
-@interface MyCloudHomeAuthViewController ()
+@interface PanBaiduNetdiskAuthViewController ()
 
 @property (nonatomic,strong) PanBaiduNetdiskAPIClient *apiClient;
 @property (nonatomic,strong) UIActivityIndicatorView *activityIndicator;
@@ -20,7 +20,7 @@
 
 @end
 
-@implementation MyCloudHomeAuthViewController
+@implementation PanBaiduNetdiskAuthViewController
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -64,29 +64,27 @@
     
     
     [[PanBaiduAppAuthManager sharedManager] authFlowWithAutoCodeExchangeFromWebView:self.webView
-                                                   webViewDidStartLoadingBlock:^(WKWebView * _Nonnull webView) {
+                                                        webViewDidStartLoadingBlock:^(WKWebView * _Nonnull webView) {
         [weakSelf.activityIndicator startAnimating];
     }
-                                                  webViewDidFinishLoadingBlock:^(WKWebView * _Nonnull webView) {
+                                                       webViewDidFinishLoadingBlock:^(WKWebView * _Nonnull webView) {
         [weakSelf.activityIndicator stopAnimating];
     }
-                                                  webViewDidFailWithErrorBlock:^(WKWebView * _Nonnull webView, NSError * _Nonnull webViewError) {
+                                                       webViewDidFailWithErrorBlock:^(WKWebView * _Nonnull webView, NSError * _Nonnull webViewError) {
         [weakSelf.activityIndicator stopAnimating];
         [weakSelf completeWithError:webViewError];
     }
-                                                               completionBlock:^(PanBaiduNetdiskAuthState * _Nullable authState, id<MCHEndpointConfiguration>  _Nullable endpointConfiguration, NSError * _Nullable error) {
+                                                                    completionBlock:^(PanBaiduNetdiskAuthState * _Nullable authState, NSError * _Nullable error) {
         if(authState){
             PanBaiduAppAuthProvider *authProvider =
-            [[PanBaiduAppAuthProvider alloc] initWithIdentifier:[MyCloudHomeHelper uuidString]
-                                                     state:authState];
+            [[PanBaiduAppAuthProvider alloc] initWithIdentifier:[PanBaiduNetdiskHelper uuidString]
+                                                          state:authState];
             weakSelf.apiClient =
             [[PanBaiduNetdiskAPIClient alloc] initWithURLSessionConfiguration:nil
-                                            endpointConfiguration:endpointConfiguration
-                                                     authProvider:authProvider];
+                                                                 authProvider:authProvider];
             //delay to avoid 429 error code
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [weakSelf.apiClient getUserInfoWithCompletionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
-                    if(dictionary){
                         if(dictionary){
                             [weakSelf completeWithAuthState:authState
                                        userIDInfoDictionary:dictionary];
@@ -94,10 +92,6 @@
                         else{
                             [weakSelf completeWithError:error];
                         }
-                    }
-                    else{
-                        [weakSelf completeWithError:error];
-                    }
                 }];
             });
         }
@@ -105,31 +99,31 @@
             [weakSelf completeWithError:error];
         }
     }];
-
+    
 }
 
 - (void)completeWithError:(NSError *)error{
-    if([self.delegate respondsToSelector:@selector(MCHAuthViewController:didFailWithError:)]){
-        [self.delegate MCHAuthViewController:self didFailWithError:error];
+    if([self.delegate respondsToSelector:@selector(panBaiduNetdiskAuthViewController:didFailWithError:)]){
+        [self.delegate panBaiduNetdiskAuthViewController:self didFailWithError:error];
     }
 }
 
 - (void)completeWithSuccess:(NSDictionary *)authData{
-    if([self.delegate respondsToSelector:@selector(MCHAuthViewController:didSuccessWithAuth:)]){
-        [self.delegate MCHAuthViewController:self didSuccessWithAuth:authData];
+    if([self.delegate respondsToSelector:@selector(panBaiduNetdiskAuthViewController:didSuccessWithAuth:)]){
+        [self.delegate panBaiduNetdiskAuthViewController:self didSuccessWithAuth:authData];
     }
 }
 
 - (void)completeWithAuthState:(PanBaiduNetdiskAuthState * _Nullable)authState
          userIDInfoDictionary:(NSDictionary * _Nullable)userIDInfoDictionary{
     PanBaiduNetdiskUser *user = [[PanBaiduNetdiskUser alloc] initWithDictionary:userIDInfoDictionary];
-    NSString *userID = [user identifier];
-    NSString *userEmail = [user email];
+    NSString *userID = [user userID];
+    NSString *userName = [user netdiskName];
     NSParameterAssert(userID);
-    NSParameterAssert(userEmail);
+    NSParameterAssert(userName);
     NSMutableDictionary *authResult = [NSMutableDictionary new];
-    if (userEmail) {
-        [authResult setObject:userEmail forKey:PanBaiduNetdiskUserEmail];
+    if (userName) {
+        [authResult setObject:userName forKey:PanBaiduNetdiskUserName];
     }
     if (userID) {
         [authResult setObject:userID forKey:PanBaiduNetdiskUserID];
@@ -139,7 +133,7 @@
                                                  requiringSecureCoding:YES
                                                                  error:nil];
         NSParameterAssert(authData);
-        [authResult setObject:authData?:[NSData data] forKey:MCHAuthDataKey];
+        [authResult setObject:authData?:[NSData data] forKey:PanBaiduNetdiskAuthDataKey];
     }
     [self completeWithSuccess:authResult];
 }

@@ -6,17 +6,17 @@
 //  Copyright © 2020 Everappz. All rights reserved.
 //
 
-#import "MyCloudHomeHelper.h"
+#import "PanBaiduNetdiskHelper.h"
 #import "LSOnlineFile.h"
 #import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
 
 unsigned long long LSFileContentLengthUnknown = -1;
 
-NSString * const MCHAuthDataKey = @"MCHAuthDataKey";
+NSString * const PanBaiduNetdiskAuthDataKey = @"PanBaiduNetdiskAuthDataKey";
 NSString * const PanBaiduNetdiskUserID = @"PanBaiduNetdiskUserID";
-NSString * const PanBaiduNetdiskUserEmail = @"PanBaiduNetdiskUserEmail";
+NSString * const PanBaiduNetdiskUserName = @"PanBaiduNetdiskUserName";
 
-@implementation MyCloudHomeHelper
+@implementation PanBaiduNetdiskHelper
 
 + (LSOnlineFile *)onlineFileForApiItem:(id)item
                        parentDirectory:(LSOnlineFile *)parentDirectory{
@@ -26,39 +26,22 @@ NSString * const PanBaiduNetdiskUserEmail = @"PanBaiduNetdiskUserEmail";
     if(item && rootPath){
         if([item isKindOfClass:[PanBaiduNetdiskFile class]]){
             PanBaiduNetdiskFile *apiFile = (PanBaiduNetdiskFile *)item;
-            NSString *title = [apiFile name];
-            BOOL isDirectory = [apiFile.mimeType isEqualToString:kBNDMIMETypeFolder];
+            NSString *title = apiFile.server_filename;
+            BOOL isDirectory = [apiFile.isdir boolValue];
             title = [title stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
             unsigned long long size = apiFile.size?apiFile.size.unsignedIntegerValue:LSFileContentLengthUnknown;
             NSURL *url = [NSURL fileURLWithPath:[rootPath stringByAppendingPathComponent:title]];
             LSOnlineFile *file = [[LSOnlineFile alloc] init];
             file.url = url;
             file.contentLength = size;
-            file.createdAt = apiFile.cTime;
-            file.updatedAt = apiFile.mTime;
+            file.createdAt = [[NSDate alloc] initWithTimeIntervalSince1970:apiFile.server_ctime.doubleValue];
+            file.updatedAt = [[NSDate alloc] initWithTimeIntervalSince1970:apiFile.server_mtime.doubleValue];
             file.directory = isDirectory;
             file.readOnly = NO;
             file.name = title;
             file.shared = NO;
             file.modelID = apiFile.identifier;
-            file.modelTag = apiFile.eTag;
-            file.deviceID = parentDirectory.deviceID;
-            file.deviceURL = parentDirectory.deviceURL;
-            return file;
-        }
-        else if([item isKindOfClass:[MCHDevice class]]){
-            MCHDevice *device = (MCHDevice *)item;
-            NSString *title = device.name;
-            NSURL *url = [NSURL fileURLWithPath:[rootPath stringByAppendingPathComponent:title]];
-            LSOnlineFile *file = [[LSOnlineFile alloc] init];
-            file.url = url;
-            file.directory = YES;
-            file.readOnly = NO;
-            file.name = title;
-            file.shared = NO;
-            file.modelID = device.deviceId;
-            file.deviceID = device.deviceId;
-            file.deviceURL = device.proxyURL;
+            file.modelTag = apiFile.md5;
             return file;
         }
         else if([item isKindOfClass:[LSOnlineFile class]]){
@@ -68,6 +51,7 @@ NSString * const PanBaiduNetdiskUserEmail = @"PanBaiduNetdiskUserEmail";
     NSParameterAssert(NO);
     return nil;
 }
+
 
 + (BOOL)shouldFilterApiFile:(id)file {
     return NO;
@@ -83,8 +67,7 @@ NSString * const PanBaiduNetdiskUserEmail = @"PanBaiduNetdiskUserEmail";
             }
             LSOnlineFile *onlineFile = nil;
             if([item isKindOfClass:[LSOnlineFile class]]==NO){
-                onlineFile = [self onlineFileForApiItem:item
-                                        parentDirectory:parentDirectory];
+                onlineFile = [self onlineFileForApiItem:item parentDirectory:parentDirectory];
             }
             else{
                 onlineFile = (LSOnlineFile *)item;
@@ -110,7 +93,7 @@ NSString * const PanBaiduNetdiskUserEmail = @"PanBaiduNetdiskUserEmail";
 
 + (PanBaiduNetdiskAPIClient *)createClientWithAuthData:(NSDictionary *)clientAuthData{
     PanBaiduNetdiskAPIClient *apiClient = nil;
-    id authDataObj = [clientAuthData objectForKey:MCHAuthDataKey];
+    id authDataObj = [clientAuthData objectForKey:PanBaiduNetdiskAuthDataKey];
     NSString *userID = [clientAuthData objectForKey:PanBaiduNetdiskUserID];
     if([authDataObj isKindOfClass:[NSData class]]
        && userID.length > 0){

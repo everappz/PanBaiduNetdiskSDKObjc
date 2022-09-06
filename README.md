@@ -22,7 +22,7 @@ pod 'PanBaiduNetdiskSDKObjc'
 
 
  # Screenshots
- <img src="https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc/blob/master/Screenshots/login_screen.png" width="300"><img src="https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc/blob/master/Screenshots/ask_permissions.png" width="300"><img src="https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc/blob/master/Screenshots/folder_content.png" width="300">
+ <img src="https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc/blob/master/Screenshots/login_screen.png" width="300"><img src="https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc/blob/master/Screenshots/folder_content.png" width="300">
  
 # Contacts
  

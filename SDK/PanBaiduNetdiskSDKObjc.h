@@ -16,10 +16,7 @@
 #import "PanBaiduNetdiskAuthState.h"
 #import "PanBaiduNetdiskAuthorizationWebViewCoordinator.h"
 #import "PanBaiduNetdiskConstants.h"
-#import "MCHDevice.h"
-
 #import "PanBaiduNetdiskFile.h"
-#import "PanBaiduNetdiskFilesResponse.h"
 #import "PanBaiduNetdiskNetworkClient.h"
 #import "PanBaiduNetdiskObject.h"
 #import "PanBaiduNetdiskRequestsCache.h"

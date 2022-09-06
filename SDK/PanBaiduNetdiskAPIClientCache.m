@@ -106,8 +106,8 @@
 }
 
 - (PanBaiduNetdiskAPIClient *_Nullable)createClientForIdentifier:(NSString *_Nonnull)identifier
-                                           authState:(PanBaiduNetdiskAuthState *_Nonnull)authState
-                                sessionConfiguration:(NSURLSessionConfiguration * _Nullable)URLSessionConfiguration
+                                                       authState:(PanBaiduNetdiskAuthState *_Nonnull)authState
+                                            sessionConfiguration:(NSURLSessionConfiguration * _Nullable)URLSessionConfiguration
 {
     
     NSParameterAssert(authState);
@@ -120,7 +120,7 @@
     PanBaiduAppAuthProvider *authProvider = [self authProviderForIdentifier:identifier];
     if (authProvider == nil) {
         authProvider = [[PanBaiduAppAuthProvider alloc] initWithIdentifier:identifier
-                                                                state:authState];
+                                                                     state:authState];
         if (authProvider) {
             [self setAuthProvider:authProvider forIdentifier:identifier];
         }
@@ -131,8 +131,7 @@
     }
     
     PanBaiduNetdiskAPIClient *client = [[PanBaiduNetdiskAPIClient alloc] initWithURLSessionConfiguration:URLSessionConfiguration
-                                                           endpointConfiguration:nil
-                                                                    authProvider:authProvider];
+                                                                                            authProvider:authProvider];
     NSParameterAssert(client);
     if(client){
         [self setClient:client forIdentifier:identifier];
@@ -149,7 +148,7 @@
     }
     NSLog(@"authStateChanged: %@ forIdentifier: %@",authState.accessToken,identifier);
     PanBaiduAppAuthProvider *authProvider = [[PanBaiduAppAuthProvider alloc] initWithIdentifier:identifier
-                                                                                state:authState];
+                                                                                          state:authState];
     NSParameterAssert(authProvider);
     if(authProvider){
         [self setAuthProvider:authProvider forIdentifier:identifier];

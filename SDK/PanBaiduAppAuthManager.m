@@ -19,6 +19,7 @@
 
 @property(nonatomic, copy) NSString *clientID;
 @property(nonatomic, copy) NSString *clientSecret;
+@property(nonatomic, copy) NSString *appID;
 @property(nonatomic, copy) NSString *redirectURI;
 @property(nonatomic, copy) NSArray<NSString *> *scopes;
 @property(nonatomic, strong) PanBaiduAppAuthFlow *currentAuthorizationFlow;
@@ -37,21 +38,27 @@ static PanBaiduAppAuthManager *_sharedAuthManager = nil;
 
 + (void)setSharedManagerWithClientID:(NSString *)clientID
                         clientSecret:(NSString *)clientSecret
-                         redirectURI:(NSString *)redirectURI{
+                               appID:(NSString *)appID
+                         redirectURI:(NSString *)redirectURI
+{
     _sharedAuthManager = [[PanBaiduAppAuthManager alloc] initWithClientID:clientID
-                                                        clientSecret:clientSecret
-                                                         redirectURI:redirectURI
-                                                              scopes:[PanBaiduAppAuthManager defaultScopes]];
+                                                             clientSecret:clientSecret
+                                                                    appID:appID
+                                                              redirectURI:redirectURI
+                                                                   scopes:[PanBaiduAppAuthManager defaultScopes]];
 }
 
 + (void)setSharedManagerWithClientID:(NSString *)clientID
                         clientSecret:(NSString *)clientSecret
+                               appID:(NSString *)appID
                          redirectURI:(NSString *)redirectURI
-                              scopes:(NSArray<NSString *>*)scopes{
+                              scopes:(NSArray<NSString *>*)scopes
+{
     _sharedAuthManager = [[PanBaiduAppAuthManager alloc] initWithClientID:clientID
-                                                        clientSecret:clientSecret
-                                                         redirectURI:redirectURI
-                                                              scopes:scopes];
+                                                             clientSecret:clientSecret
+                                                                    appID:appID
+                                                              redirectURI:redirectURI
+                                                                   scopes:scopes];
 }
 
 + (NSArray<NSString *> *)defaultScopes {
@@ -60,6 +67,7 @@ static PanBaiduAppAuthManager *_sharedAuthManager = nil;
 
 - (instancetype)initWithClientID:(NSString *)clientID
                     clientSecret:(NSString *)clientSecret
+                           appID:(NSString *)appID
                      redirectURI:(NSString *)redirectURI
                           scopes:(NSArray<NSString *> *)scopes
 {
@@ -71,6 +79,7 @@ static PanBaiduAppAuthManager *_sharedAuthManager = nil;
     if(self){
         self.clientID = clientID;
         self.clientSecret = clientSecret;
+        self.appID = appID;
         self.redirectURI = redirectURI;
         self.scopes = scopes;
     }
@@ -78,10 +87,10 @@ static PanBaiduAppAuthManager *_sharedAuthManager = nil;
 }
 
 - (PanBaiduAppAuthFlow *)authFlowWithAutoCodeExchangeFromWebView:(WKWebView *)webView
-                                webViewDidStartLoadingBlock:(PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock)webViewDidStartLoadingBlock
-                               webViewDidFinishLoadingBlock:(PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock)webViewDidFinishLoadingBlock
-                               webViewDidFailWithErrorBlock:(PanBaiduNetdiskAuthorizationWebViewCoordinatorErrorBlock)webViewDidFailWithErrorBlock
-                                            completionBlock:(PanBaiduNetdiskAppAuthManagerAuthorizationBlock)completionBlock
+                                     webViewDidStartLoadingBlock:(PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock)webViewDidStartLoadingBlock
+                                    webViewDidFinishLoadingBlock:(PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock)webViewDidFinishLoadingBlock
+                                    webViewDidFailWithErrorBlock:(PanBaiduNetdiskAuthorizationWebViewCoordinatorErrorBlock)webViewDidFailWithErrorBlock
+                                                 completionBlock:(PanBaiduNetdiskAppAuthManagerAuthorizationBlock)completionBlock
 {
     if (self.currentAuthorizationFlow) {
         [self.currentAuthorizationFlow cancel];
@@ -91,6 +100,7 @@ static PanBaiduAppAuthManager *_sharedAuthManager = nil;
     PanBaiduAppAuthFlow *flow = [PanBaiduAppAuthFlow new];
     flow.clientID = self.clientID;
     flow.clientSecret = self.clientSecret;
+    flow.appID = self.appID;
     flow.redirectURI = self.redirectURI;
     flow.scopes = self.scopes;
     

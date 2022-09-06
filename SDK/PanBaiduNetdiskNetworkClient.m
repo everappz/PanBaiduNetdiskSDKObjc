@@ -103,19 +103,19 @@ NSURLSessionDownloadDelegate
         return nil;
     }
     
-//    NSString *type = nil;
+    NSString *type = nil;
     NSString *token = nil;
     NSString *authorizationHeader = nil;
     NSURL *requestURLModified = requestURL;
     
-//    if (accessToken) {
-//        token = accessToken.token;
-//        NSParameterAssert(token);
-//        if (type == nil || type.length == 0) {
-//            type = @"Bearer";
-//        }
-//        authorizationHeader = [NSString stringWithFormat:@"%@ %@",type,token];
-//    }
+    if (accessToken) {
+        token = accessToken.token;
+        NSParameterAssert(token);
+        if (type == nil || type.length == 0) {
+            type = @"Bearer";
+        }
+        authorizationHeader = [NSString stringWithFormat:@"%@ %@",type,token];
+    }
     
     NSURLComponents *components = [NSURLComponents componentsWithString:requestURL.absoluteString];
     NSString *accessTokenStringFromComponents = nil;

@@ -17,7 +17,7 @@
 #import "PanBaiduNetdiskRequestsCache.h"
 #import "PanBaiduNetdiskAccessToken.h"
 
-#define MCHCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest) if (weak_clientRequest == nil || weak_clientRequest.isCancelled){ return; }
+#define PanBaiduNetdiskCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest) if (weak_clientRequest == nil || weak_clientRequest.isCancelled){ return; }
 
 NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 1.5;
 
@@ -115,7 +115,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 1.5;
     
     void(^retryBlock)(void) = ^{
         [PanBaiduNetdiskAPIClient dispatchAfterRetryTimeoutBlock:^{
-            MCHCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
+            PanBaiduNetdiskCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
             weak_clientRequest.internalRequest = [weakSelf _getUserInfoWithCompletionBlock:resultCompletion];
         }];
     };
@@ -196,7 +196,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 1.5;
     
     void(^retryBlock)(void) = ^{
         [PanBaiduNetdiskAPIClient dispatchAfterRetryTimeoutBlock:^{
-            MCHCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
+            PanBaiduNetdiskCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
             weak_clientRequest.internalRequest = [weakSelf _getFilesListAtPath:path completionBlock:resultCompletion];
         }];
     };
@@ -222,7 +222,6 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 1.5;
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest>)_getFilesListAtPath:(NSString *)path
                                                 completionBlock:(PanBaiduNetdiskAPIClientArrayCompletionBlock _Nullable)completion{
-    NSParameterAssert(path);
     NSMutableArray *resultFiles = [NSMutableArray new];
     return [self _getFilesListAtPath:path
                               offset:0
@@ -316,7 +315,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 1.5;
     
     void(^retryBlock)(void) = ^{
         [PanBaiduNetdiskAPIClient dispatchAfterRetryTimeoutBlock:^{
-            MCHCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
+            PanBaiduNetdiskCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
             weak_clientRequest.internalRequest = [weakSelf _getInfoForFileWithID:fileID
                                                                         completionBlock:resultCompletion];
         }];
@@ -413,7 +412,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 1.5;
     
     void(^retryBlock)(void) = ^{
         [PanBaiduNetdiskAPIClient dispatchAfterRetryTimeoutBlock:^{
-            MCHCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
+            PanBaiduNetdiskCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
             weak_clientRequest.internalRequest = [weakSelf _deleteFileForDeviceWithURL:proxyURL
                                                                                 fileID:fileID
                                                                        completionBlock:resultCompletion];
@@ -526,7 +525,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 1.5;
     
     void(^retryBlock)(void) = ^{
         [PanBaiduNetdiskAPIClient dispatchAfterRetryTimeoutBlock:^{
-            MCHCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
+            PanBaiduNetdiskCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
             weak_clientRequest.internalRequest = [weakSelf _createItemForDeviceWithURL:proxyURL
                                                                               parentID:parentID
                                                                               itemName:itemName
@@ -659,7 +658,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 1.5;
     
     void(^retryBlock)(void) = ^{
         [PanBaiduNetdiskAPIClient dispatchAfterRetryTimeoutBlock:^{
-            MCHCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
+            PanBaiduNetdiskCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
             weak_clientRequest.internalRequest = [weakSelf _patchFileForDeviceWithURL:proxyURL
                                                                                fileID:fileID
                                                                            parameters:parameters
@@ -757,7 +756,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 1.5;
     
     void(^retryBlock)(void) = ^{
         [PanBaiduNetdiskAPIClient dispatchAfterRetryTimeoutBlock:^{
-            MCHCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
+            PanBaiduNetdiskCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
             weak_clientRequest.internalRequest = [weakSelf _getFileContentForDeviceWithURL:proxyURL
                                                                                     fileID:fileID
                                                                                 parameters:additionalHeaders
@@ -854,7 +853,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 1.5;
     
     void(^retryBlock)(void) = ^{
         [PanBaiduNetdiskAPIClient dispatchAfterRetryTimeoutBlock:^{
-            MCHCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
+            PanBaiduNetdiskCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
             weak_clientRequest.internalRequest = [weakSelf _getDirectURLForDeviceWithURL:proxyURL
                                                                                   fileID:fileID
                                                                          completionBlock:resultCompletion];
@@ -935,7 +934,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 1.5;
     
     void(^retryBlock)(void) = ^{
         [PanBaiduNetdiskAPIClient dispatchAfterRetryTimeoutBlock:^{
-            MCHCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
+            PanBaiduNetdiskCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
             weak_clientRequest.internalRequest = [weakSelf _downloadFileContentForDeviceWithURL:proxyURL
                                                                                          fileID:fileID
                                                                                   progressBlock:progressBlock
@@ -1034,7 +1033,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 1.5;
     
     void(^retryBlock)(void) = ^{
         [PanBaiduNetdiskAPIClient dispatchAfterRetryTimeoutBlock:^{
-            MCHCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
+            PanBaiduNetdiskCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
             weak_clientRequest.internalRequest = [weakSelf _uploadFileContentSeparatelyForDeviceWithURL:proxyURL
                                                                                                  fileID:fileID
                                                                                         localContentURL:localContentURL

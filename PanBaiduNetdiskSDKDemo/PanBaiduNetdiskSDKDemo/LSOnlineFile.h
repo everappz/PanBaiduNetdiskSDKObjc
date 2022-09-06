@@ -22,8 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL shared;
 @property (nonatomic, copy) NSString *modelID;
 @property (nonatomic, copy) NSString *modelTag;
-@property (nonatomic, copy) NSString *deviceID;
-@property (nonatomic, strong) NSURL *deviceURL;
 
 @end
 

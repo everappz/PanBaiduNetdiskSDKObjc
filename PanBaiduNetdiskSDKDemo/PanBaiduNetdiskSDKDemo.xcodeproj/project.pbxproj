@@ -14,11 +14,11 @@
 		AC580768248E7DF500A5D75A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC580767248E7DF500A5D75A /* Assets.xcassets */; };
 		AC58076B248E7DF600A5D75A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC580769248E7DF600A5D75A /* LaunchScreen.storyboard */; };
 		AC58076E248E7DF600A5D75A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AC58076D248E7DF600A5D75A /* main.m */; };
-		AC580776248E7F1700A5D75A /* MyCloudHomeAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC580775248E7F1700A5D75A /* MyCloudHomeAuthViewController.m */; };
+		AC580776248E7F1700A5D75A /* PanBaiduNetdiskAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC580775248E7F1700A5D75A /* PanBaiduNetdiskAuthViewController.m */; };
 		AC580778248E7F4900A5D75A /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC580777248E7F4900A5D75A /* WebKit.framework */; };
 		AC58077A248E7F5000A5D75A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC580779248E7F5000A5D75A /* Foundation.framework */; };
 		AC58077F248E882900A5D75A /* FolderContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC58077E248E882900A5D75A /* FolderContentViewController.m */; };
-		AC580782248E942800A5D75A /* MyCloudHomeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AC580781248E942800A5D75A /* MyCloudHomeHelper.m */; };
+		AC580782248E942800A5D75A /* PanBaiduNetdiskHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AC580781248E942800A5D75A /* PanBaiduNetdiskHelper.m */; };
 		AC580785248E94B400A5D75A /* LSOnlineFile.m in Sources */ = {isa = PBXBuildFile; fileRef = AC580784248E94B400A5D75A /* LSOnlineFile.m */; };
 		AC580789248EE38800A5D75A /* file.png in Resources */ = {isa = PBXBuildFile; fileRef = AC580787248EE38800A5D75A /* file.png */; };
 		AC58078A248EE38800A5D75A /* folder.png in Resources */ = {isa = PBXBuildFile; fileRef = AC580788248EE38800A5D75A /* folder.png */; };
@@ -38,14 +38,14 @@
 		AC58076A248E7DF600A5D75A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AC58076C248E7DF600A5D75A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC58076D248E7DF600A5D75A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		AC580774248E7F1700A5D75A /* MyCloudHomeAuthViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyCloudHomeAuthViewController.h; sourceTree = "<group>"; };
-		AC580775248E7F1700A5D75A /* MyCloudHomeAuthViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyCloudHomeAuthViewController.m; sourceTree = "<group>"; };
+		AC580774248E7F1700A5D75A /* PanBaiduNetdiskAuthViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PanBaiduNetdiskAuthViewController.h; sourceTree = "<group>"; };
+		AC580775248E7F1700A5D75A /* PanBaiduNetdiskAuthViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PanBaiduNetdiskAuthViewController.m; sourceTree = "<group>"; };
 		AC580777248E7F4900A5D75A /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		AC580779248E7F5000A5D75A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		AC58077D248E882900A5D75A /* FolderContentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderContentViewController.h; sourceTree = "<group>"; };
 		AC58077E248E882900A5D75A /* FolderContentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FolderContentViewController.m; sourceTree = "<group>"; };
-		AC580780248E942800A5D75A /* MyCloudHomeHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyCloudHomeHelper.h; sourceTree = "<group>"; };
-		AC580781248E942800A5D75A /* MyCloudHomeHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyCloudHomeHelper.m; sourceTree = "<group>"; };
+		AC580780248E942800A5D75A /* PanBaiduNetdiskHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PanBaiduNetdiskHelper.h; sourceTree = "<group>"; };
+		AC580781248E942800A5D75A /* PanBaiduNetdiskHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PanBaiduNetdiskHelper.m; sourceTree = "<group>"; };
 		AC580783248E94B400A5D75A /* LSOnlineFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LSOnlineFile.h; sourceTree = "<group>"; };
 		AC580784248E94B400A5D75A /* LSOnlineFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LSOnlineFile.m; sourceTree = "<group>"; };
 		AC580787248EE38800A5D75A /* file.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = file.png; sourceTree = "<group>"; };
@@ -116,12 +116,12 @@
 				AC58075F248E7DF300A5D75A /* SceneDelegate.m */,
 				AC580761248E7DF300A5D75A /* ViewController.h */,
 				AC580762248E7DF300A5D75A /* ViewController.m */,
-				AC580780248E942800A5D75A /* MyCloudHomeHelper.h */,
-				AC580781248E942800A5D75A /* MyCloudHomeHelper.m */,
+				AC580780248E942800A5D75A /* PanBaiduNetdiskHelper.h */,
+				AC580781248E942800A5D75A /* PanBaiduNetdiskHelper.m */,
 				AC580783248E94B400A5D75A /* LSOnlineFile.h */,
 				AC580784248E94B400A5D75A /* LSOnlineFile.m */,
-				AC580774248E7F1700A5D75A /* MyCloudHomeAuthViewController.h */,
-				AC580775248E7F1700A5D75A /* MyCloudHomeAuthViewController.m */,
+				AC580774248E7F1700A5D75A /* PanBaiduNetdiskAuthViewController.h */,
+				AC580775248E7F1700A5D75A /* PanBaiduNetdiskAuthViewController.m */,
 				AC58077D248E882900A5D75A /* FolderContentViewController.h */,
 				AC58077E248E882900A5D75A /* FolderContentViewController.m */,
 				AC580764248E7DF300A5D75A /* Main.storyboard */,
@@ -260,12 +260,12 @@
 			files = (
 				AC58077F248E882900A5D75A /* FolderContentViewController.m in Sources */,
 				AC580763248E7DF300A5D75A /* ViewController.m in Sources */,
-				AC580782248E942800A5D75A /* MyCloudHomeHelper.m in Sources */,
+				AC580782248E942800A5D75A /* PanBaiduNetdiskHelper.m in Sources */,
 				AC58075D248E7DF300A5D75A /* AppDelegate.m in Sources */,
 				AC58076E248E7DF600A5D75A /* main.m in Sources */,
 				AC580785248E94B400A5D75A /* LSOnlineFile.m in Sources */,
 				AC580760248E7DF300A5D75A /* SceneDelegate.m in Sources */,
-				AC580776248E7F1700A5D75A /* MyCloudHomeAuthViewController.m in Sources */,
+				AC580776248E7F1700A5D75A /* PanBaiduNetdiskAuthViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

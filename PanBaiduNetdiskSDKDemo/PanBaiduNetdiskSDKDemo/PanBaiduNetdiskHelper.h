@@ -17,10 +17,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern unsigned long long LSFileContentLengthUnknown;
 
-extern NSString * const MCHAuthDataKey;
+extern NSString * const PanBaiduNetdiskAuthDataKey;
 extern NSString * const PanBaiduNetdiskUserID;
 
-@interface MyCloudHomeHelper : NSObject
+@interface PanBaiduNetdiskHelper : NSObject
 
 + (LSOnlineFile *)onlineFileForApiItem:(id)item
                        parentDirectory:(LSOnlineFile *)parentDirectory;

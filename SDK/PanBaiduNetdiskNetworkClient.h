@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
                                         accessToken:(PanBaiduNetdiskAccessToken * _Nullable)accessToken;
 
 - (NSMutableURLRequest *_Nullable)DELETERequestWithURL:(NSURL *)requestURL
-                                           contentType:(NSString *)contentType
+                                           contentType:(NSString *_Nullable)contentType
                                            accessToken:(PanBaiduNetdiskAccessToken * _Nullable)accessToken;
 
 - (NSMutableURLRequest *_Nullable)POSTRequestWithURL:(NSURL *)requestURL
@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
                                          accessToken:(PanBaiduNetdiskAccessToken * _Nullable)accessToken;
 
 - (NSMutableURLRequest *_Nullable)PUTRequestWithURL:(NSURL *)requestURL
-                                        contentType:(NSString *)contentType
+                                        contentType:(NSString *_Nullable)contentType
                                         accessToken:(PanBaiduNetdiskAccessToken * _Nullable)accessToken;
 
 - (NSMutableURLRequest *_Nullable)requestWithURL:(NSURL *)requestURL

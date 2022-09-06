@@ -14,9 +14,10 @@
 //Please refer to the following page for more information on the My Cloud Home API:
 //https://developer.westerndigital.com/develop/wd-my-cloud-home/api.html
 
-#define APP_MYCLOUD_API_KEY                                     @"mSEJny79ckQzvSlRr9S55W8l30Do9bwI"
-#define APP_MYCLOUD_SECRET_KEY                                  @"JIVemg3A0yEmbvkBGiS7RgnHEkq8veiNf6Rh-_gcNgZYNdJxrm5Z0anC76yfChhV"
-#define APP_MYCLOUD_CALLBACK_URL                                @"http://localhost"
+#define PAN_BAIDU_NET_DISK_API_KEY                                     @"fs8iRdRa98T1GPG9YNXFBDMzXYkAFuzB"
+#define PAN_BAIDU_NET_DISK_SECRET_KEY                                  @"0sKYFhi3ahvMXX0Or9K8DnnIewfw1Tua"
+#define PAN_BAIDU_NET_DISK_CALLBACK_URL                                @"pan-baidu-app-27353164://auth_success"
+#define PAN_BAIDU_NET_DISK_APP_ID                                      @"27353164"
 
 @interface AppDelegate ()
 
@@ -28,18 +29,16 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-    NSString *myCloudHomeApiKey = APP_MYCLOUD_API_KEY;
-    NSString *myCloudHomeSecretKey = APP_MYCLOUD_SECRET_KEY;
-    NSString *myCloudHomeCallbackURL = APP_MYCLOUD_CALLBACK_URL;
+    NSParameterAssert(PAN_BAIDU_NET_DISK_API_KEY.length > 0);
+    NSParameterAssert(PAN_BAIDU_NET_DISK_SECRET_KEY.length > 0);
+    NSParameterAssert(PAN_BAIDU_NET_DISK_APP_ID.length > 0);
+    NSParameterAssert(PAN_BAIDU_NET_DISK_CALLBACK_URL.length > 0);
     
-    NSParameterAssert(myCloudHomeApiKey);
-    NSParameterAssert(myCloudHomeSecretKey);
+    [PanBaiduAppAuthManager setSharedManagerWithClientID:PAN_BAIDU_NET_DISK_API_KEY
+                                            clientSecret:PAN_BAIDU_NET_DISK_SECRET_KEY
+                                                   appID:PAN_BAIDU_NET_DISK_APP_ID
+                                             redirectURI:PAN_BAIDU_NET_DISK_CALLBACK_URL];
     
-    if(myCloudHomeApiKey && myCloudHomeSecretKey){
-        [PanBaiduAppAuthManager setSharedManagerWithClientID:myCloudHomeApiKey
-                                           clientSecret:myCloudHomeSecretKey
-                                            redirectURI:myCloudHomeCallbackURL];
-    }
     
     return YES;
 }

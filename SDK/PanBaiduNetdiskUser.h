@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSNumber * _Nullable)vipType;
 
-- (NSNumber * _Nullable)userID;
+- (NSString * _Nullable)userID;
 
 @end
 
