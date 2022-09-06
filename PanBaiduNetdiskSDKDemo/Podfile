@@ -7,6 +7,6 @@ target 'PanBaiduNetdiskSDKDemo' do
 
   # Pods for PanBaiduNetdiskSDKDemo
 
-  pod 'PanBaiduNetdiskSDKObjc', :git => 'https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc'
-
+  pod 'PanBaiduNetdiskSDKObjc', :git => 'https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc', :commit => '06e8c3b6107282b921a19dfc48ea57965b795b40'
+  
 end
