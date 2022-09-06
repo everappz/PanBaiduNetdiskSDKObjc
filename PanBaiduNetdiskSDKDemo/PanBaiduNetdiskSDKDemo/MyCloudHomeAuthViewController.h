@@ -11,8 +11,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 extern NSString * const MCHAuthDataKey;
-extern NSString * const MCHUserID;
-extern NSString * const MCHUserEmail;
+extern NSString * const PanBaiduNetdiskUserID;
+extern NSString * const PanBaiduNetdiskUserEmail;
 
 @class MyCloudHomeAuthViewController;
 

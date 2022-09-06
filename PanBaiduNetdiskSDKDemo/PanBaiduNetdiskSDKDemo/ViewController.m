@@ -10,7 +10,7 @@
 #import "MyCloudHomeAuthViewController.h"
 #import "MyCloudHomeHelper.h"
 #import "FolderContentViewController.h"
-#import <MyCloudHomeSDKObjc/MyCloudHomeSDKObjc.h>
+#import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
 
 
 NSString * const MCHAuthKey = @"MCHAuthKey";
@@ -47,7 +47,7 @@ NSString * const MCHAuthKey = @"MCHAuthKey";
 {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(authProviderDidChangeNotification:)
-                                                 name:MCHAppAuthProviderDidChangeState
+                                                 name:PanBaiduAppAuthProviderDidChangeState
                                                object:nil];
 }
 
@@ -58,11 +58,11 @@ NSString * const MCHAuthKey = @"MCHAuthKey";
 
 - (void)authProviderDidChangeNotification:(NSNotification *)notification
 {
-    MCHAppAuthProvider *provider = notification.object;
-    NSParameterAssert([provider isKindOfClass:[MCHAppAuthProvider class]]);
-    if([provider isKindOfClass:[MCHAppAuthProvider class]]){
+    PanBaiduAppAuthProvider *provider = notification.object;
+    NSParameterAssert([provider isKindOfClass:[PanBaiduAppAuthProvider class]]);
+    if([provider isKindOfClass:[PanBaiduAppAuthProvider class]]){
         NSMutableDictionary *authResult = [[self loadAuth] mutableCopy];
-        MCHAuthState *authState = provider.authState;
+        PanBaiduNetdiskAuthState *authState = provider.authState;
         NSParameterAssert(authState);
         if (authState) {
             NSData *authData = [NSKeyedArchiver archivedDataWithRootObject:authState
@@ -161,8 +161,8 @@ NSString * const MCHAuthKey = @"MCHAuthKey";
     dispatch_async(dispatch_get_main_queue(), ^{
         __weak typeof (self) weakSelf = self;
         [self dismissViewControllerAnimated:YES completion:^{
-            NSString *userID = [auth objectForKey:MCHUserID];
-            MCHAPIClient *client = [MyCloudHomeHelper createClientWithAuthData:auth];
+            NSString *userID = [auth objectForKey:PanBaiduNetdiskUserID];
+            PanBaiduNetdiskAPIClient *client = [MyCloudHomeHelper createClientWithAuthData:auth];
             
             FolderContentViewController *contentViewController = [FolderContentViewController new];
             contentViewController.client = client;

@@ -11,14 +11,14 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class LSOnlineFile;
-@class MCHAPIClient;
+@class PanBaiduNetdiskAPIClient;
 
 #define LS_WEB_VIEW_SCALE_TO_FIT_SCRIPT() @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);"
 
 extern unsigned long long LSFileContentLengthUnknown;
 
 extern NSString * const MCHAuthDataKey;
-extern NSString * const MCHUserID;
+extern NSString * const PanBaiduNetdiskUserID;
 
 @interface MyCloudHomeHelper : NSObject
 
@@ -32,7 +32,7 @@ extern NSString * const MCHUserID;
 
 + (NSError *)unknownError;
 
-+ (MCHAPIClient *)createClientWithAuthData:(NSDictionary *)authData;
++ (PanBaiduNetdiskAPIClient *)createClientWithAuthData:(NSDictionary *)authData;
 
 + (NSString *)readableStringForByteSize:(NSNumber *)size;
 

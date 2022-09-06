@@ -9,12 +9,12 @@
 #import "MyCloudHomeAuthViewController.h"
 #import "MyCloudHomeHelper.h"
 #import <WebKit/WebKit.h>
-#import <MyCloudHomeSDKObjc/MyCloudHomeSDKObjc.h>
+#import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
 
 
 @interface MyCloudHomeAuthViewController ()
 
-@property (nonatomic,strong) MCHAPIClient *apiClient;
+@property (nonatomic,strong) PanBaiduNetdiskAPIClient *apiClient;
 @property (nonatomic,strong) UIActivityIndicatorView *activityIndicator;
 @property (nonatomic,strong) WKWebView *webView;
 
@@ -63,7 +63,7 @@
     __weak typeof(self) weakSelf = self;
     
     
-    [[MCHAppAuthManager sharedManager] authFlowWithAutoCodeExchangeFromWebView:self.webView
+    [[PanBaiduAppAuthManager sharedManager] authFlowWithAutoCodeExchangeFromWebView:self.webView
                                                    webViewDidStartLoadingBlock:^(WKWebView * _Nonnull webView) {
         [weakSelf.activityIndicator startAnimating];
     }
@@ -74,13 +74,13 @@
         [weakSelf.activityIndicator stopAnimating];
         [weakSelf completeWithError:webViewError];
     }
-                                                               completionBlock:^(MCHAuthState * _Nullable authState, id<MCHEndpointConfiguration>  _Nullable endpointConfiguration, NSError * _Nullable error) {
+                                                               completionBlock:^(PanBaiduNetdiskAuthState * _Nullable authState, id<MCHEndpointConfiguration>  _Nullable endpointConfiguration, NSError * _Nullable error) {
         if(authState){
-            MCHAppAuthProvider *authProvider =
-            [[MCHAppAuthProvider alloc] initWithIdentifier:[MyCloudHomeHelper uuidString]
+            PanBaiduAppAuthProvider *authProvider =
+            [[PanBaiduAppAuthProvider alloc] initWithIdentifier:[MyCloudHomeHelper uuidString]
                                                      state:authState];
             weakSelf.apiClient =
-            [[MCHAPIClient alloc] initWithURLSessionConfiguration:nil
+            [[PanBaiduNetdiskAPIClient alloc] initWithURLSessionConfiguration:nil
                                             endpointConfiguration:endpointConfiguration
                                                      authProvider:authProvider];
             //delay to avoid 429 error code
@@ -120,19 +120,19 @@
     }
 }
 
-- (void)completeWithAuthState:(MCHAuthState * _Nullable)authState
+- (void)completeWithAuthState:(PanBaiduNetdiskAuthState * _Nullable)authState
          userIDInfoDictionary:(NSDictionary * _Nullable)userIDInfoDictionary{
-    MCHUser *user = [[MCHUser alloc] initWithDictionary:userIDInfoDictionary];
+    PanBaiduNetdiskUser *user = [[PanBaiduNetdiskUser alloc] initWithDictionary:userIDInfoDictionary];
     NSString *userID = [user identifier];
     NSString *userEmail = [user email];
     NSParameterAssert(userID);
     NSParameterAssert(userEmail);
     NSMutableDictionary *authResult = [NSMutableDictionary new];
     if (userEmail) {
-        [authResult setObject:userEmail forKey:MCHUserEmail];
+        [authResult setObject:userEmail forKey:PanBaiduNetdiskUserEmail];
     }
     if (userID) {
-        [authResult setObject:userID forKey:MCHUserID];
+        [authResult setObject:userID forKey:PanBaiduNetdiskUserID];
     }
     if(authState){
         NSData *authData = [NSKeyedArchiver archivedDataWithRootObject:authState

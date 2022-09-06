@@ -9,14 +9,14 @@
 #import "FolderContentViewController.h"
 #import "MyCloudHomeHelper.h"
 #import "LSOnlineFile.h"
-#import <MyCloudHomeSDKObjc/MyCloudHomeSDKObjc.h>
+#import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
 
 
 NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
 
 @interface FolderContentViewController ()
 
-@property (nonatomic,strong)id<MCHAPIClientCancellableRequest> request;
+@property (nonatomic,strong)id<PanBaiduNetdiskAPIClientCancellableRequest> request;
 
 @property (nonatomic,strong)NSArray <LSOnlineFile *> *files;
 
@@ -107,7 +107,7 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
         return;
     }
     if([deviceID isEqualToString:itemID]){
-        itemID = kMCHFolderIDRoot;
+        itemID = kBNDFolderIDRoot;
     }
     __weak typeof (self) weakSelf = self;
     self.request = [self.client getFilesForDeviceWithURL:deviceURL
@@ -126,7 +126,7 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
         else{
             NSMutableArray *files = [NSMutableArray new];
             [array enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                MCHFile *file = [[MCHFile alloc] initWithDictionary:obj];
+                PanBaiduNetdiskFile *file = [[PanBaiduNetdiskFile alloc] initWithDictionary:obj];
                 if(file){
                     [files addObject:file];
                 }
@@ -143,7 +143,7 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
 
 - (void)loadUserIDWithCompletion:(void(^)(NSString *userID,NSError *error))completion{
     [self.client getUserInfoWithCompletionBlock:^(NSDictionary * _Nullable userIDInfoDictionary, NSError * _Nullable error) {
-        MCHUser *user = [[MCHUser alloc] initWithDictionary:userIDInfoDictionary];
+        PanBaiduNetdiskUser *user = [[PanBaiduNetdiskUser alloc] initWithDictionary:userIDInfoDictionary];
         NSString *userID = [user identifier];
         if (completion) {
             completion (userID, error);
@@ -155,7 +155,7 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
                   completion:(void(^)(NSArray<LSOnlineFile *> *files,NSError *error))completion{
     self.request = [self.client getDevicesForUserWithID:userIdentifier
                                          completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
-        NSArray *array = [dictionary objectForKey:kMCHData];
+        NSArray *array = [dictionary objectForKey:kBNDData];
         if(error){
             if(completion){
                 completion(nil,error);

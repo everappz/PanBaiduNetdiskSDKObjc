@@ -8,13 +8,13 @@
 
 #import "MyCloudHomeHelper.h"
 #import "LSOnlineFile.h"
-#import <MyCloudHomeSDKObjc/MyCloudHomeSDKObjc.h>
+#import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
 
 unsigned long long LSFileContentLengthUnknown = -1;
 
 NSString * const MCHAuthDataKey = @"MCHAuthDataKey";
-NSString * const MCHUserID = @"MCHUserID";
-NSString * const MCHUserEmail = @"MCHUserEmail";
+NSString * const PanBaiduNetdiskUserID = @"PanBaiduNetdiskUserID";
+NSString * const PanBaiduNetdiskUserEmail = @"PanBaiduNetdiskUserEmail";
 
 @implementation MyCloudHomeHelper
 
@@ -24,10 +24,10 @@ NSString * const MCHUserEmail = @"MCHUserEmail";
     NSParameterAssert(item);
     NSParameterAssert(rootPath);
     if(item && rootPath){
-        if([item isKindOfClass:[MCHFile class]]){
-            MCHFile *apiFile = (MCHFile *)item;
+        if([item isKindOfClass:[PanBaiduNetdiskFile class]]){
+            PanBaiduNetdiskFile *apiFile = (PanBaiduNetdiskFile *)item;
             NSString *title = [apiFile name];
-            BOOL isDirectory = [apiFile.mimeType isEqualToString:kMCHMIMETypeFolder];
+            BOOL isDirectory = [apiFile.mimeType isEqualToString:kBNDMIMETypeFolder];
             title = [title stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
             unsigned long long size = apiFile.size?apiFile.size.unsignedIntegerValue:LSFileContentLengthUnknown;
             NSURL *url = [NSURL fileURLWithPath:[rootPath stringByAppendingPathComponent:title]];
@@ -108,22 +108,22 @@ NSString * const MCHUserEmail = @"MCHUserEmail";
     return [[NSError alloc] initWithDomain:@"MyCloudHomeErrorDomain" code:-1 userInfo:nil];
 }
 
-+ (MCHAPIClient *)createClientWithAuthData:(NSDictionary *)clientAuthData{
-    MCHAPIClient *apiClient = nil;
++ (PanBaiduNetdiskAPIClient *)createClientWithAuthData:(NSDictionary *)clientAuthData{
+    PanBaiduNetdiskAPIClient *apiClient = nil;
     id authDataObj = [clientAuthData objectForKey:MCHAuthDataKey];
-    NSString *userID = [clientAuthData objectForKey:MCHUserID];
+    NSString *userID = [clientAuthData objectForKey:PanBaiduNetdiskUserID];
     if([authDataObj isKindOfClass:[NSData class]]
        && userID.length > 0){
         NSData *authData = (NSData *)authDataObj;
         NSParameterAssert(authData.length>0);
         if(authData.length>0){
-            id obj = [NSKeyedUnarchiver unarchivedObjectOfClass:[MCHAuthState class] fromData:authData error:nil];
-            NSParameterAssert([obj isKindOfClass:[MCHAuthState class]]);
-            if([obj isKindOfClass:[MCHAuthState class]]){
-                MCHAuthState *authState = (MCHAuthState *)obj;
-                apiClient = [[MCHAPIClientCache sharedCache] clientForIdentifier:userID];
+            id obj = [NSKeyedUnarchiver unarchivedObjectOfClass:[PanBaiduNetdiskAuthState class] fromData:authData error:nil];
+            NSParameterAssert([obj isKindOfClass:[PanBaiduNetdiskAuthState class]]);
+            if([obj isKindOfClass:[PanBaiduNetdiskAuthState class]]){
+                PanBaiduNetdiskAuthState *authState = (PanBaiduNetdiskAuthState *)obj;
+                apiClient = [[PanBaiduNetdiskAPIClientCache sharedCache] clientForIdentifier:userID];
                 if (apiClient == nil) {
-                    apiClient = [[MCHAPIClientCache sharedCache] createClientForIdentifier:userID
+                    apiClient = [[PanBaiduNetdiskAPIClientCache sharedCache] createClientForIdentifier:userID
                                                                                  authState:authState
                                                                       sessionConfiguration:nil];
                 }

@@ -11,12 +11,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MCHAPIClient;
+@class PanBaiduNetdiskAPIClient;
 @class LSOnlineFile;
 
 @interface FolderContentViewController : UITableViewController
 
-@property (nonatomic,strong)MCHAPIClient *client;
+@property (nonatomic,strong)PanBaiduNetdiskAPIClient *client;
 
 @property (nonatomic,strong)LSOnlineFile *rootDirectory;
 
