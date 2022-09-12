@@ -1,6 +1,6 @@
 //
 //  LSOnlineFile.h
-//  MyCloudHomeSDKDemo
+//  PanBaiduNetdiskSDKDemo
 //
 //  Created by Artem on 08.06.2020.
 //  Copyright © 2020 Everappz. All rights reserved.
@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL readOnly;
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, assign) BOOL shared;
-@property (nonatomic, copy) NSString *modelID;
-@property (nonatomic, copy) NSString *modelTag;
+@property (nonatomic, copy) NSString *identifier;
+@property (nonatomic, copy) NSString *md5;
 
 @end
 

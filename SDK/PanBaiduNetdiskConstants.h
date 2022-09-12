@@ -1,9 +1,9 @@
 //
 //  PanBaiduNetdiskConstants.h
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 10/17/19.
-//  Copyright © 2019 Everappz. All rights reserved.
+//  Copyright © 2022 Everappz. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -34,17 +34,18 @@ return (value); \
 #define kPanBaiduNetdiskContentTypeApplicationXWWWFormURLEncoded @"application/x-www-form-urlencoded"
 
 #define kPanBaiduNetdiskOAuthURL [NSURL URLWithString:@"https://openapi.baidu.com/oauth/2.0/"]
-
 #define kPanBaiduNetdiskXpanURL [NSURL URLWithString:@"https://pan.baidu.com/rest/2.0/xpan"]
 #define kPanBaiduNetdiskNasURL [kPanBaiduNetdiskXpanURL URLByAppendingPathComponent:@"nas"]
 #define kPanBaiduNetdiskFileURL [kPanBaiduNetdiskXpanURL URLByAppendingPathComponent:@"file"]
 #define kPanBaiduNetdiskMultimediaURL [kPanBaiduNetdiskXpanURL URLByAppendingPathComponent:@"multimedia"]
 
-
-
 @class WKWebView;
 @class PanBaiduNetdiskAuthState;
 @class PanBaiduNetdiskAccessToken;
+
+extern NSString * const PanBaiduNetdiskAccessTokenDataKey;
+extern NSString * const PanBaiduNetdiskUserIDKey;
+extern NSString * const PanBaiduNetdiskUserNameKey;
 
 typedef void(^PanBaiduNetdiskAPIClientDictionaryCompletionBlock)(NSDictionary *_Nullable dictionary, NSError * _Nullable error);
 typedef void(^PanBaiduNetdiskAPIClientArrayCompletionBlock)(NSArray<NSDictionary *> * _Nullable array, NSError * _Nullable error);

@@ -1,6 +1,6 @@
 //
 //  PanBaiduNetdiskAccessToken.h
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 3/12/21.
 //
@@ -9,13 +9,27 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PanBaiduNetdiskAccessToken : NSObject
+@interface PanBaiduNetdiskAccessToken : NSObject <NSSecureCoding,NSCopying>
 
-@property (nonatomic,copy,readonly)NSString *token;
+@property (nonatomic, readonly, copy, nullable) NSString *clientID;
+@property (nonatomic, readonly, copy, nullable) NSString *clientSecret;
+@property (nonatomic, readonly, copy, nullable) NSString *redirectURI;
+@property (nonatomic, readonly, copy, nullable) NSString *scope;
+@property (nonatomic, readonly, copy, nullable) NSString *accessToken;
+@property (nonatomic, readonly, copy, nullable) NSString *refreshToken;
+@property (nonatomic, readonly, copy, nullable) NSNumber *expiresIn;
+@property (nonatomic, readonly, copy, nullable) NSDate *tokenExpireDate;
+@property (nonatomic, readonly, strong, nullable) NSError *tokenUpdateError;
 
-@property (nonatomic,copy,readonly)NSDate *tokenExpireDate;
-
-+ (instancetype)accessTokenWithToken:(NSString *)token tokenExpireDate:(NSDate *)tokenExpireDate;
++ (instancetype)accessTokenWithClientID:(NSString * _Nullable)clientID
+                    clientSecret:(NSString * _Nullable)clientSecret
+                     redirectURI:(NSString * _Nullable)redirectURI
+                           scope:(NSString * _Nullable)scope
+                     accessToken:(NSString * _Nullable)accessToken
+                    refreshToken:(NSString * _Nullable)refreshToken
+                       expiresIn:(NSNumber * _Nullable)expiresIn
+                 tokenExpireDate:(NSDate * _Nullable)tokenExpireDate
+                tokenUpdateError:(NSError * _Nullable)tokenUpdateError;
 
 @end
 

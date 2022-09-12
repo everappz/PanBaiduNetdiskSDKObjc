@@ -1,6 +1,6 @@
 //
 //  MyCloudHomeHelper.m
-//  MyCloudHomeSDKDemo
+//  PanBaiduNetdiskSDKDemo
 //
 //  Created by Artem on 08.06.2020.
 //  Copyright © 2020 Everappz. All rights reserved.
@@ -11,10 +11,6 @@
 #import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
 
 unsigned long long LSFileContentLengthUnknown = -1;
-
-NSString * const PanBaiduNetdiskAuthDataKey = @"PanBaiduNetdiskAuthDataKey";
-NSString * const PanBaiduNetdiskUserID = @"PanBaiduNetdiskUserID";
-NSString * const PanBaiduNetdiskUserName = @"PanBaiduNetdiskUserName";
 
 @implementation PanBaiduNetdiskHelper
 
@@ -40,8 +36,8 @@ NSString * const PanBaiduNetdiskUserName = @"PanBaiduNetdiskUserName";
             file.readOnly = NO;
             file.name = title;
             file.shared = NO;
-            file.modelID = apiFile.identifier;
-            file.modelTag = apiFile.md5;
+            file.identifier = apiFile.identifier;
+            file.md5 = apiFile.md5;
             return file;
         }
         else if([item isKindOfClass:[LSOnlineFile class]]){
@@ -88,32 +84,31 @@ NSString * const PanBaiduNetdiskUserName = @"PanBaiduNetdiskUserName";
 }
 
 + (NSError *)unknownError{
-    return [[NSError alloc] initWithDomain:@"MyCloudHomeErrorDomain" code:-1 userInfo:nil];
+    return [[NSError alloc] initWithDomain:@"PanBaiduNetdiskAPIClientErrorDomain" code:-1 userInfo:nil];
 }
 
 + (PanBaiduNetdiskAPIClient *)createClientWithAuthData:(NSDictionary *)clientAuthData{
     PanBaiduNetdiskAPIClient *apiClient = nil;
-    id authDataObj = [clientAuthData objectForKey:PanBaiduNetdiskAuthDataKey];
-    NSString *userID = [clientAuthData objectForKey:PanBaiduNetdiskUserID];
-    if([authDataObj isKindOfClass:[NSData class]]
-       && userID.length > 0){
-        NSData *authData = (NSData *)authDataObj;
+    id accessTokenDataObj = [clientAuthData objectForKey:PanBaiduNetdiskAccessTokenDataKey];
+    NSString *userID = [clientAuthData objectForKey:PanBaiduNetdiskUserIDKey];
+    if ([accessTokenDataObj isKindOfClass:[NSData class]] && userID.length > 0) {
+        NSData *authData = (NSData *)accessTokenDataObj;
         NSParameterAssert(authData.length>0);
-        if(authData.length>0){
-            id obj = [NSKeyedUnarchiver unarchivedObjectOfClass:[PanBaiduNetdiskAuthState class] fromData:authData error:nil];
-            NSParameterAssert([obj isKindOfClass:[PanBaiduNetdiskAuthState class]]);
-            if([obj isKindOfClass:[PanBaiduNetdiskAuthState class]]){
-                PanBaiduNetdiskAuthState *authState = (PanBaiduNetdiskAuthState *)obj;
+        if (authData.length > 0) {
+            id obj = [NSKeyedUnarchiver unarchivedObjectOfClass:[PanBaiduNetdiskAccessToken class] fromData:authData error:nil];
+            NSParameterAssert([obj isKindOfClass:[PanBaiduNetdiskAccessToken class]]);
+            if([obj isKindOfClass:[PanBaiduNetdiskAccessToken class]]){
+                PanBaiduNetdiskAuthState *authState = [[PanBaiduNetdiskAuthState alloc] initWithToken:obj];
                 apiClient = [[PanBaiduNetdiskAPIClientCache sharedCache] clientForIdentifier:userID];
                 if (apiClient == nil) {
                     apiClient = [[PanBaiduNetdiskAPIClientCache sharedCache] createClientForIdentifier:userID
-                                                                                 authState:authState
-                                                                      sessionConfiguration:nil];
+                                                                                             authState:authState
+                                                                                  sessionConfiguration:nil];
                 }
             }
         }
     }
-    else{
+    else {
         NSParameterAssert(NO);
     }
     NSParameterAssert(apiClient);

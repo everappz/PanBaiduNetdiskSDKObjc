@@ -1,9 +1,9 @@
 //
 //  NSError+MCHSDK.h
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 10/17/19.
-//  Copyright © 2019 Everappz. All rights reserved.
+//  Copyright © 2022 Everappz. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -15,8 +15,10 @@ typedef NS_ENUM(NSInteger, PanBaiduNetdiskErrorCode) {
     PanBaiduNetdiskErrorCodeCancelled = -999,
     PanBaiduNetdiskErrorCodeNone = 0,
     PanBaiduNetdiskErrorCodeCannotGetAuthURL,
+    PanBaiduNetdiskErrorCodeAuthFailed,
     PanBaiduNetdiskErrorCodeCannotGetAccessToken,
     PanBaiduNetdiskErrorCodeAccessTokenExpired,
+    PanBaiduNetdiskErrorCodeAccessTokenInvalid,
     PanBaiduNetdiskErrorCodeCannotUpdateAccessToken,
     PanBaiduNetdiskErrorCodeCannotGetEndpointConfiguration,
     PanBaiduNetdiskErrorCodeAuthProviderIsNil,
@@ -27,6 +29,9 @@ typedef NS_ENUM(NSInteger, PanBaiduNetdiskErrorCode) {
     PanBaiduNetdiskErrorCodeLocalFileEmpty,
     PanBaiduNetdiskErrorCodeSafariOpenError,
     PanBaiduNetdiskErrorCodeCancelledAuthorizationFlow,
+    PanBaiduNetdiskErrorCodeAccessDenied,
+    PanBaiduNetdiskErrorCodeTooManyRequests,
+    PanBaiduNetdiskErrorCodeCannotPrepareRequest,
 };
 
 
@@ -64,7 +69,6 @@ typedef NS_ENUM(NSInteger, PanBaiduNetdiskPublicAPIErrorCode) {
     PanBaiduNetdiskPublicAPIErrorCodeNoAccessToUserData = 6,
     PanBaiduNetdiskPublicAPIErrorCodeHitInterfaceFrequencyControl = 31034,
 };
-
 
 /*
 3. OAuth2.0 error code list
@@ -144,6 +148,8 @@ extern  NSString * const PanBaiduNetdiskErrorDomain;
 + (instancetype)panBaiduNetdiskErrorWithCode:(NSInteger)errorCode;
 
 + (instancetype)panBaiduNetdiskErrorWithCode:(NSInteger)errorCode internalErrorDictionary:(NSDictionary *)internalErrorDictionary;
+
++ (instancetype)panBaiduNetdiskErrorWithCode:(NSInteger)errorCode internalError:(NSError *)internalError;
 
 - (BOOL)isPanBaiduNetdiskTooManyRequestsError;
 

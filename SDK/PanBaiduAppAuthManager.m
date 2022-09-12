@@ -1,9 +1,9 @@
 //
 //  PanBaiduAppAuthManager.m
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 10/17/19.
-//  Copyright © 2019 Everappz. All rights reserved.
+//  Copyright © 2022 Everappz. All rights reserved.
 //
 
 #import <WebKit/WebKit.h>
@@ -17,12 +17,12 @@
 
 @interface PanBaiduAppAuthManager()
 
-@property(nonatomic, copy) NSString *clientID;
-@property(nonatomic, copy) NSString *clientSecret;
-@property(nonatomic, copy) NSString *appID;
-@property(nonatomic, copy) NSString *redirectURI;
-@property(nonatomic, copy) NSArray<NSString *> *scopes;
-@property(nonatomic, strong) PanBaiduAppAuthFlow *currentAuthorizationFlow;
+@property (nonatomic, copy) NSString *clientID;
+@property (nonatomic, copy) NSString *clientSecret;
+@property (nonatomic, copy) NSString *appID;
+@property (nonatomic, copy) NSString *redirectURI;
+@property (nonatomic, copy) NSArray<NSString *> *scopes;
+@property (nonatomic, strong) PanBaiduAppAuthFlow *currentAuthorizationFlow;
 
 @end
 
@@ -75,8 +75,9 @@ static PanBaiduAppAuthManager *_sharedAuthManager = nil;
     NSParameterAssert(clientSecret);
     NSParameterAssert(redirectURI);
     NSParameterAssert(scopes);
+    
     self = [super init];
-    if(self){
+    if (self) {
         self.clientID = clientID;
         self.clientSecret = clientSecret;
         self.appID = appID;

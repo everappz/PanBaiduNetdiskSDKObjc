@@ -1,6 +1,6 @@
 //
 //  FolderContentViewController.m
-//  MyCloudHomeSDKDemo
+//  PanBaiduNetdiskSDKDemo
 //
 //  Created by Artem on 08.06.2020.
 //  Copyright © 2020 Everappz. All rights reserved.
@@ -89,7 +89,7 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
 
 - (void)loadFolderContent:(LSOnlineFile *)directory
                completion:(void(^)(NSArray<LSOnlineFile *> *files,NSError *error))completion{
-  
+    
     NSString *itemPath = self.rootDirectory.url.path;
     
     __weak typeof (self) weakSelf = self;
@@ -123,8 +123,8 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
 }
 
 - (void)loadUserIDWithCompletion:(void(^)(NSString *userID,NSError *error))completion{
-    [self.client getUserInfoWithCompletionBlock:^(NSDictionary * _Nullable userIDInfoDictionary, NSError * _Nullable error) {
-        PanBaiduNetdiskUser *user = [[PanBaiduNetdiskUser alloc] initWithDictionary:userIDInfoDictionary];
+    [self.client getUserInfoWithCompletionBlock:^(NSDictionary * _Nullable userModelDictionary, NSError * _Nullable error) {
+        PanBaiduNetdiskUser *user = [[PanBaiduNetdiskUser alloc] initWithDictionary:userModelDictionary];
         NSString *userID = [user userID];
         if (completion) {
             completion (userID, error);
@@ -155,7 +155,103 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
         cell.imageView.image = [UIImage imageNamed:@"folder.png"];
         cell.detailTextLabel.text = nil;
     }
+    UIButton *actionButton =  [UIButton buttonWithType:UIButtonTypeInfoLight];
+    [actionButton addTarget:self action:@selector(actionShowMoreActions:) forControlEvents:UIControlEventTouchUpInside];
+    actionButton.tag = indexPath.row + 16;
+    cell.accessoryView = actionButton;
     return cell;
+}
+
+- (void)actionShowMoreActions:(UIButton *)sender {
+    NSInteger index = sender.tag - 16;
+    LSOnlineFile *file = [self.files objectAtIndex:index];
+    UIAlertController *actionsController = [UIAlertController alertControllerWithTitle:@"More actions" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    __weak typeof (self) weakSelf = self;
+    [actionsController addAction:[UIAlertAction actionWithTitle:@"Show Info" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf.client getInfoForFileWithID:file.identifier
+                                        dlink:YES
+                                        thumb:YES
+                                        extra:YES
+                                    needmedia:YES
+                              completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+            [weakSelf processResultWithDictionary:dictionary error:error];
+        }];
+    }]];
+    
+    [actionsController addAction:[UIAlertAction actionWithTitle:@"Rename File" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UIAlertController *renameController = [UIAlertController alertControllerWithTitle:@"Rename" message:nil preferredStyle:UIAlertControllerStyleAlert];
+        __weak typeof (renameController) weakRenameController = renameController;
+        [renameController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+            textField.text = file.url.path.lastPathComponent;
+        }];
+        [renameController addAction:[UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            NSString *name = weakRenameController.textFields[0].text;
+            [weakSelf.client renameFileAtPath:file.url.path name:name completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+                [weakSelf processResultWithDictionary:dictionary error:error];
+            }];
+        }]];
+        [renameController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        }]];
+        [weakSelf presentViewController:renameController animated:YES completion:nil];
+    }]];
+    
+    [actionsController addAction:[UIAlertAction actionWithTitle:@"Move File" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UIAlertController *moveController = [UIAlertController alertControllerWithTitle:@"Move" message:nil preferredStyle:UIAlertControllerStyleAlert];
+        __weak typeof (moveController) weakMoveController = moveController;
+        [moveController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+            textField.text = file.url.path;
+        }];
+        [moveController addAction:[UIAlertAction actionWithTitle:@"Move" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            NSString *text = weakMoveController.textFields[0].text;
+            [weakSelf.client moveFileAtPath:file.url.path toPath:text completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+                [weakSelf processResultWithDictionary:dictionary error:error];
+            }];
+        }]];
+        [moveController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        }]];
+        [weakSelf presentViewController:moveController animated:YES completion:nil];
+    }]];
+    
+    [actionsController addAction:[UIAlertAction actionWithTitle:@"Copy File" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UIAlertController *copyController = [UIAlertController alertControllerWithTitle:@"Copy" message:nil preferredStyle:UIAlertControllerStyleAlert];
+        __weak typeof (copyController) weakCopyController = copyController;
+        [copyController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+            textField.text = file.url.path;
+        }];
+        [copyController addAction:[UIAlertAction actionWithTitle:@"Copy" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            NSString *text = weakCopyController.textFields[0].text;
+            [weakSelf.client copyFileAtPath:file.url.path toPath:text completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+                [weakSelf processResultWithDictionary:dictionary error:error];
+            }];
+        }]];
+        [copyController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        }]];
+        [weakSelf presentViewController:copyController animated:YES completion:nil];
+    }]];
+    
+    [actionsController addAction:[UIAlertAction actionWithTitle:@"Delete File" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf.client deleteFileAtPath:file.url.path completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+            [weakSelf processResultWithDictionary:dictionary error:error];
+        }];
+    }]];
+    
+    [actionsController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    
+    [self presentViewController:actionsController animated:YES completion:nil];
+}
+
+- (void)processResultWithDictionary:(NSDictionary * _Nullable)dictionary
+                              error:(NSError * _Nullable )error
+{
+    __weak typeof (self) weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        UIAlertController *infoController = [UIAlertController alertControllerWithTitle:error?@"Error":@"Result" message:[NSString stringWithFormat:@"%@",((error!=nil)?error:dictionary)] preferredStyle:UIAlertControllerStyleAlert];
+        [infoController addAction:[UIAlertAction actionWithTitle:@"Close" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf reloadContentDataAndUpdateViewInternal];
+        }]];
+        [self presentViewController:infoController animated:YES completion:nil];
+    });
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{

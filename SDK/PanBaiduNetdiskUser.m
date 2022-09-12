@@ -1,9 +1,9 @@
 //
 //  PanBaiduNetdiskUser.m
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 10/19/19.
-//  Copyright © 2019 Everappz. All rights reserved.
+//  Copyright © 2022 Everappz. All rights reserved.
 //
 
 #import "PanBaiduNetdiskUser.h"

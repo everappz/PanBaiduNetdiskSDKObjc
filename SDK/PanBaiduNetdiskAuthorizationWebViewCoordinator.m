@@ -1,6 +1,6 @@
 //
 //  PanBaiduNetdiskAuthorizationWebViewCoordinator.m
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 3/10/21.
 //

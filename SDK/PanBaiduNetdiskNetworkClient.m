@@ -1,6 +1,6 @@
 //
 //  MCHNetwork.m
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 3/2/21.
 //
@@ -64,7 +64,7 @@ NSURLSessionDownloadDelegate
 }
 
 - (NSMutableURLRequest *_Nullable)DELETERequestWithURL:(NSURL *)requestURL
-                                           contentType:(NSString *)contentType
+                                           contentType:(NSString *_Nullable)contentType
                                            accessToken:(PanBaiduNetdiskAccessToken * _Nullable)accessToken
 {
     return [self requestWithURL:requestURL
@@ -84,7 +84,7 @@ NSURLSessionDownloadDelegate
 }
 
 - (NSMutableURLRequest *_Nullable)PUTRequestWithURL:(NSURL *)requestURL
-                                        contentType:(NSString *)contentType
+                                        contentType:(NSString *_Nullable)contentType
                                         accessToken:(PanBaiduNetdiskAccessToken * _Nullable)accessToken
 {
     return [self requestWithURL:requestURL
@@ -103,36 +103,30 @@ NSURLSessionDownloadDelegate
         return nil;
     }
     
-    NSString *type = nil;
+//    NSString *type = nil;
     NSString *token = nil;
     NSString *authorizationHeader = nil;
     NSURL *requestURLModified = requestURL;
     
     if (accessToken) {
-        token = accessToken.token;
+        token = accessToken.accessToken;
         NSParameterAssert(token);
-        if (type == nil || type.length == 0) {
-            type = @"Bearer";
-        }
-        authorizationHeader = [NSString stringWithFormat:@"%@ %@",type,token];
+//        if (type == nil || type.length == 0) {
+//            type = @"Bearer";
+//        }
+//        authorizationHeader = [NSString stringWithFormat:@"%@ %@",type,token];
     }
     
-    NSURLComponents *components = [NSURLComponents componentsWithString:requestURL.absoluteString];
-    NSString *accessTokenStringFromComponents = nil;
-    for (NSURLQueryItem *item in components.queryItems) {
-        if ([item.name isEqualToString:@"access_token"]) {
-            accessTokenStringFromComponents = item.value;
-        }
-    }
+    NSString *accessTokenStringFromComponents = [PanBaiduNetdiskNetworkClient accessTokenFromURL:requestURL];
     
     if (accessTokenStringFromComponents == nil && token != nil) {
+        NSURLComponents *components = [NSURLComponents componentsWithString:requestURL.absoluteString];
         NSMutableArray *queryItemsUpdated = [components.queryItems mutableCopy];
         NSURLQueryItem *accessTokenItem = [NSURLQueryItem queryItemWithName:@"access_token" value:token];
         [queryItemsUpdated addObject:accessTokenItem];
         components.queryItems = queryItemsUpdated;
         requestURLModified = components.URL;
     }
-    
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:requestURLModified];
     [request setHTTPMethod:method];
@@ -144,6 +138,10 @@ NSURLSessionDownloadDelegate
     if (contentType) {
         [request addValue:contentType forHTTPHeaderField:@"Content-Type"];
     }
+    
+    [request addValue:@"pan.baidu.com" forHTTPHeaderField:@"User-Agent"];
+    
+    NSParameterAssert(authorizationHeader != nil || [PanBaiduNetdiskNetworkClient accessTokenFromURL:request.URL] != nil);
     
     return request;
 }
@@ -300,12 +298,13 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
     return [self.requestsCache removeCancellableRequest:request];
 }
 
-#pragma mark - Internal
+#pragma mark - Utils
 
-+ (void)processDictionaryCompletion:(PanBaiduNetdiskAPIClientDictionaryCompletionBlock)completion
-                           withData:(NSData * _Nullable)data
-                           response:(NSURLResponse * _Nullable)response
-                              error:(NSError * _Nullable)error{
++ (void)processResponse:(NSURLResponse * _Nullable)response
+               withData:(NSData * _Nullable)data
+                  error:(NSError * _Nullable)error
+             completion:(PanBaiduNetdiskAPIClientDictionaryCompletionBlock _Nullable)completion
+{
     NSDictionary *responseDictionary = nil;
     NSError *parsingError = nil;
     if(data){
@@ -335,14 +334,23 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
             resultError = objectValidationError;
         }
     }
-    if(completion){
+    
+    //check server error code in response json
+    NSInteger internalErrorCode = [[responseDictionary objectForKey:@"errno"] integerValue];
+    if (internalErrorCode != 0) {
+        resultError = [NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeBadResponse internalErrorDictionary:responseDictionary];
+        responseDictionary = nil;
+    }
+    
+    if (completion) {
         completion(responseDictionary,resultError);
     }
 }
 
-+ (NSError * _Nullable)processErrorCompletion:(PanBaiduNetdiskAPIClientErrorCompletionBlock)completion
-                                     response:(NSURLResponse * _Nullable)response
-                                        error:(NSError * _Nullable)error{
++ (NSError * _Nullable)processResponse:(NSURLResponse * _Nullable)response
+                             withError:(NSError * _Nullable)error
+                            completion:(PanBaiduNetdiskAPIClientErrorCompletionBlock _Nullable)completion
+{
     NSHTTPURLResponse *HTTPResponse = nil;
     if([response isKindOfClass:[NSHTTPURLResponse class]]){
         HTTPResponse = (NSHTTPURLResponse *)response;
@@ -360,9 +368,10 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
     return resultError;
 }
 
-+ (NSURL * _Nullable)processURLCompletion:(PanBaiduNetdiskAPIClientURLCompletionBlock)completion
-                                      url:(NSURL * _Nullable)url
-                                    error:(NSError * _Nullable)error{
++ (NSURL * _Nullable)processResponseWithURL:(NSURL * _Nullable)url
+                                      error:(NSError * _Nullable)error
+                                 completion:(PanBaiduNetdiskAPIClientURLCompletionBlock _Nullable)completion
+{
     if(completion){
         completion(url,error);
     }
@@ -370,7 +379,8 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 }
 
 + (NSData *)createMultipartRelatedBodyWithBoundary:(NSString *)boundary
-                                        parameters:(NSDictionary<NSString *,NSString *> *)parameters {
+                                        parameters:(NSDictionary<NSString *,NSString *> *)parameters
+{
     NSMutableData *httpBody = [NSMutableData data];
     [httpBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [httpBody appendData:[@"{" dataUsingEncoding:NSUTF8StringEncoding]];
@@ -398,6 +408,16 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
     return httpBody;
 }
 
++ (NSData *)createBodyWithURLEncodedParameters:(NSDictionary<NSString *,NSString *> *)parameters {
+    NSMutableArray<NSString *> *paramsArray = [NSMutableArray new];
+    for (NSString *key in parameters.allKeys) {
+      [paramsArray addObject:[NSString stringWithFormat:@"%@=%@", key, parameters[key]]];
+    }
+    NSString *paramsString = [paramsArray componentsJoinedByString:@"&"];
+    NSData *paramsData = [paramsString dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];
+    return paramsData;
+}
+
 + (NSMutableArray<NSURLQueryItem *> *)queryItemsFromParameters:(NSDictionary<NSString *,NSString *> *)params {
     NSMutableArray<NSURLQueryItem *> *queryParameters = [NSMutableArray array];
     [params enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull obj, BOOL * _Nonnull stop) {
@@ -418,7 +438,15 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
     return encodedQuery;
 }
 
-+ (NSURL *)URLByReplacingQueryParameters:(NSDictionary<NSString *,NSString *> *)queryParameters inURL:(NSURL *)originalURL {
++ (NSString *)URLEncodedPath:(NSString *)string {
+    NSMutableCharacterSet * charSet = [[NSCharacterSet alphanumericCharacterSet] mutableCopy];
+    [charSet addCharactersInString:@".-_~"];
+    return [string stringByAddingPercentEncodingWithAllowedCharacters:charSet];
+}
+
++ (NSURL *)URLByReplacingQueryParameters:(NSDictionary<NSString *,NSString *> *)queryParameters
+                                   inURL:(NSURL *)originalURL
+{
     NSURLComponents *components =
     [NSURLComponents componentsWithURL:originalURL resolvingAgainstBaseURL:NO];
     
@@ -451,10 +479,22 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
     return [NSString stringWithFormat:@"foo%08X%08X", arc4random(), arc4random()];
 }
 
++ (NSString *_Nullable)accessTokenFromURL:(NSURL *)url {
+    NSParameterAssert(url);
+    if (url == nil) {
+        return nil;
+    }
+    NSURLComponents *components = [NSURLComponents componentsWithString:url.absoluteString];
+    for (NSURLQueryItem *item in components.queryItems) {
+        if ([item.name isEqualToString:@"access_token"]) {
+            return item.value;
+        }
+    }
+    return nil;
+}
+
 + (void)printRequest:(NSURLRequest *)request{
-    NSLog(@"URL: %@\nHEADER_FIELDS:%@\nBODY: %@",request.URL.absoluteString,
-          request.allHTTPHeaderFields,
-          [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding]);
+    NSLog(@"URL: %@\nHEADER_FIELDS:%@\nBODY: %@",request.URL.absoluteString,request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding]);
 }
 
 @end

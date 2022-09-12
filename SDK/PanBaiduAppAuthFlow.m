@@ -1,6 +1,6 @@
 //
 //  PanBaiduAppAuthFlow.m
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 3/10/21.
 //
@@ -15,24 +15,25 @@
 #import "PanBaiduNetdiskNetworkClient.h"
 #import "PanBaiduNetdiskAuthState.h"
 #import "PanBaiduNetdiskObject.h"
+#import "PanBaiduNetdiskAccessToken.h"
+
 
 @interface PanBaiduAppAuthFlow()
 
-@property(atomic, assign) BOOL started;
-@property(atomic, assign) BOOL cancelled;
-@property(atomic, assign) BOOL completed;
+@property (nonatomic, assign) BOOL started;
+@property (nonatomic, assign) BOOL cancelled;
+@property (nonatomic, assign) BOOL completed;
 
-@property(nonatomic, strong) PanBaiduNetdiskAPIClient *apiClient;
-@property(nonatomic, strong) PanBaiduNetdiskAuthorizationWebViewCoordinator *webViewCoordinator;
-@property(nonatomic, strong) PanBaiduNetdiskNetworkClient *networkClient;
-@property(nonatomic, weak) NSURLSessionDataTask *tokenExchangeDataTask;
+@property (nonatomic, strong) PanBaiduNetdiskAPIClient *apiClient;
+@property (nonatomic, strong) PanBaiduNetdiskAuthorizationWebViewCoordinator *webViewCoordinator;
+@property (nonatomic, strong) PanBaiduNetdiskNetworkClient *networkClient;
+@property (nonatomic, weak) NSURLSessionDataTask *tokenExchangeDataTask;
 
 @end
 
 
 
 @implementation PanBaiduAppAuthFlow
-
 
 - (instancetype)init {
     self = [super init];
@@ -87,13 +88,12 @@
             if (code) {
                 [strongSelf getTokenUsingCode:code];
             }
-            else{
+            else {
                 [strongSelf completeFlowWithAuthState:nil error:error];
             }
         };
         self.webViewCoordinator = coordinator;
         const BOOL presentUserAgentResult = [coordinator presentExternalUserAgentRequest:authStartURLRequest];
-        
         if (presentUserAgentResult == NO) {
             [self completeFlowWithAuthState:nil error:[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeCannotGetAuthURL]];
         }
@@ -128,14 +128,17 @@
     [self.networkClient dataTaskWithRequest:tokenExchangeURLRequest
                           completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelf;
-        [PanBaiduNetdiskNetworkClient processDictionaryCompletion:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+        [PanBaiduNetdiskNetworkClient processResponse:response
+                                             withData:data
+                                                error:error
+                                           completion:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
             if ([dictionary objectForKey:@"access_token"] == nil) {
                 [strongSelf completeFlowWithAuthState:nil error:error];
             }
             else{
                 [strongSelf tokenRequestDidCompleteWithDictionary:dictionary];
             }
-        } withData:data response:response error:error];
+        }];
     }];
     self.tokenExchangeDataTask = tokenExchangeDataTask;
     [tokenExchangeDataTask resume];
@@ -161,22 +164,25 @@
     NSParameterAssert(refresh_token);
     
     NSDate *tokenExpireDate = nil;
-    if (expires_in && expires_in.longLongValue > 0){
+    if (expires_in && expires_in.longLongValue > 0) {
         tokenExpireDate = [NSDate dateWithTimeIntervalSinceNow:expires_in.longLongValue];
     }
     
     NSParameterAssert(self.clientID);
     NSParameterAssert(self.clientSecret);
     NSParameterAssert(self.redirectURI);
+
+    PanBaiduNetdiskAccessToken *token = [PanBaiduNetdiskAccessToken accessTokenWithClientID:self.clientID
+                                                                               clientSecret:self.clientSecret
+                                                                                redirectURI:self.redirectURI
+                                                                                      scope:scope
+                                                                                accessToken:access_token
+                                                                               refreshToken:refresh_token
+                                                                                  expiresIn:expires_in
+                                                                            tokenExpireDate:tokenExpireDate
+                                                                           tokenUpdateError:nil];
     
-    PanBaiduNetdiskAuthState *authState = [[PanBaiduNetdiskAuthState alloc] initWithClientID:self.clientID
-                                                                                clientSecret:self.clientSecret
-                                                                                 redirectURI:self.redirectURI
-                                                                                       scope:scope
-                                                                                 accessToken:access_token
-                                                                                refreshToken:refresh_token
-                                                                                   expiresIn:expires_in
-                                                                             tokenExpireDate:tokenExpireDate];
+    PanBaiduNetdiskAuthState *authState = [[PanBaiduNetdiskAuthState alloc] initWithToken:token];
     
     [self completeFlowWithAuthState:authState error:nil];
 }
@@ -214,8 +220,7 @@
 
 - (void)cleanUp{
     NSParameterAssert([NSThread isMainThread]);
-    [self.webViewCoordinator dismissExternalUserAgentAnimated:NO
-                                                   completion:nil];
+    [self.webViewCoordinator dismissExternalUserAgentAnimated:NO completion:nil];
     self.webViewCoordinator = nil;
 }
 

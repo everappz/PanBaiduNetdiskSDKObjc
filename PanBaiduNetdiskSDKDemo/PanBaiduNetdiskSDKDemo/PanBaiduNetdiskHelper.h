@@ -1,6 +1,6 @@
 //
 //  MyCloudHomeHelper.h
-//  MyCloudHomeSDKDemo
+//  PanBaiduNetdiskSDKDemo
 //
 //  Created by Artem on 08.06.2020.
 //  Copyright © 2020 Everappz. All rights reserved.
@@ -16,9 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 #define LS_WEB_VIEW_SCALE_TO_FIT_SCRIPT() @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);"
 
 extern unsigned long long LSFileContentLengthUnknown;
-
-extern NSString * const PanBaiduNetdiskAuthDataKey;
-extern NSString * const PanBaiduNetdiskUserID;
 
 @interface PanBaiduNetdiskHelper : NSObject
 

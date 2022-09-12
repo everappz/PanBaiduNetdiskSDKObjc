@@ -1,9 +1,9 @@
 //
 //  PanBaiduNetdiskAPIClient.h
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 10/17/19.
-//  Copyright © 2019 Everappz. All rights reserved.
+//  Copyright © 2022 Everappz. All rights reserved.
 //
 
 
@@ -30,12 +30,29 @@ NS_ASSUME_NONNULL_BEGIN
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)getUserInfoWithCompletionBlock:(PanBaiduNetdiskAPIClientDictionaryCompletionBlock _Nullable)completion;
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)getFilesListAtPath:(NSString *)path
-                                                         completionBlock:(PanBaiduNetdiskAPIClientArrayCompletionBlock _Nullable)completion;
+                                                               completionBlock:(PanBaiduNetdiskAPIClientArrayCompletionBlock _Nullable)completion;
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)getInfoForFileWithID:(NSString *)fileID
-                                                            completionBlock:(PanBaiduNetdiskAPIClientDictionaryCompletionBlock _Nullable)completion;
+                                                                           dlink:(BOOL)dlink
+                                                                           thumb:(BOOL)thumb
+                                                                           extra:(BOOL)extra
+                                                                       needmedia:(BOOL)needmedia
+                                                                 completionBlock:(PanBaiduNetdiskAPIClientDictionaryCompletionBlock _Nullable)completion;
 
+- (id<PanBaiduNetdiskAPIClientCancellableRequest>)deleteFileAtPath:(NSString *)filePath
+                                                   completionBlock:(PanBaiduNetdiskAPIClientDictionaryCompletionBlock _Nullable)completion;
 
+- (id<PanBaiduNetdiskAPIClientCancellableRequest>)renameFileAtPath:(NSString *)filePath
+                                                           name:(NSString *)name
+                                                   completionBlock:(PanBaiduNetdiskAPIClientDictionaryCompletionBlock _Nullable)completion;
+
+- (id<PanBaiduNetdiskAPIClientCancellableRequest>)moveFileAtPath:(NSString *)filePath
+                                                           toPath:(NSString *)toPath
+                                                 completionBlock:(PanBaiduNetdiskAPIClientDictionaryCompletionBlock _Nullable)completion;
+
+- (id<PanBaiduNetdiskAPIClientCancellableRequest>)copyFileAtPath:(NSString *)filePath
+                                                           toPath:(NSString *)toPath
+                                                 completionBlock:(PanBaiduNetdiskAPIClientDictionaryCompletionBlock _Nullable)completion;
 
 /*
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)deleteFileForDeviceWithURL:(NSURL *)proxyURL

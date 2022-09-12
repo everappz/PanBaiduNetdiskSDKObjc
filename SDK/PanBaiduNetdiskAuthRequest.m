@@ -1,6 +1,6 @@
 //
 //  PanBaiduNetdiskAuthRequest.m
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 3/10/21.
 //
@@ -21,12 +21,12 @@
 
 @interface PanBaiduNetdiskAuthorizationCodeRequest()
 
-@property (nonatomic,copy)NSString *clientID;
-@property (nonatomic,copy)NSString *scope;
-@property (nonatomic,copy)NSString *redirectURI;
-@property (nonatomic,copy)NSString *deviceID;
-@property (nonatomic,copy)NSString *responseType;
-@property (nonatomic,copy)NSString *display;
+@property (nonatomic,copy) NSString *clientID;
+@property (nonatomic,copy) NSString *scope;
+@property (nonatomic,copy) NSString *redirectURI;
+@property (nonatomic,copy) NSString *deviceID;
+@property (nonatomic,copy) NSString *responseType;
+@property (nonatomic,copy) NSString *display;
 
 @end
 

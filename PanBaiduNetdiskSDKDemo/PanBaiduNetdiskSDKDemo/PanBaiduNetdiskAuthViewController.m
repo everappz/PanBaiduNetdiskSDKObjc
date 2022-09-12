@@ -1,6 +1,6 @@
 //
 //  MyCloudHomeAuthViewController.m
-//  MyCloudHomeSDKDemo
+//  PanBaiduNetdiskSDKDemo
 //
 //  Created by Artem on 08.06.2020.
 //  Copyright © 2020 Everappz. All rights reserved.
@@ -75,23 +75,22 @@
         [weakSelf completeWithError:webViewError];
     }
                                                                     completionBlock:^(PanBaiduNetdiskAuthState * _Nullable authState, NSError * _Nullable error) {
-        if(authState){
+        if (authState) {
             PanBaiduAppAuthProvider *authProvider =
-            [[PanBaiduAppAuthProvider alloc] initWithIdentifier:[PanBaiduNetdiskHelper uuidString]
-                                                          state:authState];
+            [[PanBaiduAppAuthProvider alloc] initWithIdentifier:[PanBaiduNetdiskHelper uuidString] state:authState];
+            
             weakSelf.apiClient =
-            [[PanBaiduNetdiskAPIClient alloc] initWithURLSessionConfiguration:nil
-                                                                 authProvider:authProvider];
+            [[PanBaiduNetdiskAPIClient alloc] initWithURLSessionConfiguration:nil authProvider:authProvider];
+            
             //delay to avoid 429 error code
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [weakSelf.apiClient getUserInfoWithCompletionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
-                        if(dictionary){
-                            [weakSelf completeWithAuthState:authState
-                                       userIDInfoDictionary:dictionary];
-                        }
-                        else{
-                            [weakSelf completeWithError:error];
-                        }
+                    if(dictionary){
+                        [weakSelf completeWithAuthState:authState userModelDictionary:dictionary];
+                    }
+                    else{
+                        [weakSelf completeWithError:error];
+                    }
                 }];
             });
         }
@@ -115,25 +114,29 @@
 }
 
 - (void)completeWithAuthState:(PanBaiduNetdiskAuthState * _Nullable)authState
-         userIDInfoDictionary:(NSDictionary * _Nullable)userIDInfoDictionary{
-    PanBaiduNetdiskUser *user = [[PanBaiduNetdiskUser alloc] initWithDictionary:userIDInfoDictionary];
+          userModelDictionary:(NSDictionary * _Nullable)userModelDictionary
+{
+    PanBaiduNetdiskUser *user = [[PanBaiduNetdiskUser alloc] initWithDictionary:userModelDictionary];
     NSString *userID = [user userID];
     NSString *userName = [user netdiskName];
     NSParameterAssert(userID);
     NSParameterAssert(userName);
+    
     NSMutableDictionary *authResult = [NSMutableDictionary new];
     if (userName) {
-        [authResult setObject:userName forKey:PanBaiduNetdiskUserName];
+        [authResult setObject:userName forKey:PanBaiduNetdiskUserNameKey];
     }
+    
     if (userID) {
-        [authResult setObject:userID forKey:PanBaiduNetdiskUserID];
+        [authResult setObject:userID forKey:PanBaiduNetdiskUserIDKey];
     }
-    if(authState){
-        NSData *authData = [NSKeyedArchiver archivedDataWithRootObject:authState
+    
+    if (authState) {
+        NSData *authData = [NSKeyedArchiver archivedDataWithRootObject:authState.token
                                                  requiringSecureCoding:YES
                                                                  error:nil];
         NSParameterAssert(authData);
-        [authResult setObject:authData?:[NSData data] forKey:PanBaiduNetdiskAuthDataKey];
+        [authResult setObject:authData?:[NSData data] forKey:PanBaiduNetdiskAccessTokenDataKey];
     }
     [self completeWithSuccess:authResult];
 }

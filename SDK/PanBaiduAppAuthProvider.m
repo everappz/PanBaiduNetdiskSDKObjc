@@ -1,9 +1,9 @@
 //
 //  PanBaiduAppAuthProvider.m
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 10/17/19.
-//  Copyright © 2019 Everappz. All rights reserved.
+//  Copyright © 2022 Everappz. All rights reserved.
 //
 
 #import "PanBaiduAppAuthProvider.h"
@@ -29,7 +29,8 @@ NSString * const PanBaiduAppAuthProviderDidChangeState = @"PanBaiduAppAuthProvid
 @implementation PanBaiduAppAuthProvider
 
 - (instancetype)initWithIdentifier:(NSString *)identifier
-                             state:(PanBaiduNetdiskAuthState *)authState{
+                             state:(PanBaiduNetdiskAuthState *)authState
+{
     NSParameterAssert(authState);
     NSParameterAssert(identifier);
     if (authState == nil){
@@ -40,7 +41,7 @@ NSString * const PanBaiduAppAuthProviderDidChangeState = @"PanBaiduAppAuthProvid
     }
     
     self = [super init];
-    if(self){
+    if (self) {
         self.identifier = identifier;
         self.authState = authState;
         self.authState.stateChangeDelegate = self;
@@ -49,9 +50,10 @@ NSString * const PanBaiduAppAuthProviderDidChangeState = @"PanBaiduAppAuthProvid
 }
 
 - (void)getAccessTokenWithCompletionBlock:(PanBaiduNetdiskAccessTokenGetBlock)completion{
-    NSString *accessToken = self.authState.accessToken;
-    NSError *tokenUpdateError = self.authState.tokenUpdateError;
-    NSDate *tokenExpireDate = self.authState.tokenExpireDate;
+    PanBaiduNetdiskAccessToken *token = self.authState.token;
+
+    NSError *tokenUpdateError = token.tokenUpdateError;
+    NSDate *tokenExpireDate = token.tokenExpireDate;
     
     BOOL tokenExpired = NO;
     if (tokenExpireDate) {
@@ -71,10 +73,8 @@ NSString * const PanBaiduAppAuthProviderDidChangeState = @"PanBaiduAppAuthProvid
         }
         return;
     }
-    
-    PanBaiduNetdiskAccessToken *resultToken = [PanBaiduNetdiskAccessToken accessTokenWithToken:accessToken tokenExpireDate:tokenExpireDate];
-    
-    if (resultToken == nil) {
+
+    if (token == nil) {
         if (completion){
             completion(nil,[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeCannotGetAccessToken]);
         }
@@ -82,7 +82,7 @@ NSString * const PanBaiduAppAuthProviderDidChangeState = @"PanBaiduAppAuthProvid
     }
     
     if (completion){
-        completion(resultToken,nil);
+        completion(token,nil);
     }
 }
 

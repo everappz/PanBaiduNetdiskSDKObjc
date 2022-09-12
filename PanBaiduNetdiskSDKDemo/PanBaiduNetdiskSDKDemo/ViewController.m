@@ -1,6 +1,6 @@
 //
 //  ViewController.m
-//  MyCloudHomeSDKDemo
+//  PanBaiduNetdiskSDKDemo
 //
 //  Created by Artem on 08.06.2020.
 //  Copyright © 2020 Everappz. All rights reserved.
@@ -14,9 +14,7 @@
 #import "LSOnlineFile.h"
 
 
-
-
-NSString * const PanBaiduNetdiskAuthKey = @"PanBaiduNetdiskAuthKey";
+NSString * const kViewControllerPanBaiduNetdiskAuthKey = @"kViewControllerPanBaiduNetdiskAuthKey";
 
 @interface ViewController ()<PanBaiduNetdiskAuthViewControllerDelegate>
 
@@ -62,19 +60,28 @@ NSString * const PanBaiduNetdiskAuthKey = @"PanBaiduNetdiskAuthKey";
 {
     PanBaiduAppAuthProvider *provider = notification.object;
     NSParameterAssert([provider isKindOfClass:[PanBaiduAppAuthProvider class]]);
-    if([provider isKindOfClass:[PanBaiduAppAuthProvider class]]){
-        NSMutableDictionary *authResult = [[self loadAuth] mutableCopy];
-        PanBaiduNetdiskAuthState *authState = provider.authState;
-        NSParameterAssert(authState);
-        if (authState) {
-            NSData *authData = [NSKeyedArchiver archivedDataWithRootObject:authState
-                                                     requiringSecureCoding:YES
-                                                                     error:nil];
-            NSParameterAssert(authData);
-            [authResult setObject:authData?:[NSData data] forKey:PanBaiduNetdiskAuthDataKey];
-        }
-        [self saveAuth:authResult];
+    if ([provider isKindOfClass:[PanBaiduAppAuthProvider class]] == NO) {
+        return;
     }
+    
+    PanBaiduNetdiskAuthState *authState = provider.authState;
+    NSParameterAssert(authState);
+    NSMutableDictionary *authStateDictionary = [NSMutableDictionary new];
+    
+    NSDictionary *previousAuth = [self loadAuth];
+    if (previousAuth) {
+        [authStateDictionary addEntriesFromDictionary:previousAuth];
+    }
+    
+    if (authState) {
+        NSData *authData = [NSKeyedArchiver archivedDataWithRootObject:authState.token
+                                                 requiringSecureCoding:YES
+                                                                 error:nil];
+        NSParameterAssert(authData);
+        
+        [authStateDictionary setObject:authData?:[NSData data] forKey:PanBaiduNetdiskAccessTokenDataKey];
+    }
+    [self saveAuth:authStateDictionary];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -85,7 +92,7 @@ NSString * const PanBaiduNetdiskAuthKey = @"PanBaiduNetdiskAuthKey";
     
     UIStackView *stackView = [[UIStackView alloc] init];
     stackView.axis = UILayoutConstraintAxisVertical;
-    stackView.distribution = UIStackViewDistributionEqualSpacing;
+    stackView.distribution = UIStackViewDistributionFillEqually;
     stackView.alignment = UIStackViewAlignmentCenter;
     stackView.spacing = 20.0;
     stackView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -97,28 +104,38 @@ NSString * const PanBaiduNetdiskAuthKey = @"PanBaiduNetdiskAuthKey";
     self.stackView = stackView;
     
     UIButton *startButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [startButton setTitle:@"Start" forState:UIControlStateNormal];
+    [startButton setTitle:@"Start New Auth" forState:UIControlStateNormal];
     [startButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [startButton.titleLabel setFont:[UIFont systemFontOfSize:25.0 weight:UIFontWeightSemibold]];
+    [startButton.titleLabel setFont:[UIFont systemFontOfSize:18.0 weight:UIFontWeightSemibold]];
     [startButton setBackgroundColor:[UIColor systemBlueColor]];
-    startButton.layer.cornerRadius = 20.0;
+    startButton.layer.cornerRadius = 25.0;
     [startButton addTarget:self action:@selector(actionStart:) forControlEvents:UIControlEventTouchUpInside];
     [stackView addArrangedSubview:startButton];
     startButton.translatesAutoresizingMaskIntoConstraints = NO;
     [startButton.widthAnchor constraintEqualToConstant:300.0].active = YES;
     
-    
-    if ([self loadAuth]!=nil){
+    if ([self loadAuth] != nil) {
         UIButton *usePreviousAuthButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [usePreviousAuthButton setTitle:@"Continue" forState:UIControlStateNormal];
+        [usePreviousAuthButton setTitle:@"Continue With Previous Auth" forState:UIControlStateNormal];
         [usePreviousAuthButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [usePreviousAuthButton.titleLabel setFont:[UIFont systemFontOfSize:25.0 weight:UIFontWeightSemibold]];
+        [usePreviousAuthButton.titleLabel setFont:[UIFont systemFontOfSize:18.0 weight:UIFontWeightSemibold]];
         [usePreviousAuthButton setBackgroundColor:[UIColor systemBlueColor]];
-        usePreviousAuthButton.layer.cornerRadius = 20.0;
+        usePreviousAuthButton.layer.cornerRadius = 25.0;
         [usePreviousAuthButton addTarget:self action:@selector(actionContinue:) forControlEvents:UIControlEventTouchUpInside];
         [stackView addArrangedSubview:usePreviousAuthButton];
         usePreviousAuthButton.translatesAutoresizingMaskIntoConstraints = NO;
         [usePreviousAuthButton.widthAnchor constraintEqualToConstant:300.0].active = YES;
+        
+        UIButton *cleanPreviousAuthButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [cleanPreviousAuthButton setTitle:@"Clean Previous Auth" forState:UIControlStateNormal];
+        [cleanPreviousAuthButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [cleanPreviousAuthButton.titleLabel setFont:[UIFont systemFontOfSize:18.0 weight:UIFontWeightSemibold]];
+        [cleanPreviousAuthButton setBackgroundColor:[UIColor systemBlueColor]];
+        cleanPreviousAuthButton.layer.cornerRadius = 25.0;
+        [cleanPreviousAuthButton addTarget:self action:@selector(actionContinue:) forControlEvents:UIControlEventTouchUpInside];
+        [stackView addArrangedSubview:cleanPreviousAuthButton];
+        cleanPreviousAuthButton.translatesAutoresizingMaskIntoConstraints = NO;
+        [cleanPreviousAuthButton.widthAnchor constraintEqualToConstant:300.0].active = YES;
     }
 }
 
@@ -139,7 +156,7 @@ NSString * const PanBaiduNetdiskAuthKey = @"PanBaiduNetdiskAuthKey";
 }
 
 - (void)panBaiduNetdiskAuthViewController:(PanBaiduNetdiskAuthViewController *)viewController
-             didFailWithError:(NSError *)error
+                         didFailWithError:(NSError *)error
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         __weak typeof (self) weakSelf = self;
@@ -154,7 +171,7 @@ NSString * const PanBaiduNetdiskAuthKey = @"PanBaiduNetdiskAuthKey";
 }
 
 - (void)panBaiduNetdiskAuthViewController:(PanBaiduNetdiskAuthViewController *)viewController
-           didSuccessWithAuth:(NSDictionary *)auth
+                       didSuccessWithAuth:(NSDictionary *)auth
 {
     [self saveAuth:auth];
     [self showFolderContentWithAuth:auth];
@@ -165,7 +182,7 @@ NSString * const PanBaiduNetdiskAuthKey = @"PanBaiduNetdiskAuthKey";
     dispatch_async(dispatch_get_main_queue(), ^{
         __weak typeof (self) weakSelf = self;
         [self dismissViewControllerAnimated:YES completion:^{
-            NSString *userID = [auth objectForKey:PanBaiduNetdiskUserID];
+            NSString *userID = [auth objectForKey:PanBaiduNetdiskUserIDKey];
             PanBaiduNetdiskAPIClient *client = [PanBaiduNetdiskHelper createClientWithAuthData:auth];
             
             FolderContentViewController *contentViewController = [FolderContentViewController new];
@@ -175,7 +192,6 @@ NSString * const PanBaiduNetdiskAuthKey = @"PanBaiduNetdiskAuthKey";
             LSOnlineFile *rootFile = [[LSOnlineFile alloc] init];
             rootFile.url = [NSURL fileURLWithPath:@"/"];
             rootFile.directory = YES;
-
             contentViewController.rootDirectory = rootFile;
             
             UINavigationController *flowNavigationController =
@@ -187,20 +203,35 @@ NSString * const PanBaiduNetdiskAuthKey = @"PanBaiduNetdiskAuthKey";
     });
 }
 
-- (void)saveAuth:(NSDictionary *)auth
+- (void)saveAuth:(NSDictionary *)authDictionary
 {
-    if (auth) {
-        [[NSUserDefaults standardUserDefaults] setObject:auth forKey:PanBaiduNetdiskAuthKey];
+    if (authDictionary) {
+        NSParameterAssert([authDictionary objectForKey:PanBaiduNetdiskAccessTokenDataKey]);
+        NSParameterAssert([authDictionary objectForKey:PanBaiduNetdiskUserIDKey]);
+        NSParameterAssert([authDictionary objectForKey:PanBaiduNetdiskUserNameKey]);
+        [[NSUserDefaults standardUserDefaults] setObject:authDictionary forKey:kViewControllerPanBaiduNetdiskAuthKey];
     }
     else{
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:PanBaiduNetdiskAuthKey];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kViewControllerPanBaiduNetdiskAuthKey];
     }
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (nullable NSDictionary *)loadAuth
 {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:PanBaiduNetdiskAuthKey];
+    NSDictionary *authDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:kViewControllerPanBaiduNetdiskAuthKey];
+    if (authDictionary == nil) {
+        return nil;
+    }
+    
+    NSParameterAssert([authDictionary objectForKey:PanBaiduNetdiskAccessTokenDataKey]);
+    NSParameterAssert([authDictionary objectForKey:PanBaiduNetdiskUserIDKey]);
+    NSParameterAssert([authDictionary objectForKey:PanBaiduNetdiskUserNameKey]);
+    
+    if ([authDictionary objectForKey:PanBaiduNetdiskAccessTokenDataKey]) {
+        return authDictionary;
+    }
+    return nil;
 }
 
 @end

@@ -1,6 +1,6 @@
 //
 //  PanBaiduNetdiskAuthState.m
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 3/10/21.
 //
@@ -13,65 +13,30 @@
 
 @interface PanBaiduNetdiskAuthState()
 
-@property (nonatomic, copy, nullable) NSString *clientID;
-@property (nonatomic, copy, nullable) NSString *clientSecret;
-@property (nonatomic, copy, nullable) NSString *redirectURI;
-@property (nonatomic, copy, nullable) NSString *scope;
-@property (nonatomic, copy, nullable) NSString *accessToken;
-@property (nonatomic, copy, nullable) NSString *refreshToken;
-@property (nonatomic, strong, nullable) NSNumber *expiresIn;
-@property (nonatomic, strong, nullable) NSDate *tokenExpireDate;
-@property (nonatomic, strong, nullable) NSError *tokenUpdateError;
-
+@property (nonatomic, nullable, strong) PanBaiduNetdiskAccessToken *token;
+@property (nonatomic, strong) NSRecursiveLock *tokenAccessLock;
 @property (nonatomic, strong) PanBaiduNetdiskNetworkClient *networkClient;
-
 @property (nonatomic, weak) NSURLSessionDataTask *tokenUpdateTask;
-@property (nonatomic, strong) NSRecursiveLock *tokenUpdateTaskLock;
-@property (nonatomic, strong) NSMutableArray<PanBaiduNetdiskAccessTokenUpdateBlock> *tokenUpdateCompletionBlocks;
-@property (nonatomic, strong) NSRecursiveLock *tokenUpdateCompletionBlocksLock;
+@property (nonatomic, strong) NSMutableArray<PanBaiduNetdiskAccessTokenUpdateBlock> *tokenCompletionBlocks;
+@property (nonatomic, strong) NSRecursiveLock *tokenUpdateLock;
 
 @end
 
 
 @implementation PanBaiduNetdiskAuthState
 
-- (instancetype)initWithClientID:(NSString * _Nullable)clientID
-                    clientSecret:(NSString * _Nullable)clientSecret
-                     redirectURI:(NSString * _Nullable)redirectURI
-                           scope:(NSString * _Nullable)scope
-                     accessToken:(NSString * _Nullable)accessToken
-                    refreshToken:(NSString * _Nullable)refreshToken
-                       expiresIn:(NSNumber * _Nullable)expiresIn
-                 tokenExpireDate:(NSDate * _Nullable)tokenExpireDate
+
+- (instancetype)initWithToken:(PanBaiduNetdiskAccessToken * _Nullable)token
 {
     self = [super init];
     if (self) {
-        self.clientID = clientID;
-        self.clientSecret = clientSecret;
-        self.redirectURI = redirectURI;
-        self.scope = scope;
-        self.accessToken = accessToken;
-        self.refreshToken = refreshToken;
-        self.expiresIn = expiresIn;
-        self.tokenExpireDate = tokenExpireDate;
-        self.tokenUpdateCompletionBlocksLock = [NSRecursiveLock new];
-        self.tokenUpdateTaskLock = [NSRecursiveLock new];
+        _token = token;
+        self.tokenUpdateLock = [NSRecursiveLock new];
+        self.tokenAccessLock = [NSRecursiveLock new];
+        self.tokenCompletionBlocks = [NSMutableArray<PanBaiduNetdiskAccessTokenUpdateBlock> new];
+        self.networkClient = [[PanBaiduNetdiskNetworkClient alloc] initWithURLSessionConfiguration:nil];
     }
     return self;
-}
-
-- (PanBaiduNetdiskNetworkClient *)networkClient {
-    if (_networkClient == nil) {
-        _networkClient = [[PanBaiduNetdiskNetworkClient alloc] initWithURLSessionConfiguration:nil];
-    }
-    return _networkClient;
-}
-
-- (NSMutableArray<PanBaiduNetdiskAccessTokenUpdateBlock> *)tokenUpdateCompletionBlocks{
-    if (_tokenUpdateCompletionBlocks == nil) {
-        _tokenUpdateCompletionBlocks = [NSMutableArray<PanBaiduNetdiskAccessTokenUpdateBlock> new];
-    }
-    return _tokenUpdateCompletionBlocks;
 }
 
 - (void)addTokenUpdateCompletionBlock:(PanBaiduNetdiskAccessTokenUpdateBlock)block{
@@ -80,54 +45,34 @@
         return;
     }
     PanBaiduNetdiskAccessTokenUpdateBlock copiedBlock = [block copy];
-    [self.tokenUpdateCompletionBlocksLock lock];
-    [self.tokenUpdateCompletionBlocks addObject:copiedBlock];
-    [self.tokenUpdateCompletionBlocksLock unlock];
+    [self.tokenUpdateLock lock];
+    [self.tokenCompletionBlocks addObject:copiedBlock];
+    [self.tokenUpdateLock unlock];
+}
+
+- (PanBaiduNetdiskAccessToken *)token {
+    PanBaiduNetdiskAccessToken *token = nil;
+    [self.tokenUpdateLock lock];
+    token = _token;
+    [self.tokenUpdateLock unlock];
+    return token;
 }
 
 - (void)processTokenUpdateCompletionBlocks{
-    [self.tokenUpdateCompletionBlocksLock lock];
-    NSString *accessToken = self.accessToken;
-    NSError *tokenUpdateError = self.tokenUpdateError;
-    for (PanBaiduNetdiskAccessTokenUpdateBlock block in self.tokenUpdateCompletionBlocks){
+    NSString *accessToken = nil;
+    NSError *tokenUpdateError = nil;
+    
+    [self.tokenAccessLock lock];
+    accessToken = [_token.accessToken copy];
+    tokenUpdateError = [_token.tokenUpdateError copy];
+    [self.tokenAccessLock unlock];
+    
+    [self.tokenUpdateLock lock];
+    for (PanBaiduNetdiskAccessTokenUpdateBlock block in self.tokenCompletionBlocks){
         block(accessToken,tokenUpdateError);
     }
-    [self.tokenUpdateCompletionBlocks removeAllObjects];
-    [self.tokenUpdateCompletionBlocksLock unlock];
-}
-
-#pragma mark - NSSecureCoding
-
-+ (BOOL)supportsSecureCoding {
-    return YES;
-}
-
-- (instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [self init];
-    if (self) {
-        _expiresIn = [aDecoder decodeObjectOfClass:[NSNumber class] forKey:@"expiresIn"];
-        _refreshToken = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"refreshToken"];
-        _accessToken = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"accessToken"];
-        _scope = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"scope"];
-        _redirectURI = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"redirectURI"];
-        _clientSecret = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"clientSecret"];
-        _clientID = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"clientID"];
-        _tokenExpireDate = [aDecoder decodeObjectOfClass:[NSDate class] forKey:@"tokenExpireDate"];
-        _tokenUpdateError = [aDecoder decodeObjectOfClass:[NSError class] forKey:@"tokenUpdateError"];
-    }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder {
-    [aCoder encodeObject:_expiresIn forKey:@"expiresIn"];
-    [aCoder encodeObject:_refreshToken forKey:@"refreshToken"];
-    [aCoder encodeObject:_accessToken forKey:@"accessToken"];
-    [aCoder encodeObject:_scope forKey:@"scope"];
-    [aCoder encodeObject:_redirectURI forKey:@"redirectURI"];
-    [aCoder encodeObject:_clientSecret forKey:@"clientSecret"];
-    [aCoder encodeObject:_clientID forKey:@"clientID"];
-    [aCoder encodeObject:_tokenExpireDate forKey:@"tokenExpireDate"];
-    [aCoder encodeObject:_tokenUpdateError forKey:@"tokenUpdateError"];
+    [self.tokenCompletionBlocks removeAllObjects];
+    [self.tokenUpdateLock unlock];
 }
 
 #pragma mark - Token Update
@@ -147,24 +92,22 @@
         tokenExpireDate = [NSDate dateWithTimeIntervalSinceNow:expires_in.longLongValue];
     }
     
-    if (access_token && access_token.length > 0) {
-        self.accessToken = access_token;
-    }
-    if (expires_in) {
-        self.expiresIn = expires_in;
-    }
+    [self.tokenAccessLock lock];
     
-    if (refresh_token && refresh_token.length > 0) {
-        self.refreshToken = refresh_token;
-    }
-    if (scope && scope.length > 0) {
-        self.scope = scope;
-    }
-    if (tokenExpireDate) {
-        self.tokenExpireDate = tokenExpireDate;
-    }
+    PanBaiduNetdiskAccessToken *tokenUpdated =
+    [PanBaiduNetdiskAccessToken
+     accessTokenWithClientID:_token.clientID
+     clientSecret:_token.clientSecret
+     redirectURI:_token.redirectURI
+     scope:scope
+     accessToken:access_token
+     refreshToken:refresh_token
+     expiresIn:expires_in
+     tokenExpireDate:tokenExpireDate
+     tokenUpdateError:error];
     
-    self.tokenUpdateError = error;
+    _token = tokenUpdated;
+    [self.tokenAccessLock unlock];
     
     [self processTokenUpdateCompletionBlocks];
     
@@ -177,44 +120,58 @@
     [self addTokenUpdateCompletionBlock:completion];
     
     NSURLSessionDataTask *existingTokenUpdateTask = nil;
-    [self.tokenUpdateTaskLock lock];
+    [self.tokenUpdateLock lock];
     existingTokenUpdateTask = self.tokenUpdateTask;
-    [self.tokenUpdateTaskLock unlock];
+    [self.tokenUpdateLock unlock];
     
     if (existingTokenUpdateTask) {
         return existingTokenUpdateTask;
     }
     
-    NSParameterAssert(self.clientID);
-    NSParameterAssert(self.clientSecret);
-    NSParameterAssert(self.refreshToken);
+    NSString *clientID = nil;
+    NSString *clientSecret = nil;
+    NSString *refreshToken = nil;
+    
+    [self.tokenAccessLock lock];
+    clientID = [_token.clientID copy];
+    clientSecret = [_token.clientSecret copy];
+    refreshToken = [_token.refreshToken copy];
+    [self.tokenAccessLock unlock];
+    
+    NSParameterAssert(clientID);
+    NSParameterAssert(clientSecret);
+    NSParameterAssert(refreshToken);
     
     PanBaiduNetdiskTokenRefreshRequest *tokenRefreshRequest =
-    [PanBaiduNetdiskTokenRefreshRequest requestWithClientID:self.clientID
-                                               clientSecret:self.clientSecret
+    [PanBaiduNetdiskTokenRefreshRequest requestWithClientID:clientID
+                                               clientSecret:clientSecret
                                                   grantType:@"refresh_token"
-                                               refreshToken:self.refreshToken];
+                                               refreshToken:refreshToken];
     
     NSURLRequest *tokenRefreshURLRequest = [tokenRefreshRequest URLRequest];
-    if (tokenRefreshURLRequest == nil){
+    if (tokenRefreshURLRequest == nil) {
         NSParameterAssert(NO);
         [self completeTokenUpdateWithResponse:nil error:[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeCannotUpdateAccessToken]];
         return nil;
     }
     
     PanBaiduNetdiskMakeWeakSelf;
-    NSURLSessionDataTask *tokenUpdateTask = [self.networkClient dataTaskWithRequest:tokenRefreshURLRequest
-                                                                  completionHandler:
-                                             ^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        [PanBaiduNetdiskNetworkClient processDictionaryCompletion:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+    NSURLSessionDataTask *tokenUpdateTask =
+    [self.networkClient dataTaskWithRequest:tokenRefreshURLRequest
+                          completionHandler:
+     ^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        [PanBaiduNetdiskNetworkClient processResponse:response
+                                             withData:data
+                                                error:error
+                                           completion:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
             PanBaiduNetdiskMakeStrongSelf;
             [strongSelf completeTokenUpdateWithResponse:dictionary error:error];
-        } withData:data response:response error:error];
+        }];
     }];
     
-    [self.tokenUpdateTaskLock lock];
+    [self.tokenUpdateLock lock];
     self.tokenUpdateTask = tokenUpdateTask;
-    [self.tokenUpdateTaskLock unlock];
+    [self.tokenUpdateLock unlock];
     
     [tokenUpdateTask resume];
     return tokenUpdateTask;

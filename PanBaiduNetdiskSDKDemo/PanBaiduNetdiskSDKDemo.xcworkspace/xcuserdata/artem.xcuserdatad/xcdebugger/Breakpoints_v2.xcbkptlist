@@ -67,22 +67,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B6F32F45-A8ED-4B65-8308-FE063F801601"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAuthRequest.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "156"
-            endingLineNumber = "156"
-            landmarkName = "-URLRequest"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "E2170C36-1A29-4C81-89B2-494C83C55B90"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -90,8 +74,8 @@
             filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAPIClient.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "159"
-            endingLineNumber = "159"
+            startingLineNumber = "158"
+            endingLineNumber = "158"
             landmarkName = "-_getUserInfoWithCompletionBlock:"
             landmarkType = "7">
          </BreakpointContent>
@@ -106,8 +90,8 @@
             filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAPIClient.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "167"
-            endingLineNumber = "167"
+            startingLineNumber = "166"
+            endingLineNumber = "166"
             landmarkName = "-_getUserInfoWithCompletionBlock:"
             landmarkType = "7">
          </BreakpointContent>
@@ -115,16 +99,352 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "FB59520E-E082-4DE9-B545-4522B30A702A"
+            uuid = "C5CAF1F5-8CA0-4309-9912-55C79707B055"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskNetworkClient.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "341"
+            endingLineNumber = "341"
+            landmarkName = "+processResponse:withData:error:completion:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "C5CAF1F5-8CA0-4309-9912-55C79707B055 - ac1c3f957605dd0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "+[PanBaiduNetdiskNetworkClient processResponse:withData:error:completion:]"
+                  moduleName = "PanBaiduNetdiskSDKObjc"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskNetworkClient.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "343"
+                  endingLineNumber = "343"
+                  offsetFromSymbolStart = "953">
+               </Location>
+               <Location
+                  uuid = "C5CAF1F5-8CA0-4309-9912-55C79707B055 - ac1c3f957605d2e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "+[PanBaiduNetdiskNetworkClient processResponse:withData:error:completion:]"
+                  moduleName = "PanBaiduNetdiskSDKObjc"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskNetworkClient.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "341"
+                  endingLineNumber = "341"
+                  offsetFromSymbolStart = "889">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "784F5DCC-93ED-460E-A572-1CAEBA438436"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/NSError+PanBaiduNetdisk.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
+            landmarkName = "+panBaiduNetdiskErrorWithCode:internalErrorDictionary:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "784F5DCC-93ED-460E-A572-1CAEBA438436 - 61fcc0397cc8254a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[NSError(PanBaiduNetdisk) isPanBaiduNetdiskAuthError]"
+                  moduleName = "PanBaiduNetdiskSDKObjc"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/NSError+PanBaiduNetdisk.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "65"
+                  endingLineNumber = "65"
+                  offsetFromSymbolStart = "19">
+               </Location>
+               <Location
+                  uuid = "784F5DCC-93ED-460E-A572-1CAEBA438436 - b9fc46e652f72ebb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "+[NSError(PanBaiduNetdisk) panBaiduNetdiskErrorWithCode:internalErrorDictionary:]"
+                  moduleName = "PanBaiduNetdiskSDKObjc"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/NSError+PanBaiduNetdisk.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "61"
+                  endingLineNumber = "61"
+                  offsetFromSymbolStart = "498">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3F706E77-7500-46DF-BCAC-430F5ADCAA82"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAuthState.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
+            landmarkName = "-completeTokenUpdateWithResponse:error:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "3F706E77-7500-46DF-BCAC-430F5ADCAA82 - ab43c39969264dbe"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[PanBaiduNetdiskAuthState completeTokenUpdateWithResponse:error:]"
+                  moduleName = "PanBaiduNetdiskSDKObjc"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAuthState.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "108"
+                  endingLineNumber = "108"
+                  offsetFromSymbolStart = "388">
+               </Location>
+               <Location
+                  uuid = "3F706E77-7500-46DF-BCAC-430F5ADCAA82 - ab43c39969264068"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[PanBaiduNetdiskAuthState completeTokenUpdateWithResponse:error:]"
+                  moduleName = "PanBaiduNetdiskSDKObjc"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAuthState.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "90"
+                  endingLineNumber = "90"
+                  offsetFromSymbolStart = "388">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6CE5C581-7BE6-43E4-8F5C-698E7DA6342E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PanBaiduNetdiskSDKDemo/ViewController.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "208"
+            endingLineNumber = "208"
+            landmarkName = "-saveAuth:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4328B295-0AAD-4CDC-BC0F-6FF0D900F655"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PanBaiduNetdiskSDKDemo/ViewController.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
+            landmarkName = "-authProviderDidChangeNotification:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F7CF0C9F-5410-4F57-A24B-41F390E1F101"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PanBaiduNetdiskSDKDemo/ViewController.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "176"
+            endingLineNumber = "176"
+            landmarkName = "-panBaiduNetdiskAuthViewController:didSuccessWithAuth:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BC899516-B4CB-4F7C-99A7-BB5576CD2A21"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PanBaiduNetdiskSDKDemo/ViewController.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "161"
+            endingLineNumber = "161"
+            landmarkName = "-panBaiduNetdiskAuthViewController:didFailWithError:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4EAFC3BE-7364-45C5-B320-EA9DA1F77398"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduAppAuthManager.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
+            landmarkName = "-authFlowWithAutoCodeExchangeFromWebView:webViewDidStartLoadingBlock:webViewDidFinishLoadingBlock:webViewDidFailWithErrorBlock:completionBlock:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4174DD78-31A9-424A-83EE-6E8957E5B6FB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduAppAuthFlow.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "70"
+            endingLineNumber = "70"
+            landmarkName = "-start"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C1242E43-94EF-4026-BB74-8300E6BB87EF"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduAppAuthFlow.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
+            landmarkName = "-start"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D2A795BA-6339-4A32-A5D0-889BCFCFC8E5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduAppAuthFlow.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
+            landmarkName = "-getTokenUsingCode:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "01737D26-38E8-4AF9-A5D9-24E0D77658A9"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduAppAuthFlow.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
+            landmarkName = "-getTokenUsingCode:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F74D78A5-E0D3-444E-8FEA-6CDB489464A5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PanBaiduNetdiskSDKDemo/PanBaiduNetdiskAuthViewController.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "141"
+            endingLineNumber = "141"
+            landmarkName = "-completeWithAuthState:userModelDictionary:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4180F8E1-CD1E-4AFD-A64E-4DE004128E17"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAPIClient.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "263"
-            endingLineNumber = "263"
-            landmarkName = "-_getFilesListAtPath:offset:length:resultFiles:completionBlock:"
+            startingLineNumber = "407"
+            endingLineNumber = "407"
+            landmarkName = "-_getInfoForFileWithID:dlink:thumb:extra:needmedia:completionBlock:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0740210A-CCA0-4E63-A0BE-F0ADC412F0E8"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAPIClient.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "595"
+            endingLineNumber = "595"
+            landmarkName = "-defaultFileManagerRequestWithMethod:overwrite:fileListParameters:completionBlock:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2F5B9EEE-C17A-435B-9EB1-7B95AA61D3BF"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskNetworkClient.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "417"
+            endingLineNumber = "417"
+            landmarkName = "+createBodyWithURLEncodedParameters:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

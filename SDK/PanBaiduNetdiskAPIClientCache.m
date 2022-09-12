@@ -1,9 +1,9 @@
 //
 //  PanBaiduNetdiskAPIClientCache.m
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 10/20/19.
-//  Copyright © 2019 Everappz. All rights reserved.
+//  Copyright © 2022 Everappz. All rights reserved.
 //
 
 #import "PanBaiduNetdiskAPIClientCache.h"
@@ -90,7 +90,8 @@
 }
 
 - (BOOL)setClient:(PanBaiduNetdiskAPIClient * _Nonnull)client
-    forIdentifier:(NSString * _Nonnull)identifier{
+    forIdentifier:(NSString * _Nonnull)identifier
+{
     NSParameterAssert(client);
     NSParameterAssert(identifier);
     if (identifier == nil){
@@ -146,7 +147,7 @@
     if(authState == nil || identifier == nil){
         return;
     }
-    NSLog(@"authStateChanged: %@ forIdentifier: %@",authState.accessToken,identifier);
+    NSLog(@"authStateChanged: %@ forIdentifier: %@",authState.token.accessToken,identifier);
     PanBaiduAppAuthProvider *authProvider = [[PanBaiduAppAuthProvider alloc] initWithIdentifier:identifier
                                                                                           state:authState];
     NSParameterAssert(authProvider);
@@ -162,7 +163,7 @@
     PanBaiduAppAuthProvider *provider = notification.object;
     NSParameterAssert([provider isKindOfClass:[PanBaiduAppAuthProvider class]]);
     if([provider isKindOfClass:[PanBaiduAppAuthProvider class]]){
-        NSLog(@"authProviderDidChangeNotification: %@ forIdentifier: %@",provider.authState.accessToken,provider.identifier);
+        NSLog(@"authProviderDidChangeNotification: %@ forIdentifier: %@",provider.authState.token.accessToken,provider.identifier);
     }
 }
 

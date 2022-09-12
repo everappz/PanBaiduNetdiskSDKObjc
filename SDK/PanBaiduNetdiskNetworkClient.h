@@ -1,6 +1,6 @@
 //
 //  MCHNetwork.h
-//  MyCloudHomeSDKObjc
+//  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 3/2/21.
 //
@@ -17,9 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithURLSessionConfiguration:(NSURLSessionConfiguration * _Nullable)URLSessionConfiguration;
 
-@property (nonatomic,strong,readonly)NSURLSession *session;
+@property (nonatomic, strong, readonly) NSURLSession *session;
 
-@property (nonatomic,strong,readonly)PanBaiduNetdiskRequestsCache *requestsCache;
+@property (nonatomic, strong, readonly) PanBaiduNetdiskRequestsCache *requestsCache;
 
 - (NSMutableURLRequest *_Nullable)GETRequestWithURL:(NSURL *)requestURL
                                         contentType:(NSString *_Nullable)contentType
@@ -51,18 +51,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request fromFile:(NSURL *)fileURL;
 
-+ (void)processDictionaryCompletion:(PanBaiduNetdiskAPIClientDictionaryCompletionBlock)completion
-                           withData:(NSData * _Nullable)data
-                           response:(NSURLResponse * _Nullable)response
-                              error:(NSError * _Nullable)error;
++ (void)processResponse:(NSURLResponse * _Nullable)response
+               withData:(NSData * _Nullable)data
+                  error:(NSError * _Nullable)error
+             completion:(PanBaiduNetdiskAPIClientDictionaryCompletionBlock _Nullable)completion;
 
-+ (NSError * _Nullable)processErrorCompletion:(PanBaiduNetdiskAPIClientErrorCompletionBlock)completion
-                                     response:(NSURLResponse * _Nullable)response
-                                        error:(NSError * _Nullable)error;
++ (NSError * _Nullable)processResponse:(NSURLResponse * _Nullable)response
+                             withError:(NSError * _Nullable)error
+                            completion:(PanBaiduNetdiskAPIClientErrorCompletionBlock _Nullable)completion;
 
-+ (NSURL * _Nullable)processURLCompletion:(PanBaiduNetdiskAPIClientURLCompletionBlock)completion
-                                      url:(NSURL * _Nullable)url
-                                    error:(NSError * _Nullable)error;
++ (NSURL * _Nullable)processResponseWithURL:(NSURL * _Nullable)url
+                                      error:(NSError * _Nullable)error
+                                 completion:(PanBaiduNetdiskAPIClientURLCompletionBlock _Nullable)completion;
 
 + (NSData *)createMultipartRelatedBodyWithBoundary:(NSString *)boundary
                                         parameters:(NSDictionary<NSString *,NSString *> *)parameters;
@@ -70,9 +70,15 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSURL *)URLByReplacingQueryParameters:(NSDictionary<NSString *,NSString *> *)queryParameters
                                    inURL:(NSURL *)originalURL;
 
++ (NSString *)URLEncodedParameters:(NSDictionary<NSString *,NSString *> *)params;
+
++ (NSString *)URLEncodedPath:(NSString *)string;
+
 + (NSDictionary *_Nullable)queryDictionaryFromURL:(NSURL *)URL;
 
 + (NSData *)createJSONBodyWithParameters:(NSDictionary<NSString *,NSString *> *)parameters;
+
++ (NSData *)createBodyWithURLEncodedParameters:(NSDictionary<NSString *,NSString *> *)parameters;
 
 + (NSString *)createMultipartFormBoundary;
 
