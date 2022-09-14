@@ -1,6 +1,6 @@
 # PanBaiduNetdiskSDKObjc
 
-This project is Objc SKD for Pan Baidu Netdisk API which available here: https://pan.baidu.com/union/doc/
+This project is Objc SKD for Pan Baidu Netdisk API which is available here: https://pan.baidu.com/union/doc/
 
 It allows you to connect Pan Baidu Netdisk and perform basic file manager operations: MOVE, DELETE, CREATE FOLDER, DOWNLOAD FILE, CONTENTS OF DERECTORY and so on.
 
