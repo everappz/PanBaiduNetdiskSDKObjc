@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AC053BF928D22A24008984BF /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC053BF828D22A24008984BF /* QuickLook.framework */; };
+		AC053BFC28D22AD8008984BF /* LSPreviewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = AC053BFB28D22AD8008984BF /* LSPreviewItem.m */; };
+		AC053BFE28D28B4B008984BF /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC053BFD28D28B4B008984BF /* AVKit.framework */; };
 		AC58075D248E7DF300A5D75A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AC58075C248E7DF300A5D75A /* AppDelegate.m */; };
 		AC580760248E7DF300A5D75A /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AC58075F248E7DF300A5D75A /* SceneDelegate.m */; };
 		AC580763248E7DF300A5D75A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC580762248E7DF300A5D75A /* ViewController.m */; };
@@ -26,6 +29,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AC053BF828D22A24008984BF /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
+		AC053BFA28D22AD8008984BF /* LSPreviewItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LSPreviewItem.h; sourceTree = "<group>"; };
+		AC053BFB28D22AD8008984BF /* LSPreviewItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LSPreviewItem.m; sourceTree = "<group>"; };
+		AC053BFD28D28B4B008984BF /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
 		AC580758248E7DF300A5D75A /* PanBaiduNetdiskSDKDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PanBaiduNetdiskSDKDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC58075B248E7DF300A5D75A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		AC58075C248E7DF300A5D75A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -60,6 +67,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC053BFE28D28B4B008984BF /* AVKit.framework in Frameworks */,
+				AC053BF928D22A24008984BF /* QuickLook.framework in Frameworks */,
 				AC58077A248E7F5000A5D75A /* Foundation.framework in Frameworks */,
 				AC580778248E7F4900A5D75A /* WebKit.framework in Frameworks */,
 				D5AC8298BFE81834D0BD71D2 /* Pods_PanBaiduNetdiskSDKDemo.framework in Frameworks */,
@@ -72,6 +81,8 @@
 		0432194ADB01CD8B365F46CE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AC053BFD28D28B4B008984BF /* AVKit.framework */,
+				AC053BF828D22A24008984BF /* QuickLook.framework */,
 				AC580779248E7F5000A5D75A /* Foundation.framework */,
 				AC580777248E7F4900A5D75A /* WebKit.framework */,
 				B4B396B240EA6B70F61776B4 /* Pods_PanBaiduNetdiskSDKDemo.framework */,
@@ -120,6 +131,8 @@
 				AC580781248E942800A5D75A /* PanBaiduNetdiskHelper.m */,
 				AC580783248E94B400A5D75A /* LSOnlineFile.h */,
 				AC580784248E94B400A5D75A /* LSOnlineFile.m */,
+				AC053BFA28D22AD8008984BF /* LSPreviewItem.h */,
+				AC053BFB28D22AD8008984BF /* LSPreviewItem.m */,
 				AC580774248E7F1700A5D75A /* PanBaiduNetdiskAuthViewController.h */,
 				AC580775248E7F1700A5D75A /* PanBaiduNetdiskAuthViewController.m */,
 				AC58077D248E882900A5D75A /* FolderContentViewController.h */,
@@ -259,6 +272,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AC58077F248E882900A5D75A /* FolderContentViewController.m in Sources */,
+				AC053BFC28D22AD8008984BF /* LSPreviewItem.m in Sources */,
 				AC580763248E7DF300A5D75A /* ViewController.m in Sources */,
 				AC580782248E942800A5D75A /* PanBaiduNetdiskHelper.m in Sources */,
 				AC58075D248E7DF300A5D75A /* AppDelegate.m in Sources */,

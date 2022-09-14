@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL readOnly;
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, assign) BOOL shared;
+@property (nonatomic, assign) NSInteger contentType;
 @property (nonatomic, copy) NSString *identifier;
 @property (nonatomic, copy) NSString *md5;
 

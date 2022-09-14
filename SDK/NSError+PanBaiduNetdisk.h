@@ -20,7 +20,6 @@ typedef NS_ENUM(NSInteger, PanBaiduNetdiskErrorCode) {
     PanBaiduNetdiskErrorCodeAccessTokenExpired,
     PanBaiduNetdiskErrorCodeAccessTokenInvalid,
     PanBaiduNetdiskErrorCodeCannotUpdateAccessToken,
-    PanBaiduNetdiskErrorCodeCannotGetEndpointConfiguration,
     PanBaiduNetdiskErrorCodeAuthProviderIsNil,
     PanBaiduNetdiskErrorCodeBadInputParameters,
     PanBaiduNetdiskErrorCodeBadResponse,

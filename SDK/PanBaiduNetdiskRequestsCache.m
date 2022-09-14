@@ -57,6 +57,11 @@
 
 - (PanBaiduNetdiskAPIClientRequest *)createAndAddCancellableRequest{
     PanBaiduNetdiskAPIClientRequest *clientRequest = [[PanBaiduNetdiskAPIClientRequest alloc] init];
+    PanBaiduNetdiskMakeWeakSelf;
+    PanBaiduNetdiskMakeWeakReference(clientRequest);
+    [clientRequest setCancelBlock:^{
+        [weakSelf removeCancellableRequest:weak_clientRequest];
+    }];
     [self addCancellableRequest:clientRequest];
     return clientRequest;
 }
@@ -66,6 +71,7 @@
     if ([request conformsToProtocol:@protocol(PanBaiduNetdiskAPIClientCancellableRequest)]) {
         [self.stateLock lock];
         [self.cancellableRequests addObject:request];
+        NSParameterAssert(self.cancellableRequests.count < 100);
         [self.stateLock unlock];
     }
 }

@@ -54,15 +54,15 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)processResponse:(NSURLResponse * _Nullable)response
                withData:(NSData * _Nullable)data
                   error:(NSError * _Nullable)error
-             completion:(PanBaiduNetdiskAPIClientDictionaryCompletionBlock _Nullable)completion;
+             completion:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion;
 
 + (NSError * _Nullable)processResponse:(NSURLResponse * _Nullable)response
                              withError:(NSError * _Nullable)error
-                            completion:(PanBaiduNetdiskAPIClientErrorCompletionBlock _Nullable)completion;
+                            completion:(PanBaiduNetdiskAPIClientErrorBlock _Nullable)completion;
 
 + (NSURL * _Nullable)processResponseWithURL:(NSURL * _Nullable)url
                                       error:(NSError * _Nullable)error
-                                 completion:(PanBaiduNetdiskAPIClientURLCompletionBlock _Nullable)completion;
+                                 completion:(PanBaiduNetdiskAPIClientURLBlock _Nullable)completion;
 
 + (NSData *)createMultipartRelatedBodyWithBoundary:(NSString *)boundary
                                         parameters:(NSDictionary<NSString *,NSString *> *)parameters;

@@ -9,24 +9,34 @@
 #import "FolderContentViewController.h"
 #import "PanBaiduNetdiskHelper.h"
 #import "LSOnlineFile.h"
+#import "LSPreviewItem.h"
 #import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
-
+#import <QuickLook/QuickLook.h>
+#import <AVKit/AVKit.h>
+#import <AVKit/AVPlayerViewController.h>
 
 NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
 
-@interface FolderContentViewController ()
+@interface FolderContentViewController ()<QLPreviewControllerDataSource,QLPreviewControllerDelegate,AVPlayerViewControllerDelegate>
 
 @property (nonatomic,strong)id<PanBaiduNetdiskAPIClientCancellableRequest> request;
 
 @property (nonatomic,strong)NSArray <LSOnlineFile *> *files;
 
+@property (nonatomic,strong)LSPreviewItem *previewItem;
+
 @end
+
+
 
 @implementation FolderContentViewController
 
 - (void)viewDidLoad{
     [super viewDidLoad];
     self.tableView.rowHeight = 52.0;
+    
+    self.navigationItem.rightBarButtonItem =
+    [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(actionCreateFolder:)];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -34,6 +44,8 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
     self.title = self.rootDirectory.name;
     [self reloadContentDataAndUpdateView];
 }
+
+#pragma mark - Load Content
 
 - (void)reloadContentDataAndUpdateView{
     if (self.userID == nil) {
@@ -79,6 +91,7 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
                                      completion:nil];
             }
             weakSelf.files = files;
+            weakSelf.navigationItem.title = weakSelf.rootDirectory.url.path;
             [weakSelf.tableView reloadData];
         });
     };
@@ -132,6 +145,8 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
     }];
 }
 
+#pragma mark - Table View
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
@@ -162,12 +177,120 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    LSOnlineFile *file = [self.files objectAtIndex:indexPath.row];
+    if(file.directory){
+        FolderContentViewController *contentViewController = [FolderContentViewController new];
+        contentViewController.client = self.client;
+        contentViewController.userID = self.userID;
+        contentViewController.rootDirectory = file;
+        [self.navigationController pushViewController:contentViewController animated:YES];
+    }
+    else {
+        
+        UIView *parentView = self.navigationController.view;
+        UIProgressView *progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+        [parentView addSubview:progressView];
+        progressView.translatesAutoresizingMaskIntoConstraints = NO;
+        [progressView.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor constant:-16.0].active = YES;
+        [progressView.leftAnchor constraintEqualToAnchor:parentView.leftAnchor constant:16.0].active = YES;
+        [progressView.rightAnchor constraintEqualToAnchor:parentView.rightAnchor constant:-16.0].active = YES;
+        
+        __weak typeof (self) weakSelf = self;
+        
+        [self.client downloadContentForFileWithID:file.identifier progressBlock:^(float progress) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                progressView.progress = progress;
+            });
+        } completionBlock:^(NSURL * _Nullable location, NSError * _Nullable error) {
+            
+            if (location) {
+                
+                NSString *destinationPath = [[FolderContentViewController applicationDocumentsDirectory].path stringByAppendingPathComponent:file.name];
+                [[NSFileManager defaultManager] removeItemAtPath:destinationPath error:nil];
+                NSURL *fileURL = [NSURL fileURLWithPath:destinationPath];
+                [[NSFileManager defaultManager] moveItemAtURL:location toURL:fileURL error:nil];
+                
+                if (file.contentType == 1 || file.contentType == 2) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        AVPlayerViewController *playerViewController = [[AVPlayerViewController alloc] init];
+                        AVPlayer *player = [AVPlayer playerWithURL:fileURL];
+                        NSCParameterAssert(player);
+                        __weak typeof (player) weakPlayer = player;
+                        playerViewController.player = player;
+                        
+                        [weakSelf presentViewController:playerViewController animated:YES completion:^{
+                            [weakPlayer play];
+                        }];
+                    });
+                }
+                else {
+                    LSPreviewItem *item = [[LSPreviewItem alloc] init];
+                    item.previewItemURL = fileURL;
+                    item.previewItemTitle = file.name;
+                    weakSelf.previewItem = item;
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        QLPreviewController *controller = [QLPreviewController new];
+                        controller.dataSource = weakSelf;
+                        controller.delegate = weakSelf;
+                        [weakSelf presentViewController:controller animated:YES completion:nil];
+                    });
+                }
+                
+            }
+            else {
+                [weakSelf processResultWithDictionary:nil error:error];
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [progressView removeFromSuperview];
+            });
+        }];
+    }
+}
+
++ (NSURL *)applicationDocumentsDirectory
+{
+     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+}
+
+#pragma mark - Actions
+
+- (void)actionCreateFolder:(id)sender {
+    UIAlertController *createFolderController = [UIAlertController alertControllerWithTitle:@"Create Folder" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    __weak typeof (createFolderController) weakCreateFolderController = createFolderController;
+    __weak typeof (self) weakSelf = self;
+    [createFolderController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        
+    }];
+    [createFolderController addAction:[UIAlertAction actionWithTitle:@"Create Folder" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        NSString *text = weakCreateFolderController.textFields[0].text;
+        NSString *path = [weakSelf.rootDirectory.url.path stringByAppendingPathComponent:text];
+        [weakSelf.client fileCreateRequestWithPath:path
+                                              size:0
+                                             isDir:YES
+                                         blockList:nil
+                                          uploadId:nil
+                                    renamingPolicy:1
+                                        isRevision:NO
+                                   completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+            [weakSelf processResultWithDictionary:dictionary error:error];
+        }];
+    }]];
+    [createFolderController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+    }]];
+    [self presentViewController:createFolderController animated:YES completion:nil];
+}
+
 - (void)actionShowMoreActions:(UIButton *)sender {
     NSInteger index = sender.tag - 16;
     LSOnlineFile *file = [self.files objectAtIndex:index];
-    UIAlertController *actionsController = [UIAlertController alertControllerWithTitle:@"More actions" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertController *actionsController = [UIAlertController alertControllerWithTitle:@"More actions" message:@"Please select file action." preferredStyle:UIAlertControllerStyleActionSheet];
     
     __weak typeof (self) weakSelf = self;
+    
     [actionsController addAction:[UIAlertAction actionWithTitle:@"Show Info" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [weakSelf.client getInfoForFileWithID:file.identifier
                                         dlink:YES
@@ -179,6 +302,35 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
         }];
     }]];
     
+    [actionsController addAction:[UIAlertAction actionWithTitle:@"Get Direct URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf.client getDirectURLForFileWithID:file.identifier
+                                   completionBlock:^(NSURL * _Nullable location, NSError * _Nullable error) {
+            NSMutableDictionary *resultDictionary = [NSMutableDictionary new];
+            if (location) {
+                [resultDictionary setObject:location forKey:@"location"];
+            }
+            [weakSelf processResultWithDictionary:resultDictionary error:error];
+        }];
+    }]];
+    
+    [actionsController addAction:[UIAlertAction actionWithTitle:@"Get First 10 bytes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf.client getContentForFileWithID:file.identifier additionalHeaders:@{@"":@""} didReceiveDataBlock:^(NSData * _Nullable data) {
+            NSMutableDictionary *resultDictionary = [NSMutableDictionary new];
+            if (data) {
+                [resultDictionary setObject:[NSString stringWithFormat:@"%@",data] forKey:@"data"];
+            }
+            [weakSelf processResultWithDictionary:resultDictionary error:nil];
+        } didReceiveResponseBlock:^(NSURLResponse * _Nullable response) {
+            NSMutableDictionary *resultDictionary = [NSMutableDictionary new];
+            if (response) {
+                [resultDictionary setObject:[NSString stringWithFormat:@"%@",response] forKey:@"response"];
+            }
+            [weakSelf processResultWithDictionary:resultDictionary error:nil];
+        } completionBlock:^(NSError * _Nullable error) {
+            [weakSelf processResultWithDictionary:nil error:error];
+        }];
+    }]];
+
     [actionsController addAction:[UIAlertAction actionWithTitle:@"Rename File" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         UIAlertController *renameController = [UIAlertController alertControllerWithTitle:@"Rename" message:nil preferredStyle:UIAlertControllerStyleAlert];
         __weak typeof (renameController) weakRenameController = renameController;
@@ -245,7 +397,7 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
                               error:(NSError * _Nullable )error
 {
     __weak typeof (self) weakSelf = self;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
         UIAlertController *infoController = [UIAlertController alertControllerWithTitle:error?@"Error":@"Result" message:[NSString stringWithFormat:@"%@",((error!=nil)?error:dictionary)] preferredStyle:UIAlertControllerStyleAlert];
         [infoController addAction:[UIAlertAction actionWithTitle:@"Close" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
             [weakSelf reloadContentDataAndUpdateViewInternal];
@@ -254,16 +406,20 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
     });
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    LSOnlineFile *file = [self.files objectAtIndex:indexPath.row];
-    if(file.directory){
-        FolderContentViewController *contentViewController = [FolderContentViewController new];
-        contentViewController.client = self.client;
-        contentViewController.userID = self.userID;
-        contentViewController.rootDirectory = file;
-        [self.navigationController pushViewController:contentViewController animated:YES];
-    }
+#pragma mark - QLPreviewControllerDataSource
+
+- (NSInteger)numberOfPreviewItemsInPreviewController:(QLPreviewController *)controller {
+    return self.previewItem != nil ? 1 : 0;
+}
+
+- (id <QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger)index{
+    return self.previewItem;
+}
+
+#pragma mark - QLPreviewControllerDelegate
+
+- (void)previewControllerDidDismiss:(QLPreviewController *)controller {
+    self.previewItem = nil;
 }
 
 @end

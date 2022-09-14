@@ -33,6 +33,9 @@
     [self.lock lock];
     _сancelled = YES;
     [self.lock unlock];
+    if (self.cancelBlock) {
+        self.cancelBlock();
+    }
 }
 
 - (BOOL)isCancelled{

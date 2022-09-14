@@ -113,13 +113,11 @@
                                code:(NSString *)code
 {
     PanBaiduNetdiskTokenExchangeRequest *request = [PanBaiduNetdiskTokenExchangeRequest new];
-    
     request.clientID = clientID;
     request.clientSecret = clientSecret;
     request.redirectURI = redirectURI;
     request.grantType = grantType;
     request.code = code;
-    
     return request;
 }
 

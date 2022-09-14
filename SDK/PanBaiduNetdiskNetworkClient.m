@@ -35,15 +35,17 @@ NSURLSessionDownloadDelegate
     self = [super init];
     if (self){
         NSURLSessionConfiguration *resultConfiguration = URLSessionConfiguration;
-        if(resultConfiguration == nil){
+        if (resultConfiguration == nil) {
             resultConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
             resultConfiguration.requestCachePolicy = NSURLRequestUseProtocolCachePolicy;
             resultConfiguration.allowsCellularAccess = YES;
             resultConfiguration.timeoutIntervalForRequest = 30;
             resultConfiguration.HTTPMaximumConnectionsPerHost = 1;
         }
+        
         NSOperationQueue *callbackQueue = [[NSOperationQueue alloc] init];
         callbackQueue.maxConcurrentOperationCount = 1;
+        
         NSURLSession *session = [NSURLSession sessionWithConfiguration:resultConfiguration
                                                               delegate:self
                                                          delegateQueue:callbackQueue];
@@ -150,11 +152,10 @@ NSURLSessionDownloadDelegate
                             completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler{
     NSParameterAssert(self.session);
     NSParameterAssert(request);
-    if(self.session && request){
-        return [self.session dataTaskWithRequest:request
-                               completionHandler:completionHandler];
+    if (self.session && request) {
+        return [self.session dataTaskWithRequest:request completionHandler:completionHandler];
     }
-    if(completionHandler){
+    if (completionHandler) {
         completionHandler(nil,nil,[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeBadInputParameters]);
     }
     return nil;
@@ -163,7 +164,7 @@ NSURLSessionDownloadDelegate
 - (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request{
     NSParameterAssert(self.session);
     NSParameterAssert(request);
-    if(self.session && request){
+    if (self.session && request) {
         return [self.session dataTaskWithRequest:request];
     }
     return nil;
@@ -172,7 +173,7 @@ NSURLSessionDownloadDelegate
 - (NSURLSessionDownloadTask *)downloadTaskWithRequest:(NSURLRequest *)request{
     NSParameterAssert(self.session);
     NSParameterAssert(request);
-    if(self.session && request){
+    if (self.session && request) {
         return [self.session downloadTaskWithRequest:request];
     }
     return nil;
@@ -181,20 +182,33 @@ NSURLSessionDownloadDelegate
 - (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request fromFile:(NSURL *)fileURL{
     NSParameterAssert(self.session);
     NSParameterAssert(request);
-    if(self.session && request){
+    if (self.session && request) {
         return [self.session uploadTaskWithRequest:request fromFile:fileURL];
     }
     return nil;
 }
 
+
+
 #pragma mark - NSURLSession Delegate
+
+- (void)URLSession:(NSURLSession *)session
+              task:(NSURLSessionTask *)task
+willPerformHTTPRedirection:(NSHTTPURLResponse *)response
+        newRequest:(NSURLRequest *)request
+ completionHandler:(void (^)(NSURLRequest * _Nullable))completionHandler
+{
+    if (completionHandler) {
+        completionHandler(request);
+    }
+}
 
 - (void)URLSession:(NSURLSession *)session
 didBecomeInvalidWithError:(nullable NSError *)error
 {
     NSArray *tasks = [self allCancellableRequestsWithURLTasks];
     [tasks enumerateObjectsUsingBlock:^(PanBaiduNetdiskAPIClientRequest * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if(obj.errorCompletionBlock){
+        if (obj.errorCompletionBlock) {
             obj.errorCompletionBlock(error);
         }
         [self removeCancellableRequest:obj];
@@ -219,10 +233,10 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
 didCompleteWithError:(nullable NSError *)error
 {
     PanBaiduNetdiskAPIClientRequest *request = [self cancellableRequestWithURLTaskIdentifier:task.taskIdentifier];
-    if(request.errorCompletionBlock){
+    if (request.errorCompletionBlock) {
         request.errorCompletionBlock(error);
     }
-    if(request.downloadCompletionBlock){
+    if (request.downloadCompletionBlock) {
         request.downloadCompletionBlock(nil,error);
     }
     [self removeCancellableRequest:request];
@@ -234,10 +248,10 @@ didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
     PanBaiduNetdiskAPIClientRequest *request = [self cancellableRequestWithURLTaskIdentifier:dataTask.taskIdentifier];
-    if(request.didReceiveResponseBlock){
+    if (request.didReceiveResponseBlock) {
         request.didReceiveResponseBlock(response);
     }
-    if(completionHandler){
+    if (completionHandler) {
         completionHandler(NSURLSessionResponseAllow);
     }
 }
@@ -247,7 +261,7 @@ didReceiveResponse:(NSURLResponse *)response
     didReceiveData:(NSData *)data
 {
     PanBaiduNetdiskAPIClientRequest *request = [self cancellableRequestWithURLTaskIdentifier:dataTask.taskIdentifier];
-    if(request.didReceiveDataBlock){
+    if (request.didReceiveDataBlock) {
         request.didReceiveDataBlock(data);
     }
 }
@@ -303,7 +317,7 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 + (void)processResponse:(NSURLResponse * _Nullable)response
                withData:(NSData * _Nullable)data
                   error:(NSError * _Nullable)error
-             completion:(PanBaiduNetdiskAPIClientDictionaryCompletionBlock _Nullable)completion
+             completion:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
 {
     NSDictionary *responseDictionary = nil;
     NSError *parsingError = nil;
@@ -349,7 +363,7 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 
 + (NSError * _Nullable)processResponse:(NSURLResponse * _Nullable)response
                              withError:(NSError * _Nullable)error
-                            completion:(PanBaiduNetdiskAPIClientErrorCompletionBlock _Nullable)completion
+                            completion:(PanBaiduNetdiskAPIClientErrorBlock _Nullable)completion
 {
     NSHTTPURLResponse *HTTPResponse = nil;
     if([response isKindOfClass:[NSHTTPURLResponse class]]){
@@ -370,7 +384,7 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 
 + (NSURL * _Nullable)processResponseWithURL:(NSURL * _Nullable)url
                                       error:(NSError * _Nullable)error
-                                 completion:(PanBaiduNetdiskAPIClientURLCompletionBlock _Nullable)completion
+                                 completion:(PanBaiduNetdiskAPIClientURLBlock _Nullable)completion
 {
     if(completion){
         completion(url,error);

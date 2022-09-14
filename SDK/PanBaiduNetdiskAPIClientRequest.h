@@ -25,9 +25,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,strong,nullable)id<PanBaiduNetdiskAPIClientCancellableRequest> internalRequest;
 @property (nonatomic,copy,nullable)PanBaiduNetdiskAPIClientDidReceiveDataBlock didReceiveDataBlock;
 @property (nonatomic,copy,nullable)PanBaiduNetdiskAPIClientDidReceiveResponseBlock didReceiveResponseBlock;
-@property (nonatomic,copy,nullable)PanBaiduNetdiskAPIClientErrorCompletionBlock errorCompletionBlock;
+@property (nonatomic,copy,nullable)PanBaiduNetdiskAPIClientErrorBlock errorCompletionBlock;
 @property (nonatomic,copy,nullable)PanBaiduNetdiskAPIClientProgressBlock progressBlock;
-@property (nonatomic,copy,nullable)PanBaiduNetdiskAPIClientURLCompletionBlock downloadCompletionBlock;
+@property (nonatomic,copy,nullable)PanBaiduNetdiskAPIClientURLBlock downloadCompletionBlock;
+@property (nonatomic,copy,nullable)PanBaiduNetdiskAPIClientVoidBlock cancelBlock;
 @property (nonatomic,strong,nullable)NSNumber *totalContentSize;
 @property (nonatomic,assign)NSUInteger URLTaskIdentifier;
 

@@ -25,15 +25,16 @@ typedef BOOL(^PanBaiduNetdiskAuthorizationWebViewDecidePolicyBlock)(WKWebView *w
 @implementation PanBaiduNetdiskAuthorizationWebViewCoordinator
 
 - (instancetype)initWithWebView:(WKWebView *)webView
-                    redirectURI:(NSURL *)redirectURI{
+                    redirectURI:(NSURL *)redirectURI
+{
     self = [super init];
-    if(self){
+    if (self) {
         self.webView = webView;
         PanBaiduNetdiskMakeWeakSelf;
         [self setWebViewDecidePolicyBlock:^BOOL(WKWebView * _Nonnull webView, WKNavigationAction * _Nonnull navigationAction) {
             NSURL *navigationActionURL = navigationAction.request.URL;
             NSLog(@"navigationActionURL: %@",navigationActionURL);
-            if([navigationActionURL.scheme.lowercaseString isEqualToString:redirectURI.scheme.lowercaseString]){
+            if ([navigationActionURL.scheme.lowercaseString isEqualToString:redirectURI.scheme.lowercaseString]) {
                 NSString *absoluteString = navigationActionURL.absoluteString;
                 absoluteString = [absoluteString stringByReplacingOccurrencesOfString:@"/?" withString:@"?"];
                 NSURL *fixedURL = [NSURL URLWithString:absoluteString];
@@ -96,7 +97,6 @@ typedef BOOL(^PanBaiduNetdiskAuthorizationWebViewDecidePolicyBlock)(WKWebView *w
 #pragma mark - WKWebView
 
 - (void)WKWebViewDidFinish:(WKWebView *)webView error:(NSError *)webViewError {
-    
     if (webView != self.webView) {
         return;
     }

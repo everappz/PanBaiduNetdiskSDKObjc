@@ -29,6 +29,7 @@ unsigned long long LSFileContentLengthUnknown = -1;
             NSURL *url = [NSURL fileURLWithPath:[rootPath stringByAppendingPathComponent:title]];
             LSOnlineFile *file = [[LSOnlineFile alloc] init];
             file.url = url;
+            file.contentType = [apiFile.category integerValue];
             file.contentLength = size;
             file.createdAt = [[NSDate alloc] initWithTimeIntervalSince1970:apiFile.server_ctime.doubleValue];
             file.updatedAt = [[NSDate alloc] initWithTimeIntervalSince1970:apiFile.server_mtime.doubleValue];

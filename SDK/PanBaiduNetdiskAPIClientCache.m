@@ -74,7 +74,8 @@
 }
 
 - (BOOL)setAuthProvider:(PanBaiduAppAuthProvider * _Nonnull)authProvider
-          forIdentifier:(NSString * _Nonnull)identifier{
+          forIdentifier:(NSString * _Nonnull)identifier
+{
     NSParameterAssert(authProvider);
     NSParameterAssert(identifier);
     if (identifier == nil){
@@ -110,11 +111,10 @@
                                                        authState:(PanBaiduNetdiskAuthState *_Nonnull)authState
                                             sessionConfiguration:(NSURLSessionConfiguration * _Nullable)URLSessionConfiguration
 {
-    
     NSParameterAssert(authState);
     NSParameterAssert(identifier);
     
-    if(identifier == nil || authState == nil){
+    if (identifier == nil || authState == nil) {
         return nil;
     }
     
@@ -127,21 +127,22 @@
         }
     }
     NSParameterAssert(authProvider);
-    if(authProvider == nil){
+    if (authProvider == nil) {
         return nil;
     }
     
     PanBaiduNetdiskAPIClient *client = [[PanBaiduNetdiskAPIClient alloc] initWithURLSessionConfiguration:URLSessionConfiguration
                                                                                             authProvider:authProvider];
     NSParameterAssert(client);
-    if(client){
+    if (client) {
         [self setClient:client forIdentifier:identifier];
     }
     return client;
 }
 
 - (void)updateAuthState:(PanBaiduNetdiskAuthState *_Nonnull)authState
-          forIdentifier:(NSString *_Nonnull)identifier{
+          forIdentifier:(NSString *_Nonnull)identifier
+{
     NSParameterAssert(authState);
     NSParameterAssert(identifier);
     if(authState == nil || identifier == nil){

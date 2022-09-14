@@ -22,7 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,copy) PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock webViewDidStartLoadingBlock;
 @property (nonatomic,copy) PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock webViewDidFinishLoadingBlock;
 @property (nonatomic,copy) PanBaiduNetdiskAuthorizationWebViewCoordinatorErrorBlock webViewDidFailWithErrorBlock;
-
 @property (nonatomic,copy) PanBaiduNetdiskAuthorizationWebViewCoordinatorCompletionBlock completionBlock;
 
 - (BOOL)presentExternalUserAgentRequest:(NSURLRequest *)request;

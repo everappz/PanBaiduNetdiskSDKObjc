@@ -47,15 +47,15 @@ extern NSString * const PanBaiduNetdiskAccessTokenDataKey;
 extern NSString * const PanBaiduNetdiskUserIDKey;
 extern NSString * const PanBaiduNetdiskUserNameKey;
 
-typedef void(^PanBaiduNetdiskAPIClientDictionaryCompletionBlock)(NSDictionary *_Nullable dictionary, NSError * _Nullable error);
-typedef void(^PanBaiduNetdiskAPIClientArrayCompletionBlock)(NSArray<NSDictionary *> * _Nullable array, NSError * _Nullable error);
-typedef void(^PanBaiduNetdiskAPIClientVoidCompletionBlock)(void);
-typedef void(^PanBaiduNetdiskAPIClientErrorCompletionBlock)(NSError * _Nullable error);
+typedef void(^PanBaiduNetdiskAPIClientDictionaryBlock)(NSDictionary *_Nullable dictionary, NSError * _Nullable error);
+typedef void(^PanBaiduNetdiskAPIClientArrayBlock)(NSArray<NSDictionary *> * _Nullable array, NSError * _Nullable error);
+typedef void(^PanBaiduNetdiskAPIClientVoidBlock)(void);
+typedef void(^PanBaiduNetdiskAPIClientErrorBlock)(NSError * _Nullable error);
 typedef void(^PanBaiduNetdiskAPIClientDidReceiveDataBlock)(NSData * _Nullable data);
 typedef void(^PanBaiduNetdiskAPIClientDidReceiveResponseBlock)(NSURLResponse * _Nullable response);
 typedef void(^PanBaiduNetdiskAPIClientProgressBlock)(float progress);
-typedef void(^PanBaiduNetdiskAPIClientURLCompletionBlock)(NSURL *_Nullable location, NSError * _Nullable error);
-typedef void(^PanBaiduNetdiskAPIClientAccessTokenCompletionBlock)(PanBaiduNetdiskAccessToken * _Nullable accessToken, NSError * _Nullable error);
+typedef void(^PanBaiduNetdiskAPIClientURLBlock)(NSURL *_Nullable location, NSError * _Nullable error);
+typedef void(^PanBaiduNetdiskAPIClientAccessTokenBlock)(PanBaiduNetdiskAccessToken * _Nullable accessToken, NSError * _Nullable error);
 
 typedef void(^PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock)(WKWebView *webView);
 typedef void(^PanBaiduNetdiskAuthorizationWebViewCoordinatorErrorBlock)(WKWebView *webView, NSError *webViewError);
