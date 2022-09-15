@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -32,6 +33,8 @@ extern unsigned long long LSFileContentLengthUnknown;
 + (PanBaiduNetdiskAPIClient *)createClientWithAuthData:(NSDictionary *)authData;
 
 + (NSString *)readableStringForByteSize:(NSNumber *)size;
+
++ (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)size;
 
 @end
 

@@ -85,4 +85,22 @@
     }
 }
 
+- (void)cancelAndRemoveAllRequests {
+    [self.stateLock lock];
+    for (id<PanBaiduNetdiskAPIClientCancellableRequest>request in self.cancellableRequests) {
+        [PanBaiduNetdiskRequestsCache cleanCancelBlockForRequest:request];
+        [request cancel];
+    }
+    [self.cancellableRequests removeAllObjects];
+    [self.stateLock unlock];
+}
+
++ (void)cleanCancelBlockForRequest:(id)request {
+    if ([request isKindOfClass:[PanBaiduNetdiskAPIClientRequest class]]) {
+        PanBaiduNetdiskAPIClientRequest *clientRequest = (PanBaiduNetdiskAPIClientRequest *)request;
+        [clientRequest setCancelBlock:nil];
+        [PanBaiduNetdiskRequestsCache cleanCancelBlockForRequest:clientRequest.internalRequest];
+    }
+}
+
 @end

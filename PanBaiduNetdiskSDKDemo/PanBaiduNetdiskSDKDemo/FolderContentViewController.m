@@ -20,14 +20,10 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
 @interface FolderContentViewController ()<QLPreviewControllerDataSource,QLPreviewControllerDelegate,AVPlayerViewControllerDelegate>
 
 @property (nonatomic,strong)id<PanBaiduNetdiskAPIClientCancellableRequest> request;
-
 @property (nonatomic,strong)NSArray <LSOnlineFile *> *files;
-
 @property (nonatomic,strong)LSPreviewItem *previewItem;
 
 @end
-
-
 
 @implementation FolderContentViewController
 
@@ -35,8 +31,11 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
     [super viewDidLoad];
     self.tableView.rowHeight = 52.0;
     
-    self.navigationItem.rightBarButtonItem =
-    [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(actionCreateFolder:)];
+    self.navigationItem.rightBarButtonItems =
+    @[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(actionCreateFolder:)],
+      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(actionUpload:)]];
+    
+    [self.navigationController setToolbarHidden:NO];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -163,11 +162,11 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
     LSOnlineFile *file = [self.files objectAtIndex:indexPath.row];
     cell.textLabel.text = file.name;
     if(file.directory == NO){
-        cell.imageView.image = [UIImage imageNamed:@"file.png"];
+        cell.imageView.image = [PanBaiduNetdiskHelper imageWithImage:[UIImage imageNamed:@"file.png"] scaledToSize:CGSizeMake(32.0, 32.0)];
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@, %@", file.createdAt, [PanBaiduNetdiskHelper readableStringForByteSize:@(file.contentLength)]];
     }
     else{
-        cell.imageView.image = [UIImage imageNamed:@"folder.png"];
+        cell.imageView.image = [PanBaiduNetdiskHelper imageWithImage:[UIImage imageNamed:@"folder.png"] scaledToSize:CGSizeMake(32.0, 32.0)];
         cell.detailTextLabel.text = nil;
     }
     UIButton *actionButton =  [UIButton buttonWithType:UIButtonTypeInfoLight];
@@ -180,7 +179,7 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     LSOnlineFile *file = [self.files objectAtIndex:indexPath.row];
-    if(file.directory){
+    if (file.directory) {
         FolderContentViewController *contentViewController = [FolderContentViewController new];
         contentViewController.client = self.client;
         contentViewController.userID = self.userID;
@@ -188,14 +187,7 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
         [self.navigationController pushViewController:contentViewController animated:YES];
     }
     else {
-        
-        UIView *parentView = self.navigationController.view;
-        UIProgressView *progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-        [parentView addSubview:progressView];
-        progressView.translatesAutoresizingMaskIntoConstraints = NO;
-        [progressView.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor constant:-16.0].active = YES;
-        [progressView.leftAnchor constraintEqualToAnchor:parentView.leftAnchor constant:16.0].active = YES;
-        [progressView.rightAnchor constraintEqualToAnchor:parentView.rightAnchor constant:-16.0].active = YES;
+        UIProgressView *progressView = [self showProgressView];
         
         __weak typeof (self) weakSelf = self;
         
@@ -245,18 +237,46 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
             }
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                [progressView removeFromSuperview];
+                [weakSelf hideProgressView];
             });
         }];
     }
 }
 
-+ (NSURL *)applicationDocumentsDirectory
-{
-     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+- (UIProgressView *)showProgressView {
+    NSParameterAssert([NSThread isMainThread]);
+    UIToolbar *toolbar = self.navigationController.toolbar;
+    
+    UIProgressView *progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+    UIBarButtonItem *progressItem = [[UIBarButtonItem alloc] initWithCustomView:progressView];
+    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                                                                target:self
+                                                                                action:@selector(actionCancelAllOperations:)];
+    UIBarButtonItem *spaceItem1 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:NULL];
+    UIBarButtonItem *spaceItem2 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:NULL];
+    UIBarButtonItem *spaceItem3 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:NULL];
+    [toolbar setItems:@[spaceItem1,progressItem,spaceItem2,cancelItem,spaceItem3]];
+    return progressView;
 }
 
+- (void)hideProgressView {
+    NSParameterAssert([NSThread isMainThread]);
+    UIToolbar *toolbar = self.navigationController.toolbar;
+    [toolbar setItems:nil];
+}
+
++ (NSURL *)applicationDocumentsDirectory
+{
+    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+}
+
+
 #pragma mark - Actions
+
+- (void)actionCancelAllOperations:(id)sender {
+    [self.client cancelAllRequests];
+    [self.navigationController.toolbar setItems:nil];
+}
 
 - (void)actionCreateFolder:(id)sender {
     UIAlertController *createFolderController = [UIAlertController alertControllerWithTitle:@"Create Folder" message:nil preferredStyle:UIAlertControllerStyleAlert];
@@ -268,20 +288,41 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
     [createFolderController addAction:[UIAlertAction actionWithTitle:@"Create Folder" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         NSString *text = weakCreateFolderController.textFields[0].text;
         NSString *path = [weakSelf.rootDirectory.url.path stringByAppendingPathComponent:text];
-        [weakSelf.client fileCreateRequestWithPath:path
-                                              size:0
-                                             isDir:YES
-                                         blockList:nil
-                                          uploadId:nil
-                                    renamingPolicy:1
-                                        isRevision:NO
-                                   completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+        [weakSelf.client createFolderAtPath:path
+                            completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
             [weakSelf processResultWithDictionary:dictionary error:error];
         }];
     }]];
     [createFolderController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
     }]];
     [self presentViewController:createFolderController animated:YES completion:nil];
+}
+
+- (void)actionUpload:(id)sender {
+    __weak typeof (self) weakSelf = self;
+    UIProgressView *progressView = [self showProgressView];
+    
+    NSString *localPath = nil;
+    if ((arc4random() % 2) == 1) {
+        localPath = [[NSBundle mainBundle] pathForResource:@"file_example_WAV_10MG" ofType:@"wav"];
+    }
+    else {
+        localPath = [[NSBundle mainBundle] pathForResource:@"file_example_2M" ofType:@"mp3"];
+    }
+    
+    NSParameterAssert(localPath);
+    [self.client uploadFileFromLocalPath:localPath
+                            toRemotePath:[self.rootDirectory.url.path stringByAppendingPathComponent:localPath.lastPathComponent]
+                           progressBlock:^(float progress) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            progressView.progress = progress;
+        });
+    } completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+        [weakSelf processResultWithDictionary:dictionary error:error];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf hideProgressView];
+        });
+    }];
 }
 
 - (void)actionShowMoreActions:(UIButton *)sender {
@@ -330,7 +371,7 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
             [weakSelf processResultWithDictionary:nil error:error];
         }];
     }]];
-
+    
     [actionsController addAction:[UIAlertAction actionWithTitle:@"Rename File" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         UIAlertController *renameController = [UIAlertController alertControllerWithTitle:@"Rename" message:nil preferredStyle:UIAlertControllerStyleAlert];
         __weak typeof (renameController) weakRenameController = renameController;

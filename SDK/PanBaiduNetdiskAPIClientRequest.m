@@ -11,7 +11,7 @@
     BOOL _сancelled;
 }
 
-@property (nonatomic, strong) NSRecursiveLock *lock;
+@property (nonatomic, strong) NSRecursiveLock *stateLock;
 
 @end
 
@@ -21,18 +21,19 @@
 
 - (instancetype)initWithInternalRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)internalRequest{
     self = [super init];
-    if(self){
-        self.internalRequest = internalRequest;
-        self.lock = [NSRecursiveLock new];
+    if (self) {
+        self.stateLock = [NSRecursiveLock new];
+        _internalRequest = internalRequest;
+        _сancelled = NO;
     }
     return self;
 }
 
 - (void)cancel{
-    [self.internalRequest cancel];
-    [self.lock lock];
+    [self.stateLock lock];
     _сancelled = YES;
-    [self.lock unlock];
+    [_internalRequest cancel];
+    [self.stateLock unlock];
     if (self.cancelBlock) {
         self.cancelBlock();
     }
@@ -40,10 +41,16 @@
 
 - (BOOL)isCancelled{
     BOOL flag = NO;
-    [self.lock lock];
+    [self.stateLock lock];
     flag = _сancelled;
-    [self.lock unlock];
+    [self.stateLock unlock];
     return flag;
+}
+
+- (void)setInternalRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest>)internalRequest {
+    [self.stateLock lock];
+    _internalRequest = internalRequest;
+    [self.stateLock unlock];
 }
 
 @end

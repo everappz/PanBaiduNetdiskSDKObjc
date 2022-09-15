@@ -171,7 +171,7 @@
     NSParameterAssert(self.clientID);
     NSParameterAssert(self.clientSecret);
     NSParameterAssert(self.redirectURI);
-
+    
     PanBaiduNetdiskAccessToken *token = [PanBaiduNetdiskAccessToken accessTokenWithClientID:self.clientID
                                                                                clientSecret:self.clientSecret
                                                                                 redirectURI:self.redirectURI

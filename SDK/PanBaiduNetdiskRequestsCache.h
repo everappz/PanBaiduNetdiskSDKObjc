@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)removeCancellableRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request;
 
+- (void)cancelAndRemoveAllRequests;
+
 @end
 
 NS_ASSUME_NONNULL_END

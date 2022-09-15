@@ -196,6 +196,7 @@ NSString * const kViewControllerPanBaiduNetdiskAuthKey = @"kViewControllerPanBai
             
             UINavigationController *flowNavigationController =
             [[UINavigationController alloc] initWithRootViewController:contentViewController];
+            [flowNavigationController setToolbarHidden:NO];
             [weakSelf presentViewController:flowNavigationController
                                    animated:YES
                                  completion:nil];

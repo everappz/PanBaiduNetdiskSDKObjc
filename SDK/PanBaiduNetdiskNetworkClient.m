@@ -105,7 +105,7 @@ NSURLSessionDownloadDelegate
         return nil;
     }
     
-//    NSString *type = nil;
+    //    NSString *type = nil;
     NSString *token = nil;
     NSString *authorizationHeader = nil;
     NSURL *requestURLModified = requestURL;
@@ -113,10 +113,10 @@ NSURLSessionDownloadDelegate
     if (accessToken) {
         token = accessToken.accessToken;
         NSParameterAssert(token);
-//        if (type == nil || type.length == 0) {
-//            type = @"Bearer";
-//        }
-//        authorizationHeader = [NSString stringWithFormat:@"%@ %@",type,token];
+        //        if (type == nil || type.length == 0) {
+        //            type = @"Bearer";
+        //        }
+        //        authorizationHeader = [NSString stringWithFormat:@"%@ %@",type,token];
     }
     
     NSString *accessTokenStringFromComponents = [PanBaiduNetdiskNetworkClient accessTokenFromURL:requestURL];
@@ -188,7 +188,17 @@ NSURLSessionDownloadDelegate
     return nil;
 }
 
-
+- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request
+                                         fromData:(nullable NSData *)bodyData
+                                completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler
+{
+    NSParameterAssert(self.session);
+    NSParameterAssert(request);
+    if (self.session && request) {
+        return [self.session uploadTaskWithRequest:request fromData:bodyData completionHandler:completionHandler];
+    }
+    return nil;
+}
 
 #pragma mark - NSURLSession Delegate
 
@@ -409,6 +419,21 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
     return httpBody;
 }
 
++ (NSData *)createMultipartFormDataBodyWithBoundary:(NSString *)boundary
+                                      parameterName:(NSString *)parameterName
+                                           fileName:(NSString *)fileName
+                                           fileData:(NSData *)fileData
+                                           mimeType:(NSString *)mimeType
+{
+    NSMutableData *httpBody = [NSMutableData data];
+    [httpBody appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [httpBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", parameterName, fileName] dataUsingEncoding:NSUTF8StringEncoding]];
+    [httpBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n\r\n", mimeType] dataUsingEncoding:NSUTF8StringEncoding]];
+    [httpBody appendData:fileData];
+    [httpBody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    return httpBody;
+}
+
 + (NSData *)createJSONBodyWithParameters:(NSDictionary<NSString *,NSString *> *)parameters {
     NSMutableData *httpBody = [NSMutableData data];
     [httpBody appendData:[@"{" dataUsingEncoding:NSUTF8StringEncoding]];
@@ -425,7 +450,7 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 + (NSData *)createBodyWithURLEncodedParameters:(NSDictionary<NSString *,NSString *> *)parameters {
     NSMutableArray<NSString *> *paramsArray = [NSMutableArray new];
     for (NSString *key in parameters.allKeys) {
-      [paramsArray addObject:[NSString stringWithFormat:@"%@=%@", key, parameters[key]]];
+        [paramsArray addObject:[NSString stringWithFormat:@"%@=%@", key, parameters[key]]];
     }
     NSString *paramsString = [paramsArray componentsJoinedByString:@"&"];
     NSData *paramsData = [paramsString dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];
@@ -490,7 +515,7 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 }
 
 + (NSString *)createMultipartFormBoundary{
-    return [NSString stringWithFormat:@"foo%08X%08X", arc4random(), arc4random()];
+    return [NSString stringWithFormat:@"Boundary-%@",[NSUUID UUID].UUIDString];
 }
 
 + (NSString *_Nullable)accessTokenFromURL:(NSURL *)url {

@@ -15,7 +15,8 @@ unsigned long long LSFileContentLengthUnknown = -1;
 @implementation PanBaiduNetdiskHelper
 
 + (LSOnlineFile *)onlineFileForApiItem:(id)item
-                       parentDirectory:(LSOnlineFile *)parentDirectory{
+                       parentDirectory:(LSOnlineFile *)parentDirectory
+{
     NSString *rootPath = parentDirectory.url.path;
     NSParameterAssert(item);
     NSParameterAssert(rootPath);
@@ -48,7 +49,6 @@ unsigned long long LSFileContentLengthUnknown = -1;
     NSParameterAssert(NO);
     return nil;
 }
-
 
 + (BOOL)shouldFilterApiFile:(id)file {
     return NO;
@@ -121,6 +121,17 @@ unsigned long long LSFileContentLengthUnknown = -1;
     long long fileSize = [size longLongValue];
     result_str = [NSByteCountFormatter stringFromByteCount:fileSize countStyle:NSByteCountFormatterCountStyleFile];
     return result_str;
+}
+
++ (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)size {
+    //UIGraphicsBeginImageContext(newSize);
+    // In next line, pass 0.0 to use the current device's pixel scaling factor (and thus account for Retina resolution).
+    // Pass 1.0 to force exact pixel size.
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0.0);
+    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
 }
 
 @end

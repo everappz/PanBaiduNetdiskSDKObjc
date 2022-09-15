@@ -31,6 +31,7 @@ return (value); \
 
 #define kPanBaiduNetdiskContentTypeApplicationJSON @"application/json"
 #define kPanBaiduNetdiskContentTypeMultipartRelated @"multipart/related"
+#define kPanBaiduNetdiskContentTypeMultipartFormData @"multipart/form-data"
 #define kPanBaiduNetdiskContentTypeApplicationXWWWFormURLEncoded @"application/x-www-form-urlencoded"
 
 #define kPanBaiduNetdiskOAuthURL [NSURL URLWithString:@"https://openapi.baidu.com/oauth/2.0/"]
@@ -38,6 +39,7 @@ return (value); \
 #define kPanBaiduNetdiskNasURL [kPanBaiduNetdiskXpanURL URLByAppendingPathComponent:@"nas"]
 #define kPanBaiduNetdiskFileURL [kPanBaiduNetdiskXpanURL URLByAppendingPathComponent:@"file"]
 #define kPanBaiduNetdiskMultimediaURL [kPanBaiduNetdiskXpanURL URLByAppendingPathComponent:@"multimedia"]
+#define kPanBaiduNetdiskSuperFileURL [NSURL URLWithString:@"https://d.pcs.baidu.com/rest/2.0/pcs/superfile2"]
 
 @class WKWebView;
 @class PanBaiduNetdiskAuthState;

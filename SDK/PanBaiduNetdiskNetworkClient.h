@@ -51,6 +51,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request fromFile:(NSURL *)fileURL;
 
+- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request
+                                         fromData:(nullable NSData *)bodyData
+                                completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
+
 + (void)processResponse:(NSURLResponse * _Nullable)response
                withData:(NSData * _Nullable)data
                   error:(NSError * _Nullable)error
@@ -64,9 +68,6 @@ NS_ASSUME_NONNULL_BEGIN
                                       error:(NSError * _Nullable)error
                                  completion:(PanBaiduNetdiskAPIClientURLBlock _Nullable)completion;
 
-+ (NSData *)createMultipartRelatedBodyWithBoundary:(NSString *)boundary
-                                        parameters:(NSDictionary<NSString *,NSString *> *)parameters;
-
 + (NSURL *)URLByReplacingQueryParameters:(NSDictionary<NSString *,NSString *> *)queryParameters
                                    inURL:(NSURL *)originalURL;
 
@@ -77,6 +78,15 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSDictionary *_Nullable)queryDictionaryFromURL:(NSURL *)URL;
 
 + (NSData *)createJSONBodyWithParameters:(NSDictionary<NSString *,NSString *> *)parameters;
+
++ (NSData *)createMultipartRelatedBodyWithBoundary:(NSString *)boundary
+                                        parameters:(NSDictionary<NSString *,NSString *> *)parameters;
+
++ (NSData *)createMultipartFormDataBodyWithBoundary:(NSString *)boundary
+                                      parameterName:(NSString *)parameterName
+                                           fileName:(NSString *)fileName
+                                           fileData:(NSData *)fileData
+                                           mimeType:(NSString *)mimeType;
 
 + (NSData *)createBodyWithURLEncodedParameters:(NSDictionary<NSString *,NSString *> *)parameters;
 

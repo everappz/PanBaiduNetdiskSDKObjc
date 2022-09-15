@@ -10,6 +10,9 @@
 		AC053BF928D22A24008984BF /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC053BF828D22A24008984BF /* QuickLook.framework */; };
 		AC053BFC28D22AD8008984BF /* LSPreviewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = AC053BFB28D22AD8008984BF /* LSPreviewItem.m */; };
 		AC053BFE28D28B4B008984BF /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC053BFD28D28B4B008984BF /* AVKit.framework */; };
+		AC053C0C28D348B9008984BF /* file_example_WAV_10MG.wav in Resources */ = {isa = PBXBuildFile; fileRef = AC053C0B28D348B9008984BF /* file_example_WAV_10MG.wav */; };
+		AC053C0E28D3AFFE008984BF /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC053C0D28D3AFFE008984BF /* MobileCoreServices.framework */; };
+		AC053C1028D3CA25008984BF /* file_example_2M.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AC053C0F28D3CA25008984BF /* file_example_2M.mp3 */; };
 		AC58075D248E7DF300A5D75A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AC58075C248E7DF300A5D75A /* AppDelegate.m */; };
 		AC580760248E7DF300A5D75A /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AC58075F248E7DF300A5D75A /* SceneDelegate.m */; };
 		AC580763248E7DF300A5D75A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC580762248E7DF300A5D75A /* ViewController.m */; };
@@ -33,6 +36,9 @@
 		AC053BFA28D22AD8008984BF /* LSPreviewItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LSPreviewItem.h; sourceTree = "<group>"; };
 		AC053BFB28D22AD8008984BF /* LSPreviewItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LSPreviewItem.m; sourceTree = "<group>"; };
 		AC053BFD28D28B4B008984BF /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
+		AC053C0B28D348B9008984BF /* file_example_WAV_10MG.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = file_example_WAV_10MG.wav; sourceTree = "<group>"; };
+		AC053C0D28D3AFFE008984BF /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		AC053C0F28D3CA25008984BF /* file_example_2M.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = file_example_2M.mp3; sourceTree = "<group>"; };
 		AC580758248E7DF300A5D75A /* PanBaiduNetdiskSDKDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PanBaiduNetdiskSDKDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC58075B248E7DF300A5D75A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		AC58075C248E7DF300A5D75A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -67,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC053C0E28D3AFFE008984BF /* MobileCoreServices.framework in Frameworks */,
 				AC053BFE28D28B4B008984BF /* AVKit.framework in Frameworks */,
 				AC053BF928D22A24008984BF /* QuickLook.framework in Frameworks */,
 				AC58077A248E7F5000A5D75A /* Foundation.framework in Frameworks */,
@@ -81,6 +88,7 @@
 		0432194ADB01CD8B365F46CE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AC053C0D28D3AFFE008984BF /* MobileCoreServices.framework */,
 				AC053BFD28D28B4B008984BF /* AVKit.framework */,
 				AC053BF828D22A24008984BF /* QuickLook.framework */,
 				AC580779248E7F5000A5D75A /* Foundation.framework */,
@@ -149,6 +157,8 @@
 		AC580786248EE38800A5D75A /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				AC053C0F28D3CA25008984BF /* file_example_2M.mp3 */,
+				AC053C0B28D348B9008984BF /* file_example_WAV_10MG.wav */,
 				AC580787248EE38800A5D75A /* file.png */,
 				AC580788248EE38800A5D75A /* folder.png */,
 			);
@@ -215,10 +225,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				AC58076B248E7DF600A5D75A /* LaunchScreen.storyboard in Resources */,
+				AC053C0C28D348B9008984BF /* file_example_WAV_10MG.wav in Resources */,
 				AC580768248E7DF500A5D75A /* Assets.xcassets in Resources */,
 				AC580766248E7DF300A5D75A /* Main.storyboard in Resources */,
 				AC580789248EE38800A5D75A /* file.png in Resources */,
 				AC58078A248EE38800A5D75A /* folder.png in Resources */,
+				AC053C1028D3CA25008984BF /* file_example_2M.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
