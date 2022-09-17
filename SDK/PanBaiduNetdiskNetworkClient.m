@@ -109,7 +109,6 @@ NSURLSessionDownloadDelegate
     }
     
     NSString *token = nil;
-    NSString *authorizationHeader = nil;
     NSURL *requestURLModified = requestURL;
     
     if (accessToken) {
@@ -137,7 +136,7 @@ NSURLSessionDownloadDelegate
     
     [request addValue:@"pan.baidu.com" forHTTPHeaderField:@"User-Agent"];
     
-    NSParameterAssert(authorizationHeader != nil || [PanBaiduNetdiskNetworkClient accessTokenFromURL:request.URL] != nil);
+    NSParameterAssert([PanBaiduNetdiskNetworkClient accessTokenFromURL:request.URL] != nil);
     
     return request;
 }
