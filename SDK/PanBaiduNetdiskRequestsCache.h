@@ -14,17 +14,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PanBaiduNetdiskRequestsCache : NSObject
 
-- (PanBaiduNetdiskAPIClientRequest * _Nullable)cancellableRequestWithURLTaskIdentifier:(NSUInteger)URLTaskIdentifier;
+- (PanBaiduNetdiskAPIClientRequest * _Nullable)cachedCancellableRequestWithURLTaskIdentifier:(NSUInteger)URLTaskIdentifier;
 
-- (NSArray<PanBaiduNetdiskAPIClientRequest *> * _Nullable)allCancellableRequestsWithURLTasks;
+- (NSArray<PanBaiduNetdiskAPIClientRequest *> * _Nullable)allCachedCancellableRequestsWithURLTasks;
 
-- (PanBaiduNetdiskAPIClientRequest *)createAndAddCancellableRequest;
+- (PanBaiduNetdiskAPIClientRequest *)createCachedCancellableRequest;
 
-- (void)addCancellableRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request;
+- (void)addCancellableRequestToCache:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request;
 
-- (void)removeCancellableRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request;
+- (void)removeCancellableRequestFromCache:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request;
 
-- (void)cancelAndRemoveAllRequests;
+- (void)cancelAndRemoveAllCachedRequests;
 
 @end
 

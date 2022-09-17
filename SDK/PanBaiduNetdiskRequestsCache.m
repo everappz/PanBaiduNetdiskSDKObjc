@@ -28,7 +28,7 @@
     return self;
 }
 
-- (PanBaiduNetdiskAPIClientRequest * _Nullable)cancellableRequestWithURLTaskIdentifier:(NSUInteger)URLTaskIdentifier {
+- (PanBaiduNetdiskAPIClientRequest * _Nullable)cachedCancellableRequestWithURLTaskIdentifier:(NSUInteger)URLTaskIdentifier {
     __block PanBaiduNetdiskAPIClientRequest *clientRequest = nil;
     [self.stateLock lock];
     [self.cancellableRequests enumerateObjectsUsingBlock:^(id<PanBaiduNetdiskAPIClientCancellableRequest>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -43,7 +43,7 @@
     return clientRequest;
 }
 
-- (NSArray<PanBaiduNetdiskAPIClientRequest *> * _Nullable)allCancellableRequestsWithURLTasks{
+- (NSArray<PanBaiduNetdiskAPIClientRequest *> * _Nullable)allCachedCancellableRequestsWithURLTasks{
     NSMutableArray *result = [NSMutableArray new];
     [self.stateLock lock];
     for (id<PanBaiduNetdiskAPIClientCancellableRequest> obj in self.cancellableRequests) {
@@ -57,18 +57,13 @@
     return result;
 }
 
-- (PanBaiduNetdiskAPIClientRequest *)createAndAddCancellableRequest{
+- (PanBaiduNetdiskAPIClientRequest *)createCachedCancellableRequest{
     PanBaiduNetdiskAPIClientRequest *clientRequest = [[PanBaiduNetdiskAPIClientRequest alloc] init];
-    PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskMakeWeakReference(clientRequest);
-    [clientRequest setCancelBlock:^{
-        [weakSelf removeCancellableRequest:weak_clientRequest];
-    }];
-    [self addCancellableRequest:clientRequest];
+    [self addCancellableRequestToCache:clientRequest];
     return clientRequest;
 }
 
-- (void)addCancellableRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
+- (void)addCancellableRequestToCache:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
     NSParameterAssert([request conformsToProtocol:@protocol(PanBaiduNetdiskAPIClientCancellableRequest)]);
     if ([request conformsToProtocol:@protocol(PanBaiduNetdiskAPIClientCancellableRequest)] == NO) {
         return;
@@ -76,13 +71,20 @@
     [self.stateLock lock];
     [self.cancellableRequests addObject:request];
     NSParameterAssert(self.cancellableRequests.count < 100);
+    PanBaiduNetdiskMakeWeakSelf;
+    PanBaiduNetdiskMakeWeakReference(request);
+    if ([request isKindOfClass:[PanBaiduNetdiskAPIClientRequest class]]) {
+        [(PanBaiduNetdiskAPIClientRequest *)request setCancelBlock:^{
+            [weakSelf removeCancellableRequestFromCache:weak_request];
+        }];
+    }
     [self.stateLock unlock];
 }
 
-- (void)removeCancellableRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
+- (void)removeCancellableRequestFromCache:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
     if ([request isKindOfClass:[PanBaiduNetdiskAPIClientRequest class]]) {
         PanBaiduNetdiskAPIClientRequest *clientRequest = (PanBaiduNetdiskAPIClientRequest *)request;
-        [self removeCancellableRequest:clientRequest.internalRequest];
+        [self removeCancellableRequestFromCache:clientRequest.internalRequest];
     }
     
     if ([request conformsToProtocol:@protocol(PanBaiduNetdiskAPIClientCancellableRequest)]) {
@@ -92,12 +94,12 @@
     }
 }
 
-- (void)cancelAndRemoveAllRequests {
+- (void)cancelAndRemoveAllCachedRequests {
     [self.stateLock lock];
     for (id<PanBaiduNetdiskAPIClientCancellableRequest>request in self.cancellableRequests) {
         [PanBaiduNetdiskRequestsCache removeCancelBlockForRequest:request];
         if ([request respondsToSelector:@selector(cancel)]) {
-        [request cancel];
+            [request cancel];
         }
     }
     [self.cancellableRequests removeAllObjects];

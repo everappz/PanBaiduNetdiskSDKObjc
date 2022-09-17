@@ -36,7 +36,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 
 @implementation PanBaiduNetdiskAPIClient
 
-+ (nullable PanBaiduNetdiskAPIClient *)createNewOrLoadCachedClientWithAuthData:(NSDictionary *)clientAuthData{
++ (nullable PanBaiduNetdiskAPIClient *)createNewOrGetCachedClientWithAuthData:(NSDictionary *)clientAuthData{
     id dataObj = [clientAuthData objectForKey:PanBaiduNetdiskAccessTokenDataKey];
     NSString *userID = [clientAuthData objectForKey:PanBaiduNetdiskUserIDKey];
     
@@ -83,7 +83,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
                                    authProvider:(PanBaiduAppAuthProvider *_Nullable)authProvider
 {
     self = [super init];
-    if(self){
+    if (self) {
         self.authProvider = authProvider;
         self.authProviderLock = [NSRecursiveLock new];
         self.networkClient = [[PanBaiduNetdiskNetworkClient alloc] initWithURLSessionConfiguration:URLSessionConfiguration];
@@ -92,7 +92,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (void)cancelAllRequests{
-    [self cancelAndRemoveAllRequests];
+    [self cancelAndRemoveAllCachedRequests];
 }
 
 #pragma mark - Access Token
@@ -123,7 +123,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)updateAccessTokenWithCompletionBlock:(PanBaiduNetdiskAPIClientVoidBlock _Nullable)completion{
     PanBaiduNetdiskMakeWeakSelf;
     
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     PanBaiduAppAuthProvider *authProvider = nil;
@@ -136,7 +136,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         NSURLSessionDataTask *task =
         [authProvider updateAccessTokenWithCompletionBlock:^(NSString * _Nullable accessToken, NSError * _Nullable error) {
             PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             
             if (completion) {
                 completion();
@@ -146,7 +146,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         return clientRequest;
     }
     
-    [self removeCancellableRequest:clientRequest];
+    [self removeCancellableRequestFromCache:clientRequest];
     if (completion) {
         completion();
     }
@@ -158,12 +158,12 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)getUserInfoWithCompletionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion{
     PanBaiduNetdiskMakeWeakSelf;
     
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     PanBaiduNetdiskAPIClientDictionaryBlock resultCompletion = ^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-        [strongSelf removeCancellableRequest:weak_clientRequest];
+        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
         
         if (completion) {
             completion(dictionary,error);
@@ -202,7 +202,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_getUserInfoWithCompletionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion{
     PanBaiduNetdiskMakeWeakSelf;
     
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     [self getAccessTokenWithCompletionBlock:
@@ -211,7 +211,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error) {
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             [PanBaiduNetdiskNetworkClient processResponse:nil
                                                  withData:nil
                                                     error:error
@@ -227,18 +227,11 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         [strongSelf dataTaskWithRequest:request
                       completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
             PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-            [strongSelf removeCancellableRequest:weak_clientRequest];
-            
-            PanBaiduNetdiskAPIClientDictionaryBlock resultCompletion =
-            ^(NSDictionary * _Nullable resultDictionary, NSError * _Nullable resultError) {
-                if (completion) {
-                    completion (resultDictionary, resultError);
-                }
-            };
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             [PanBaiduNetdiskNetworkClient processResponse:response
                                                  withData:data
                                                     error:error
-                                               completion:resultCompletion];
+                                               completion:completion];
         }];
         
         weak_clientRequest.internalRequest = (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)task;
@@ -254,12 +247,12 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
                                                                completionBlock:(PanBaiduNetdiskAPIClientArrayBlock _Nullable)completion
 {
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     PanBaiduNetdiskAPIClientArrayBlock resultCompletion = ^(NSArray<NSDictionary *> * _Nullable array, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-        [strongSelf removeCancellableRequest:weak_clientRequest];
+        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
         
         if (completion){
             completion(array,error);
@@ -276,7 +269,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     
     id<PanBaiduNetdiskAPIClientCancellableRequest> internalRequest =
     (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)[self _getFilesListAtPath:path
-                                                              completionBlock:^(NSArray<NSDictionary *> * _Nullable array, NSError * _Nullable error) {
+                                                                        completionBlock:^(NSArray<NSDictionary *> * _Nullable array, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         if (error.isPanBaiduNetdiskTooManyRequestsError) {
             retryBlock();
@@ -296,7 +289,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_getFilesListAtPath:(nullable NSString *)path
-                                                      completionBlock:(PanBaiduNetdiskAPIClientArrayBlock _Nullable)completion
+                                                                completionBlock:(PanBaiduNetdiskAPIClientArrayBlock _Nullable)completion
 {
     NSMutableArray *resultFiles = [NSMutableArray new];
     
@@ -305,10 +298,10 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_getFilesListAtPath:(nullable NSString *)path
-                                                               offset:(NSInteger)offset
-                                                               length:(NSInteger)length
-                                                          resultFiles:(NSMutableArray *)resultFiles
-                                                      completionBlock:(PanBaiduNetdiskAPIClientArrayBlock _Nullable)completion
+                                                                         offset:(NSInteger)offset
+                                                                         length:(NSInteger)length
+                                                                    resultFiles:(NSMutableArray *)resultFiles
+                                                                completionBlock:(PanBaiduNetdiskAPIClientArrayBlock _Nullable)completion
 {
     NSParameterAssert(resultFiles);
     if (resultFiles == nil) {
@@ -319,22 +312,28 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     }
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     [self getAccessTokenWithCompletionBlock:
      ^(PanBaiduNetdiskAccessToken * _Nullable accessToken, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         if (error) {
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             if (completion) {
                 completion(nil,error);
             }
             return;
         }
         
-        NSString *pathModified = path?:@"/";
-        NSURL *requestURL = [PanBaiduNetdiskNetworkClient URLByReplacingQueryParameters:@{@"method":@"list",@"start":[NSString stringWithFormat:@"%@",@(offset)],@"limit":[NSString stringWithFormat:@"%@",@(length)],@"dir":pathModified} inURL:kPanBaiduNetdiskFileURL];
+        NSString *pathModified = (path != nil)?path:@"/";
+        NSDictionary *parameters = @{
+            @"method":@"list",
+            @"start":[NSString stringWithFormat:@"%@",@(offset)],
+            @"limit":[NSString stringWithFormat:@"%@",@(length)],
+            @"dir":pathModified
+        };
+        NSURL *requestURL = [PanBaiduNetdiskNetworkClient URLByReplacingQueryParameters:parameters inURL:kPanBaiduNetdiskFileURL];
         NSMutableURLRequest *request = [strongSelf GETRequestWithURL:requestURL accessToken:accessToken];
         [PanBaiduNetdiskNetworkClient printRequest:request];
         
@@ -362,7 +361,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
                     weak_clientRequest.internalRequest = (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)nextPageRequest;
                 }
                 else {
-                    [strongSelf removeCancellableRequest:weak_clientRequest];
+                    [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
                     if (resultFiles.count == 0 || error) {
                         if(completion){
                             completion(nil,error);
@@ -402,12 +401,12 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     }
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     PanBaiduNetdiskAPIClientDictionaryBlock resultCompletion = ^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-        [strongSelf removeCancellableRequest:weak_clientRequest];
+        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
         
         if (completion){
             completion(dictionary,error);
@@ -430,11 +429,11 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     
     id<PanBaiduNetdiskAPIClientCancellableRequest> internalRequest =
     (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)[self _getInfoForFileWithID:fileID
-                                                                          dlink:dlink
-                                                                          thumb:thumb
-                                                                          extra:extra
-                                                                      needmedia:needmedia
-                                                                completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+                                                                                    dlink:dlink
+                                                                                    thumb:thumb
+                                                                                    extra:extra
+                                                                                needmedia:needmedia
+                                                                          completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         if (error.isPanBaiduNetdiskTooManyRequestsError) {
             retryBlock();
@@ -454,11 +453,11 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_getInfoForFileWithID:(NSString *)fileID
-                                                                  dlink:(BOOL)dlink
-                                                                  thumb:(BOOL)thumb
-                                                                  extra:(BOOL)extra
-                                                              needmedia:(BOOL)needmedia
-                                                        completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
+                                                                            dlink:(BOOL)dlink
+                                                                            thumb:(BOOL)thumb
+                                                                            extra:(BOOL)extra
+                                                                        needmedia:(BOOL)needmedia
+                                                                  completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
 {
     NSParameterAssert(fileID);
     if (fileID == nil) {
@@ -469,7 +468,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     }
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     [self getAccessTokenWithCompletionBlock:
@@ -477,7 +476,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error) {
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             [PanBaiduNetdiskNetworkClient processResponse:nil
                                                  withData:nil
                                                     error:error
@@ -503,10 +502,11 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         NSMutableURLRequest *request = [strongSelf GETRequestWithURL:requestURL accessToken:accessToken];
         [PanBaiduNetdiskNetworkClient printRequest:request];
         
-        NSURLSessionDataTask *task = [strongSelf dataTaskWithRequest:request
-                                                   completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSURLSessionDataTask *task =
+        [strongSelf dataTaskWithRequest:request
+                      completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
             PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             
             [PanBaiduNetdiskNetworkClient processResponse:response
                                                  withData:data
@@ -546,7 +546,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 #pragma mark - File Manager Request
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)deleteFileAtPath:(NSString *)filePath
-                                                   completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
+                                                             completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
 {
     NSParameterAssert(filePath);
     if (filePath == nil) {
@@ -563,8 +563,8 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)renameFileAtPath:(NSString *)filePath
-                                                              name:(NSString *)name
-                                                   completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
+                                                                        name:(NSString *)name
+                                                             completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
 {
     NSParameterAssert(filePath);
     if (filePath == nil) {
@@ -589,8 +589,8 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)moveFileAtPath:(NSString *)filePath
-                                                          toPath:(NSString *)toPath
-                                                 completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
+                                                                    toPath:(NSString *)toPath
+                                                           completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
 {
     NSParameterAssert(filePath);
     if (filePath == nil) {
@@ -614,8 +614,8 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)copyFileAtPath:(NSString *)filePath
-                                                          toPath:(NSString *)toPath
-                                                 completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
+                                                                    toPath:(NSString *)toPath
+                                                           completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
 {
     NSParameterAssert(filePath);
     if (filePath == nil) {
@@ -639,9 +639,9 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_defaultFileManagerRequestWithMethod:(NSString *)method
-                                                                             overwrite:(BOOL)overwrite
-                                                                    fileListParameters:(NSDictionary<NSString *,NSString *> *)fileListParameters
-                                                                       completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
+                                                                                       overwrite:(BOOL)overwrite
+                                                                              fileListParameters:(NSDictionary<NSString *,NSString *> *)fileListParameters
+                                                                                 completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
 {
     NSParameterAssert(method);
     if (method == nil) {
@@ -687,12 +687,12 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
                                completionBlock:completion];
 }
 
-- (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_fileManagerRequestWithMethod:(NSString *)method
-                                                                 bodyParameters:(NSDictionary<NSString *,NSString *> *)bodyParameters
-                                                                completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
+- (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_fileManagerRequestWithMethod:(NSString *)fileManagerMethod
+                                                                           bodyParameters:(NSDictionary<NSString *,NSString *> *)bodyParameters
+                                                                          completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
 {
-    NSParameterAssert(method);
-    if (method == nil) {
+    NSParameterAssert(fileManagerMethod);
+    if (fileManagerMethod == nil) {
         if (completion) {
             completion(nil,[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeBadInputParameters]);
         }
@@ -700,35 +700,38 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     }
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     PanBaiduNetdiskAPIClientDictionaryBlock resultCompletion = ^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-        [strongSelf removeCancellableRequest:weak_clientRequest];
+        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
         
         if (completion){
             completion(dictionary,error);
         }
     };
     
+    NSString *requestMethod = @"filemanager";
+    NSDictionary *urlParameters = @{@"opera":fileManagerMethod};
+    
     void(^retryBlock)(void) = ^{
         [PanBaiduNetdiskAPIClient dispatchAfterRetryTimeoutBlock:^{
             PanBaiduNetdiskCheckIfClientRequestIsCancelledOrNilAndReturn(weak_clientRequest);
             PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
             
-            weak_clientRequest.internalRequest = [strongSelf _fileRequestWithMethod:@"filemanager"
-                                                                      urlParameters:@{@"opera":method}
+            weak_clientRequest.internalRequest = [strongSelf _fileRequestWithMethod:requestMethod
+                                                                      urlParameters:urlParameters
                                                                      bodyParameters:bodyParameters
                                                                     completionBlock:resultCompletion];
         }];
     };
     
     id<PanBaiduNetdiskAPIClientCancellableRequest> internalRequest =
-    (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)[self _fileRequestWithMethod:@"filemanager"
-                                                                   urlParameters:@{@"opera":method}
-                                                                  bodyParameters:bodyParameters
-                                                                 completionBlock:^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
+    (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)[self _fileRequestWithMethod:requestMethod
+                                                                             urlParameters:urlParameters
+                                                                            bodyParameters:bodyParameters
+                                                                           completionBlock:^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error.isPanBaiduNetdiskTooManyRequestsError) {
@@ -751,10 +754,10 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 #pragma mark - Download File
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)getContentForFileWithID:(NSString *)fileID
-                                                        additionalHeaders:(NSDictionary *)additionalHeaders
-                                                      didReceiveDataBlock:(PanBaiduNetdiskAPIClientDidReceiveDataBlock _Nullable)didReceiveData
-                                                  didReceiveResponseBlock:(PanBaiduNetdiskAPIClientDidReceiveResponseBlock _Nullable)didReceiveResponse
-                                                          completionBlock:(PanBaiduNetdiskAPIClientErrorBlock _Nullable)completion
+                                                                  additionalHeaders:(NSDictionary *)additionalHeaders
+                                                                didReceiveDataBlock:(PanBaiduNetdiskAPIClientDidReceiveDataBlock _Nullable)didReceiveData
+                                                            didReceiveResponseBlock:(PanBaiduNetdiskAPIClientDidReceiveResponseBlock _Nullable)didReceiveResponse
+                                                                    completionBlock:(PanBaiduNetdiskAPIClientErrorBlock _Nullable)completion
 {
     NSParameterAssert(fileID);
     if (fileID == nil) {
@@ -765,12 +768,12 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     }
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     PanBaiduNetdiskAPIClientErrorBlock resultCompletion = ^(NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-        [strongSelf removeCancellableRequest:weak_clientRequest];
+        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
         
         if (completion){
             completion(error);
@@ -792,10 +795,10 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     
     id<PanBaiduNetdiskAPIClientCancellableRequest> internalRequest =
     (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)[self _getContentForFileWithID:fileID
-                                                                 additionalHeaders:additionalHeaders
-                                                               didReceiveDataBlock:didReceiveData
-                                                           didReceiveResponseBlock:didReceiveResponse
-                                                                   completionBlock:^(NSError * _Nullable error) {
+                                                                           additionalHeaders:additionalHeaders
+                                                                         didReceiveDataBlock:didReceiveData
+                                                                     didReceiveResponseBlock:didReceiveResponse
+                                                                             completionBlock:^(NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error.isPanBaiduNetdiskTooManyRequestsError) {
@@ -807,7 +810,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
             }];
         }
         else {
-            completion(error);
+            resultCompletion(error);
         }
     }];
     
@@ -816,10 +819,10 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_getContentForFileWithID:(NSString *)fileID
-                                                         additionalHeaders:(NSDictionary *)additionalHeaders
-                                                       didReceiveDataBlock:(PanBaiduNetdiskAPIClientDidReceiveDataBlock _Nullable)didReceiveData
-                                                   didReceiveResponseBlock:(PanBaiduNetdiskAPIClientDidReceiveResponseBlock _Nullable)didReceiveResponse
-                                                           completionBlock:(PanBaiduNetdiskAPIClientErrorBlock _Nullable)completion
+                                                                   additionalHeaders:(NSDictionary *)additionalHeaders
+                                                                 didReceiveDataBlock:(PanBaiduNetdiskAPIClientDidReceiveDataBlock _Nullable)didReceiveData
+                                                             didReceiveResponseBlock:(PanBaiduNetdiskAPIClientDidReceiveResponseBlock _Nullable)didReceiveResponse
+                                                                     completionBlock:(PanBaiduNetdiskAPIClientErrorBlock _Nullable)completion
 {
     NSParameterAssert(fileID);
     if (fileID == nil) {
@@ -829,7 +832,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         return nil;
     }
     
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     clientRequest.didReceiveDataBlock = didReceiveData;
     clientRequest.didReceiveResponseBlock = didReceiveResponse;
     clientRequest.errorCompletionBlock = completion;
@@ -841,7 +844,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error) {
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             [PanBaiduNetdiskNetworkClient processResponse:nil
                                                 withError:error
                                                completion:completion];
@@ -864,13 +867,13 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
             }
             
             if (error) {
-                [strongSelf removeCancellableRequest:weak_clientRequest];
+                [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
                 [PanBaiduNetdiskNetworkClient processResponse:nil
                                                     withError:error
                                                    completion:completion];
             }
             else if (downloadURL == nil) {
-                [strongSelf removeCancellableRequest:weak_clientRequest];
+                [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
                 [PanBaiduNetdiskNetworkClient processResponse:nil
                                                     withError:[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeCannotGetDirectURL]
                                                    completion:completion];
@@ -898,7 +901,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)getDirectURLForFileWithID:(NSString *)fileID
-                                                            completionBlock:(PanBaiduNetdiskAPIClientURLBlock _Nullable)completion
+                                                                      completionBlock:(PanBaiduNetdiskAPIClientURLBlock _Nullable)completion
 {
     NSParameterAssert(fileID);
     if (fileID == nil) {
@@ -909,12 +912,12 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     }
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     PanBaiduNetdiskAPIClientURLBlock resultCompletion = ^(NSURL *_Nullable location, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-        [strongSelf removeCancellableRequest:weak_clientRequest];
+        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
         
         if (completion){
             completion(location,error);
@@ -933,7 +936,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     
     id<PanBaiduNetdiskAPIClientCancellableRequest> internalRequest =
     (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)[self _getDirectURLForFileWithID:fileID
-                                                                     completionBlock:^(NSURL *_Nullable location, NSError * _Nullable error) {
+                                                                               completionBlock:^(NSURL *_Nullable location, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error.isPanBaiduNetdiskTooManyRequestsError) {
@@ -954,7 +957,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_getDirectURLForFileWithID:(NSString *)fileID
-                                                             completionBlock:(PanBaiduNetdiskAPIClientURLBlock _Nullable)completion
+                                                                       completionBlock:(PanBaiduNetdiskAPIClientURLBlock _Nullable)completion
 {
     NSParameterAssert(fileID);
     if (fileID == nil) {
@@ -965,7 +968,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     }
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     [self getAccessTokenWithCompletionBlock:
@@ -973,7 +976,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error) {
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             [PanBaiduNetdiskNetworkClient processResponseWithURL:nil
                                                            error:error
                                                       completion:completion];
@@ -987,8 +990,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
                                     extra:NO
                                 needmedia:NO
                           completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
-            
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             
             NSString *dlink = [dictionary objectForKey:@"dlink"];
             NSURL *downloadURL = nil;
@@ -1026,8 +1028,8 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)downloadContentForFileWithID:(NSString *)fileID
-                                                                 progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
-                                                               completionBlock:(PanBaiduNetdiskAPIClientURLBlock _Nullable)downloadCompletionBlock
+                                                                           progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
+                                                                         completionBlock:(PanBaiduNetdiskAPIClientURLBlock _Nullable)downloadCompletionBlock
 {
     NSParameterAssert(fileID);
     if (fileID == nil) {
@@ -1038,12 +1040,12 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     }
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     PanBaiduNetdiskAPIClientURLBlock resultCompletion = ^(NSURL *_Nullable location, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-        [strongSelf removeCancellableRequest:weak_clientRequest];
+        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
         
         if (downloadCompletionBlock) {
             downloadCompletionBlock(location,error);
@@ -1063,8 +1065,8 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     
     id<PanBaiduNetdiskAPIClientCancellableRequest> internalRequest =
     (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)[self _downloadContentForFileWithID:fileID
-                                                                          progressBlock:progressBlock
-                                                                        completionBlock:^(NSURL *_Nullable location, NSError * _Nullable error) {
+                                                                                    progressBlock:progressBlock
+                                                                                  completionBlock:^(NSURL *_Nullable location, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error.isPanBaiduNetdiskTooManyRequestsError) {
@@ -1085,8 +1087,8 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_downloadContentForFileWithID:(NSString *)fileID
-                                                                  progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
-                                                                completionBlock:(PanBaiduNetdiskAPIClientURLBlock _Nullable)downloadCompletionBlock
+                                                                            progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
+                                                                          completionBlock:(PanBaiduNetdiskAPIClientURLBlock _Nullable)downloadCompletionBlock
 {
     NSParameterAssert(fileID);
     if (fileID == nil) {
@@ -1096,14 +1098,14 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         return nil;
     }
     
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     PanBaiduNetdiskMakeWeakSelf;
     clientRequest.progressBlock = progressBlock;
     
     clientRequest.downloadCompletionBlock = ^(NSURL *_Nullable location, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-        [strongSelf removeCancellableRequest:weak_clientRequest];
+        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
         
         if (downloadCompletionBlock) {
             downloadCompletionBlock(location,error);
@@ -1115,7 +1117,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error) {
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             [PanBaiduNetdiskNetworkClient processResponseWithURL:nil
                                                            error:error
                                                       completion:downloadCompletionBlock];
@@ -1137,7 +1139,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
             }
             
             if (error) {
-                [strongSelf removeCancellableRequest:weak_clientRequest];
+                [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
                 [PanBaiduNetdiskNetworkClient processResponseWithURL:nil
                                                                error:error
                                                           completion:downloadCompletionBlock];
@@ -1145,7 +1147,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
             }
             
             if (downloadURL == nil) {
-                [strongSelf removeCancellableRequest:weak_clientRequest];
+                [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
                 [PanBaiduNetdiskNetworkClient processResponseWithURL:nil
                                                                error:[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeCannotGetDirectURL]
                                                           completion:downloadCompletionBlock];
@@ -1171,9 +1173,9 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 #pragma mark - Upload File
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)uploadFileFromLocalPath:(NSString *)localPath
-                                                             toRemotePath:(NSString *)remotePath
-                                                            progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
-                                                          completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completionBlock
+                                                                       toRemotePath:(NSString *)remotePath
+                                                                      progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
+                                                                    completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completionBlock
 {
     NSParameterAssert(localPath);
     if (localPath == nil) {
@@ -1192,12 +1194,12 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     }
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     PanBaiduNetdiskAPIClientDictionaryBlock resultCompletion = ^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-        [strongSelf removeCancellableRequest:weak_clientRequest];
+        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
         
         if (completionBlock){
             completionBlock(dictionary,error);
@@ -1217,9 +1219,9 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     
     id<PanBaiduNetdiskAPIClientCancellableRequest> internalRequest =
     (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)[self _uploadFileFromLocalPath:localPath
-                                                                      toRemotePath:remotePath
-                                                                     progressBlock:progressBlock
-                                                                   completionBlock:^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
+                                                                                toRemotePath:remotePath
+                                                                               progressBlock:progressBlock
+                                                                             completionBlock:^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         if (error.isPanBaiduNetdiskTooManyRequestsError) {
             retryBlock();
@@ -1239,9 +1241,9 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_uploadFileFromLocalPath:(NSString *)localPath
-                                                              toRemotePath:(NSString *)remotePath
-                                                             progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
-                                                           completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completionBlock
+                                                                        toRemotePath:(NSString *)remotePath
+                                                                       progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
+                                                                     completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completionBlock
 {
     NSParameterAssert(localPath);
     if (localPath == nil) {
@@ -1278,7 +1280,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     const NSUInteger kBlockSize = 4 * 1024 * 1024; //4MB
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     clientRequest.totalContentSize = @(contentSize);
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
@@ -1287,7 +1289,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error) {
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             [PanBaiduNetdiskNetworkClient processResponse:nil
                                                  withData:nil
                                                     error:error
@@ -1300,26 +1302,37 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
             NSMutableArray<NSString *> *blockList = [NSMutableArray<NSString *> new];
             
             @autoreleasepool {
-                NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingAtPath:localPath];
-                NSUInteger fileOffset = 0;
-                while (fileOffset < contentSize) {
-                    [fileHandle seekToFileOffset:fileOffset];
-                    NSData *chunkData = [fileHandle readDataOfLength:kBlockSize];
-                    NSString *chunkMD5 = [PanBaiduNetdiskAPIClient MD5ForSmallData:chunkData];
-                    NSCParameterAssert(chunkMD5.length > 0);
-                    if (chunkMD5.length > 0) {
-                        [blockList addObject:chunkMD5];
-                    }
-                    else {
-                        [fileHandle closeFile];
-                        if (completionBlock) {
-                            completionBlock(nil,[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeCannotPrepareRequest]);
+                NSFileHandle *fileHandle = nil;
+                BOOL fileReadError = NO;
+                @try {
+                    fileHandle = [NSFileHandle fileHandleForReadingAtPath:localPath];
+                    NSUInteger fileOffset = 0;
+                    while (fileOffset < contentSize) {
+                        [fileHandle seekToFileOffset:fileOffset];
+                        NSData *chunkData = [fileHandle readDataOfLength:kBlockSize];
+                        NSString *chunkMD5 = [PanBaiduNetdiskAPIClient MD5ForSmallData:chunkData];
+                        NSCParameterAssert(chunkMD5.length > 0);
+                        if (chunkMD5.length > 0) {
+                            [blockList addObject:chunkMD5];
                         }
-                        return;
+                        else {
+                            fileReadError = YES;
+                            break;
+                        }
+                        fileOffset += chunkData.length;
                     }
-                    fileOffset += chunkData.length;
+                } @catch (NSException *exception) {
+                    fileReadError = YES;
+                } @finally {
+                    [fileHandle closeFile];
                 }
-                [fileHandle closeFile];
+                
+                if (fileReadError) {
+                    if (completionBlock) {
+                        completionBlock(nil,[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeCannotPrepareRequest]);
+                    }
+                    return;
+                }
             }
             
             const NSUInteger renamingPolicy = 3;//3 Override the file with the same name when there is a file in the cloud.
@@ -1335,7 +1348,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
                 PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
                 
                 if (error) {
-                    [strongSelf removeCancellableRequest:weak_clientRequest];
+                    [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
                     if (completionBlock) {
                         completionBlock(nil,error);
                     }
@@ -1345,7 +1358,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
                 NSString *uploadID = [dictionary objectForKey:@"uploadid"];
                 
                 if (uploadID == nil) {
-                    [strongSelf removeCancellableRequest:weak_clientRequest];
+                    [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
                     if (completionBlock) {
                         completionBlock(nil,[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeBadResponse]);
                     }
@@ -1361,24 +1374,25 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
                                                      blockList:blockList
                                                  clientRequest:weak_clientRequest
                                                  progressBlock:progressBlock
-                                               completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+                                               completionBlock:^(NSError * _Nullable error) {
                     if (error) {
-                        [strongSelf removeCancellableRequest:weak_clientRequest];
+                        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
                         if (completionBlock) {
                             completionBlock(nil,error);
                         }
                         return;
                     }
                     
-                    id<PanBaiduNetdiskAPIClientCancellableRequest> createFileRequest = [strongSelf _fileCreateRequestWithPath:remotePath
-                                                                                                                         size:contentSize
-                                                                                                                        isDir:NO
-                                                                                                                    blockList:blockList
-                                                                                                                     uploadId:uploadID
-                                                                                                               renamingPolicy:renamingPolicy
-                                                                                                                   isRevision:YES
-                                                                                                              completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
-                        [strongSelf removeCancellableRequest:weak_clientRequest];
+                    id<PanBaiduNetdiskAPIClientCancellableRequest> createFileRequest =
+                    [strongSelf _fileCreateRequestWithPath:remotePath
+                                                      size:contentSize
+                                                     isDir:NO
+                                                 blockList:blockList
+                                                  uploadId:uploadID
+                                            renamingPolicy:renamingPolicy
+                                                isRevision:YES
+                                           completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+                        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
                         if (completionBlock) {
                             completionBlock(dictionary,error);
                         }
@@ -1405,21 +1419,59 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
                                  blockList:(NSArray<NSString *> *)blockList
                              clientRequest:(PanBaiduNetdiskAPIClientRequest *)clientRequest
                              progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
-                           completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completionBlock
+                           completionBlock:(PanBaiduNetdiskAPIClientErrorBlock _Nullable)completionBlock
 {
-    if (partNumber >= blockList.count) {
+    NSParameterAssert(localPath != nil &&
+                      remotePath != nil &&
+                      uploadID != nil &&
+                      contentSize > 0 &&
+                      blockList.count > 0);
+    
+    if (localPath == nil ||
+        remotePath == nil ||
+        uploadID == nil ||
+        contentSize == 0 ||
+        blockList.count == 0)
+    {
         if (completionBlock) {
-            completionBlock(nil,nil);
+            completionBlock([NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeBadInputParameters]);
         }
         return;
     }
     
-    NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingAtPath:localPath];
-    const NSUInteger fileOffset = partNumber * blockSize;
-    [fileHandle seekToFileOffset:fileOffset];
-    NSData *chunkData = [fileHandle readDataOfLength:blockSize];
-    const NSUInteger chunkDataLength = chunkData.length;
-    [fileHandle closeFile];
+    if (partNumber >= blockList.count) {
+        //file uploaded successfully
+        if (completionBlock) {
+            completionBlock(nil);
+        }
+        return;
+    }
+    
+    NSData *chunkData = nil;
+    NSUInteger chunkDataLength = 0;
+    NSFileHandle *fileHandle = nil;
+    
+    @try {
+        fileHandle = [NSFileHandle fileHandleForReadingAtPath:localPath];
+        const NSUInteger fileOffset = partNumber * blockSize;
+        [fileHandle seekToFileOffset:fileOffset];
+        chunkData = [fileHandle readDataOfLength:blockSize];
+        chunkDataLength = chunkData.length;
+    } @catch (NSException *exception) {
+        chunkData = nil;
+        chunkDataLength = 0;
+    }
+    @finally {
+        [fileHandle closeFile];
+    }
+    
+    NSParameterAssert(chunkDataLength);
+    if (chunkDataLength == 0) {
+        if (completionBlock) {
+            completionBlock([NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeCannotPrepareRequest]);
+        }
+        return;
+    }
     
     PanBaiduNetdiskMakeWeakSelf;
     PanBaiduNetdiskMakeWeakReference(clientRequest);
@@ -1440,12 +1492,12 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
             progressBlock(totalProgress);
         }
     }
-                          completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
+                          completionBlock:^(NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error) {
             if (completionBlock) {
-                completionBlock(nil,error);
+                completionBlock(error);
             }
             return;
         }
@@ -1474,16 +1526,16 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
  @param fileData Uploaded File Content
  */
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_fileUploadChunkRequestWithPath:(NSString *)filePath
-                                                                         uploadId:(NSString *)uploadId
-                                                                       partNumber:(NSUInteger)partNumber
-                                                                         fileData:(NSData *)fileData
-                                                                    progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
-                                                                  completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
+                                                                                   uploadId:(NSString *)uploadId
+                                                                                 partNumber:(NSUInteger)partNumber
+                                                                                   fileData:(NSData *)fileData
+                                                                              progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
+                                                                            completionBlock:(PanBaiduNetdiskAPIClientErrorBlock _Nullable)completion
 {
     NSParameterAssert(filePath);
     if (filePath == nil) {
         if (completion) {
-            completion(nil,[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeBadInputParameters]);
+            completion([NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeBadInputParameters]);
         }
         return nil;
     }
@@ -1491,7 +1543,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     NSParameterAssert(uploadId);
     if (uploadId == nil) {
         if (completion) {
-            completion(nil,[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeBadInputParameters]);
+            completion([NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeBadInputParameters]);
         }
         return nil;
     }
@@ -1499,7 +1551,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     NSParameterAssert(fileData);
     if (fileData == nil) {
         if (completion) {
-            completion(nil,[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeBadInputParameters]);
+            completion([NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeBadInputParameters]);
         }
         return nil;
     }
@@ -1511,15 +1563,15 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     NSString *fileName = filePath.lastPathComponent;
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     PanBaiduNetdiskAPIClientDictionaryBlock resultCompletion = ^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-        [strongSelf removeCancellableRequest:weak_clientRequest];
+        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
         
         if (completion){
-            completion(dictionary,error);
+            completion(error);
         }
     };
     
@@ -1538,11 +1590,11 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     
     id<PanBaiduNetdiskAPIClientCancellableRequest> internalRequest =
     (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)[self _fileUploadChunkRequestWithUploadId:uploadId
-                                                                                urlParameters:urlParameters
-                                                                                     fileData:fileData
-                                                                                     fileName:fileName
-                                                                                progressBlock:progressBlock
-                                                                              completionBlock:^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
+                                                                                          urlParameters:urlParameters
+                                                                                               fileData:fileData
+                                                                                               fileName:fileName
+                                                                                          progressBlock:progressBlock
+                                                                                        completionBlock:^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         if (error.isPanBaiduNetdiskTooManyRequestsError) {
             retryBlock();
@@ -1562,23 +1614,32 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 }
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_fileUploadChunkRequestWithUploadId:(NSString *)uploadId
-                                                                        urlParameters:(NSDictionary<NSString *,NSString *> *)urlParameters
-                                                                             fileData:(NSData *)fileData
-                                                                             fileName:(NSString *)fileName
-                                                                        progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
-                                                                      completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
+                                                                                  urlParameters:(NSDictionary<NSString *,NSString *> *)urlParameters
+                                                                                       fileData:(NSData *)fileData
+                                                                                       fileName:(NSString *)fileName
+                                                                                  progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
+                                                                                completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
 {
+    NSParameterAssert(uploadId);
+    NSParameterAssert(urlParameters);
     NSParameterAssert(fileData);
-    if (fileData == nil) {
+    NSParameterAssert(fileName);
+    
+    if (uploadId == nil ||
+        urlParameters == nil ||
+        fileData == nil ||
+        fileName == nil)
+    {
         if (completion) {
             completion(nil,[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeBadInputParameters]);
         }
         return nil;
     }
     
-    PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     clientRequest.progressBlock = progressBlock;
+    
+    PanBaiduNetdiskMakeWeakSelf;
     PanBaiduNetdiskMakeWeakReference(clientRequest)
     
     [self getAccessTokenWithCompletionBlock:
@@ -1586,7 +1647,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error) {
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             [PanBaiduNetdiskNetworkClient processResponse:nil
                                                  withData:nil
                                                     error:error
@@ -1606,7 +1667,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         
         NSString *mimeType = [PanBaiduNetdiskAPIClient extensionToMIMEType:fileName.pathExtension.lowercaseString];
         NSString *boundary = [PanBaiduNetdiskNetworkClient createMultipartFormBoundary];
-        NSString *charset = (NSString *)CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
+        NSString *charset = @"utf-8";
         NSString *contentType = [NSString stringWithFormat:@"%@; charset=%@; boundary=%@",kPanBaiduNetdiskContentTypeMultipartFormData, charset, boundary];
         
         NSMutableURLRequest *request = [strongSelf POSTRequestWithURL:requestURL
@@ -1627,7 +1688,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
                                                               fromData:requestHTTPBodyData
                                                      completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
             PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             
             [PanBaiduNetdiskNetworkClient processResponse:response
                                                  withData:data
@@ -1658,13 +1719,13 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
  @param isRevision Do you need multi-version support? 1 is supported, 0 is not supported, and the default is 0 (with this parameter, the renaming policy will be ignored)
  */
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_fileCreateRequestWithPath:(NSString *)filePath
-                                                                        size:(long long int)size
-                                                                       isDir:(BOOL)isDir
-                                                                   blockList:(nullable NSArray<NSString *> *)blockList
-                                                                    uploadId:(nullable NSString *)uploadId
-                                                              renamingPolicy:(NSUInteger)renamingPolicy
-                                                                  isRevision:(BOOL)isRevision
-                                                             completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
+                                                                                  size:(long long int)size
+                                                                                 isDir:(BOOL)isDir
+                                                                             blockList:(nullable NSArray<NSString *> *)blockList
+                                                                              uploadId:(nullable NSString *)uploadId
+                                                                        renamingPolicy:(NSUInteger)renamingPolicy
+                                                                            isRevision:(BOOL)isRevision
+                                                                       completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
 {
     NSParameterAssert(filePath);
     if (filePath == nil) {
@@ -1695,17 +1756,20 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     
     NSString *encodedPathParameter = [PanBaiduNetdiskNetworkClient URLEncodedParameters:@{@"path":filePath}];
     NSString *encodedPath = [encodedPathParameter componentsSeparatedByString:@"="].lastObject;
-    [bodyParameters setObject:encodedPath forKey:@"path"];
+    NSParameterAssert(encodedPath);
+    if (encodedPath) {
+        [bodyParameters setObject:encodedPath forKey:@"path"];
+    }
     
     NSString *method = @"create";
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     PanBaiduNetdiskAPIClientDictionaryBlock resultCompletion = ^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-        [strongSelf removeCancellableRequest:weak_clientRequest];
+        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
         
         if (completion){
             completion(dictionary,error);
@@ -1725,9 +1789,9 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     
     id<PanBaiduNetdiskAPIClientCancellableRequest> internalRequest =
     (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)[self _fileRequestWithMethod:method
-                                                                   urlParameters:nil
-                                                                  bodyParameters:bodyParameters
-                                                                 completionBlock:^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
+                                                                             urlParameters:nil
+                                                                            bodyParameters:bodyParameters
+                                                                           completionBlock:^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         if (error.isPanBaiduNetdiskTooManyRequestsError) {
             retryBlock();
@@ -1756,11 +1820,11 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
  @param renamingPolicy File naming policy. 1 indicates that when the path conflicts, rename it. 2 means that when the path conflicts and block_list is different, it is renamed. 3 Override the file with the same name when there is a file in the cloud.
  */
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_filePreCreateRequestWithPath:(NSString *)filePath
-                                                                           size:(long long int)size
-                                                                          isDir:(BOOL)isDir
-                                                                      blockList:(nullable NSArray<NSString *> *)blockList
-                                                                 renamingPolicy:(NSUInteger)renamingPolicy
-                                                                completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
+                                                                                     size:(long long int)size
+                                                                                    isDir:(BOOL)isDir
+                                                                                blockList:(nullable NSArray<NSString *> *)blockList
+                                                                           renamingPolicy:(NSUInteger)renamingPolicy
+                                                                          completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
 {
     NSParameterAssert(filePath);
     if (filePath == nil) {
@@ -1773,6 +1837,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     NSMutableDictionary *bodyParameters = [NSMutableDictionary new];
     
     [bodyParameters setObject:@(renamingPolicy) forKey:@"rtype"];
+    
     //Fixed value 1
     [bodyParameters setObject:@(1) forKey:@"autoinit"];
     
@@ -1786,21 +1851,25 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     }
     
     [bodyParameters setObject:@(isDir) forKey:@"isdir"];
+    
     [bodyParameters setObject:@(size) forKey:@"size"];
     
     NSString *encodedPathParameter = [PanBaiduNetdiskNetworkClient URLEncodedParameters:@{@"path":filePath}];
     NSString *encodedPath = [encodedPathParameter componentsSeparatedByString:@"="].lastObject;
-    [bodyParameters setObject:encodedPath forKey:@"path"];
+    NSParameterAssert(encodedPath);
+    if (encodedPath) {
+        [bodyParameters setObject:encodedPath forKey:@"path"];
+    }
     
     NSString *method = @"precreate";
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest);
     
     PanBaiduNetdiskAPIClientDictionaryBlock resultCompletion = ^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-        [strongSelf removeCancellableRequest:weak_clientRequest];
+        [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
         
         if (completion){
             completion(dictionary,error);
@@ -1820,9 +1889,9 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     
     id<PanBaiduNetdiskAPIClientCancellableRequest> internalRequest =
     (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)[self _fileRequestWithMethod:method
-                                                                   urlParameters:nil
-                                                                  bodyParameters:bodyParameters
-                                                                 completionBlock:^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
+                                                                             urlParameters:nil
+                                                                            bodyParameters:bodyParameters
+                                                                           completionBlock:^(NSDictionary *_Nullable dictionary, NSError * _Nullable error) {
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error.isPanBaiduNetdiskTooManyRequestsError) {
@@ -1845,9 +1914,9 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 #pragma mark - File Request
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)_fileRequestWithMethod:(NSString *)method
-                                                           urlParameters:(NSDictionary<NSString *,NSString *> *)urlParameters
-                                                          bodyParameters:(NSDictionary<NSString *,NSString *> *)bodyParameters
-                                                         completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
+                                                                     urlParameters:(NSDictionary<NSString *,NSString *> *)urlParameters
+                                                                    bodyParameters:(NSDictionary<NSString *,NSString *> *)bodyParameters
+                                                                   completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion
 {
     NSParameterAssert(method);
     NSParameterAssert(bodyParameters);
@@ -1859,7 +1928,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     }
     
     PanBaiduNetdiskMakeWeakSelf;
-    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createAndAddCancellableRequest];
+    PanBaiduNetdiskAPIClientRequest *clientRequest = [self createCachedCancellableRequest];
     PanBaiduNetdiskMakeWeakReference(clientRequest)
     
     [self getAccessTokenWithCompletionBlock:
@@ -1867,7 +1936,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
         
         if (error) {
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             [PanBaiduNetdiskNetworkClient processResponse:nil
                                                  withData:nil
                                                     error:error
@@ -1893,7 +1962,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         NSURLSessionDataTask *task = [strongSelf dataTaskWithRequest:request
                                                    completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
             PanBaiduNetdiskMakeStrongSelfAndReturnIfNil;
-            [strongSelf removeCancellableRequest:weak_clientRequest];
+            [strongSelf removeCancellableRequestFromCache:weak_clientRequest];
             
             [PanBaiduNetdiskNetworkClient processResponse:response
                                                  withData:data
@@ -1967,28 +2036,28 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 
 #pragma mark - Requests Cache
 
-- (PanBaiduNetdiskAPIClientRequest * _Nullable)cancellableRequestWithURLTaskIdentifier:(NSUInteger)URLTaskIdentifier{
-    return [self.networkClient.requestsCache cancellableRequestWithURLTaskIdentifier:URLTaskIdentifier];
+- (PanBaiduNetdiskAPIClientRequest * _Nullable)cachedCancellableRequestWithURLTaskIdentifier:(NSUInteger)URLTaskIdentifier{
+    return [self.networkClient.requestsCache cachedCancellableRequestWithURLTaskIdentifier:URLTaskIdentifier];
 }
 
-- (NSArray<PanBaiduNetdiskAPIClientRequest *> * _Nullable)allCancellableRequestsWithURLTasks{
-    return [self.networkClient.requestsCache allCancellableRequestsWithURLTasks];
+- (NSArray<PanBaiduNetdiskAPIClientRequest *> * _Nullable)allCachedCancellableRequestsWithURLTasks{
+    return [self.networkClient.requestsCache allCachedCancellableRequestsWithURLTasks];
 }
 
-- (PanBaiduNetdiskAPIClientRequest *)createAndAddCancellableRequest{
-    return [self.networkClient.requestsCache createAndAddCancellableRequest];
+- (PanBaiduNetdiskAPIClientRequest *)createCachedCancellableRequest{
+    return [self.networkClient.requestsCache createCachedCancellableRequest];
 }
 
-- (void)addCancellableRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
-    return [self.networkClient.requestsCache addCancellableRequest:request];
+- (void)addCancellableRequestToCache:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
+    return [self.networkClient.requestsCache addCancellableRequestToCache:request];
 }
 
-- (void)removeCancellableRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
-    return [self.networkClient.requestsCache removeCancellableRequest:request];
+- (void)removeCancellableRequestFromCache:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
+    return [self.networkClient.requestsCache removeCancellableRequestFromCache:request];
 }
 
-- (void)cancelAndRemoveAllRequests{
-    [self.networkClient.requestsCache cancelAndRemoveAllRequests];
+- (void)cancelAndRemoveAllCachedRequests{
+    [self.networkClient.requestsCache cancelAndRemoveAllCachedRequests];
 }
 
 #pragma mark - Internal

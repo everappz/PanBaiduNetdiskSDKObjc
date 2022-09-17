@@ -210,12 +210,12 @@ willPerformHTTPRedirection:(NSHTTPURLResponse *)response
 - (void)URLSession:(NSURLSession *)session
 didBecomeInvalidWithError:(nullable NSError *)error
 {
-    NSArray *tasks = [self allCancellableRequestsWithURLTasks];
+    NSArray *tasks = [self allCachedCancellableRequestsWithURLTasks];
     for (PanBaiduNetdiskAPIClientRequest *obj in tasks) {
         if (obj.errorCompletionBlock) {
             obj.errorCompletionBlock(error);
         }
-        [self removeCancellableRequest:obj];
+        [self removeCancellableRequestFromCache:obj];
     }
 }
 
@@ -225,7 +225,7 @@ didBecomeInvalidWithError:(nullable NSError *)error
     totalBytesSent:(int64_t)totalBytesSent
 totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
 {
-    PanBaiduNetdiskAPIClientRequest *request = [self cancellableRequestWithURLTaskIdentifier:task.taskIdentifier];
+    PanBaiduNetdiskAPIClientRequest *request = [self cachedCancellableRequestWithURLTaskIdentifier:task.taskIdentifier];
     int64_t totalSize = totalBytesExpectedToSend>0?totalBytesExpectedToSend:[request.totalContentSize longLongValue];
     if (request.progressBlock && totalSize > 0) {
         request.progressBlock((float)totalBytesSent/(float)totalSize);
@@ -236,14 +236,14 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
               task:(NSURLSessionTask *)task
 didCompleteWithError:(nullable NSError *)error
 {
-    PanBaiduNetdiskAPIClientRequest *request = [self cancellableRequestWithURLTaskIdentifier:task.taskIdentifier];
+    PanBaiduNetdiskAPIClientRequest *request = [self cachedCancellableRequestWithURLTaskIdentifier:task.taskIdentifier];
     if (request.errorCompletionBlock) {
         request.errorCompletionBlock(error);
     }
     if (request.downloadCompletionBlock) {
         request.downloadCompletionBlock(nil,error);
     }
-    [self removeCancellableRequest:request];
+    [self removeCancellableRequestFromCache:request];
 }
 
 - (void)URLSession:(NSURLSession *)session
@@ -251,7 +251,7 @@ didCompleteWithError:(nullable NSError *)error
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    PanBaiduNetdiskAPIClientRequest *request = [self cancellableRequestWithURLTaskIdentifier:dataTask.taskIdentifier];
+    PanBaiduNetdiskAPIClientRequest *request = [self cachedCancellableRequestWithURLTaskIdentifier:dataTask.taskIdentifier];
     if (request.didReceiveResponseBlock) {
         request.didReceiveResponseBlock(response);
     }
@@ -264,7 +264,7 @@ didReceiveResponse:(NSURLResponse *)response
           dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data
 {
-    PanBaiduNetdiskAPIClientRequest *request = [self cancellableRequestWithURLTaskIdentifier:dataTask.taskIdentifier];
+    PanBaiduNetdiskAPIClientRequest *request = [self cachedCancellableRequestWithURLTaskIdentifier:dataTask.taskIdentifier];
     if (request.didReceiveDataBlock) {
         request.didReceiveDataBlock(data);
     }
@@ -274,11 +274,11 @@ didReceiveResponse:(NSURLResponse *)response
       downloadTask:(NSURLSessionDownloadTask *)downloadTask
 didFinishDownloadingToURL:(NSURL *)location
 {
-    PanBaiduNetdiskAPIClientRequest *request = [self cancellableRequestWithURLTaskIdentifier:downloadTask.taskIdentifier];
+    PanBaiduNetdiskAPIClientRequest *request = [self cachedCancellableRequestWithURLTaskIdentifier:downloadTask.taskIdentifier];
     if(request.downloadCompletionBlock){
         request.downloadCompletionBlock(location,nil);
     }
-    [self removeCancellableRequest:request];
+    [self removeCancellableRequestFromCache:request];
 }
 
 - (void)URLSession:(NSURLSession *)session
@@ -287,7 +287,7 @@ didFinishDownloadingToURL:(NSURL *)location
  totalBytesWritten:(int64_t)totalBytesWritten
 totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
-    PanBaiduNetdiskAPIClientRequest *request = [self cancellableRequestWithURLTaskIdentifier:downloadTask.taskIdentifier];
+    PanBaiduNetdiskAPIClientRequest *request = [self cachedCancellableRequestWithURLTaskIdentifier:downloadTask.taskIdentifier];
     int64_t totalSize = totalBytesExpectedToWrite>0?totalBytesExpectedToWrite:[request.totalContentSize longLongValue];
     if(request.progressBlock && totalSize>0){
         request.progressBlock((float)totalBytesWritten/(float)totalSize);
@@ -296,24 +296,24 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 
 #pragma mark - Requests Cache
 
-- (PanBaiduNetdiskAPIClientRequest * _Nullable)cancellableRequestWithURLTaskIdentifier:(NSUInteger)URLTaskIdentifier{
-    return [self.requestsCache cancellableRequestWithURLTaskIdentifier:URLTaskIdentifier];
+- (PanBaiduNetdiskAPIClientRequest * _Nullable)cachedCancellableRequestWithURLTaskIdentifier:(NSUInteger)URLTaskIdentifier{
+    return [self.requestsCache cachedCancellableRequestWithURLTaskIdentifier:URLTaskIdentifier];
 }
 
-- (NSArray<PanBaiduNetdiskAPIClientRequest *> * _Nullable)allCancellableRequestsWithURLTasks{
-    return [self.requestsCache allCancellableRequestsWithURLTasks];
+- (NSArray<PanBaiduNetdiskAPIClientRequest *> * _Nullable)allCachedCancellableRequestsWithURLTasks{
+    return [self.requestsCache allCachedCancellableRequestsWithURLTasks];
 }
 
-- (PanBaiduNetdiskAPIClientRequest *)createAndAddCancellableRequest{
-    return [self.requestsCache createAndAddCancellableRequest];
+- (PanBaiduNetdiskAPIClientRequest *)createCachedCancellableRequest{
+    return [self.requestsCache createCachedCancellableRequest];
 }
 
-- (void)addCancellableRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
-    return [self.requestsCache addCancellableRequest:request];
+- (void)addCancellableRequestToCache:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
+    return [self.requestsCache addCancellableRequestToCache:request];
 }
 
-- (void)removeCancellableRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
-    return [self.requestsCache removeCancellableRequest:request];
+- (void)removeCancellableRequestFromCache:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
+    return [self.requestsCache removeCancellableRequestFromCache:request];
 }
 
 #pragma mark - Utils

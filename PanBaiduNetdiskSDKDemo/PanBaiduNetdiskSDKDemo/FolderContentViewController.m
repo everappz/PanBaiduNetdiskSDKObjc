@@ -355,20 +355,19 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
     }]];
     
     [actionsController addAction:[UIAlertAction actionWithTitle:@"Get First 10 bytes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [weakSelf.client getContentForFileWithID:file.identifier additionalHeaders:@{@"":@""} didReceiveDataBlock:^(NSData * _Nullable data) {
-            NSMutableDictionary *resultDictionary = [NSMutableDictionary new];
+        NSMutableData *receivedData = [NSMutableData new];
+        [weakSelf.client getContentForFileWithID:file.identifier additionalHeaders:@{@"Range":@"bytes=0-9"} didReceiveDataBlock:^(NSData * _Nullable data) {
             if (data) {
-                [resultDictionary setObject:[NSString stringWithFormat:@"%@",data] forKey:@"data"];
+            [receivedData appendData:data];
             }
-            [weakSelf processResultWithDictionary:resultDictionary error:nil];
         } didReceiveResponseBlock:^(NSURLResponse * _Nullable response) {
-            NSMutableDictionary *resultDictionary = [NSMutableDictionary new];
-            if (response) {
-                [resultDictionary setObject:[NSString stringWithFormat:@"%@",response] forKey:@"response"];
-            }
-            [weakSelf processResultWithDictionary:resultDictionary error:nil];
         } completionBlock:^(NSError * _Nullable error) {
-            [weakSelf processResultWithDictionary:nil error:error];
+            NSMutableDictionary *resultDictionary = [NSMutableDictionary new];
+            if (receivedData.length > 0) {
+                [resultDictionary setObject:[NSString stringWithFormat:@"%@",receivedData] forKey:@"data"];
+            }
+            NSCParameterAssert(receivedData.length == 10);
+            [weakSelf processResultWithDictionary:resultDictionary error:nil];
         }];
     }]];
     

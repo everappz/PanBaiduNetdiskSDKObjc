@@ -133,9 +133,15 @@
     }
     
     if (authState) {
-        NSData *authData = [NSKeyedArchiver archivedDataWithRootObject:authState.token
-                                                 requiringSecureCoding:YES
-                                                                 error:nil];
+        NSData *authData = nil;
+        if (@available(iOS 11.0, *)) {
+            authData = [NSKeyedArchiver archivedDataWithRootObject:authState.token
+                                             requiringSecureCoding:YES
+                                                             error:nil];
+            
+        } else {
+            authData = [NSKeyedArchiver archivedDataWithRootObject:authState.token];
+        }
         NSParameterAssert(authData);
         [authResult setObject:authData?:[NSData data] forKey:PanBaiduNetdiskAccessTokenDataKey];
     }

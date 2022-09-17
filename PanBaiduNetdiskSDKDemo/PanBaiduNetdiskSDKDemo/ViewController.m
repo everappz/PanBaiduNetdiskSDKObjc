@@ -73,11 +73,14 @@ NSString * const kViewControllerPanBaiduNetdiskAuthKey = @"kViewControllerPanBai
     }
     
     if (authState) {
-        NSData *authData = [NSKeyedArchiver archivedDataWithRootObject:authState.token
-                                                 requiringSecureCoding:YES
-                                                                 error:nil];
+        NSData *authData;
+        if (@available(iOS 11.0, *)) {
+            authData = [NSKeyedArchiver archivedDataWithRootObject:authState.token requiringSecureCoding:YES error:nil];
+            
+        } else {
+            authData = [NSKeyedArchiver archivedDataWithRootObject:authState.token];
+        }
         NSParameterAssert(authData);
-        
         [authStateDictionary setObject:authData?:[NSData data] forKey:PanBaiduNetdiskAccessTokenDataKey];
     }
     [self saveAuth:authStateDictionary];
@@ -181,7 +184,7 @@ NSString * const kViewControllerPanBaiduNetdiskAuthKey = @"kViewControllerPanBai
         __weak typeof (self) weakSelf = self;
         [self dismissViewControllerAnimated:YES completion:^{
             NSString *userID = [auth objectForKey:PanBaiduNetdiskUserIDKey];
-            PanBaiduNetdiskAPIClient *client = [PanBaiduNetdiskAPIClient createNewOrLoadCachedClientWithAuthData:auth];
+            PanBaiduNetdiskAPIClient *client = [PanBaiduNetdiskAPIClient createNewOrGetCachedClientWithAuthData:auth];
             
             FolderContentViewController *contentViewController = [FolderContentViewController new];
             contentViewController.client = client;

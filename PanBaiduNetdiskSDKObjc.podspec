@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = 'PanBaiduNetdiskSDKObjc'
-  s.version      = '1.0.0'
+  s.version      = '1.0.1'
   s.summary      = 'A pleasant wrapper around the Pan Baidu Netdisk API.'
   s.homepage     = 'https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc.git'
   s.author       = { 'Everappz' => 'https://everapz.com' }
