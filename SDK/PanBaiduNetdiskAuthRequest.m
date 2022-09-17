@@ -21,12 +21,12 @@
 
 @interface PanBaiduNetdiskAuthorizationCodeRequest()
 
-@property (nonatomic,copy) NSString *clientID;
-@property (nonatomic,copy) NSString *scope;
-@property (nonatomic,copy) NSString *redirectURI;
-@property (nonatomic,copy) NSString *deviceID;
-@property (nonatomic,copy) NSString *responseType;
-@property (nonatomic,copy) NSString *display;
+@property (nonatomic, copy) NSString *clientID;
+@property (nonatomic, copy) NSString *scope;
+@property (nonatomic, copy) NSString *redirectURI;
+@property (nonatomic, copy) NSString *deviceID;
+@property (nonatomic, copy) NSString *responseType;
+@property (nonatomic, copy) NSString *display;
 
 @end
 
@@ -95,11 +95,11 @@
 
 @interface PanBaiduNetdiskTokenExchangeRequest()
 
-@property (nonatomic,copy)NSString *clientID;
-@property (nonatomic,copy)NSString *clientSecret;
-@property (nonatomic,copy)NSString *redirectURI;
-@property (nonatomic,copy)NSString *grantType;
-@property (nonatomic,copy)NSString *code;
+@property (nonatomic, copy)NSString *clientID;
+@property (nonatomic, copy)NSString *clientSecret;
+@property (nonatomic, copy)NSString *redirectURI;
+@property (nonatomic, copy)NSString *grantType;
+@property (nonatomic, copy)NSString *code;
 
 @end
 
@@ -162,10 +162,10 @@
 
 @interface PanBaiduNetdiskTokenRefreshRequest()
 
-@property (nonatomic,copy)NSString *clientID;
-@property (nonatomic,copy)NSString *clientSecret;
-@property (nonatomic,copy)NSString *grantType;
-@property (nonatomic,copy)NSString *refreshToken;
+@property (nonatomic, copy)NSString *clientID;
+@property (nonatomic, copy)NSString *clientSecret;
+@property (nonatomic, copy)NSString *grantType;
+@property (nonatomic, copy)NSString *refreshToken;
 
 @end
 

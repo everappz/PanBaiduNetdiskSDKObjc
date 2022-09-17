@@ -14,11 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 @class LSOnlineFile;
 @class PanBaiduNetdiskAPIClient;
 
-#define LS_WEB_VIEW_SCALE_TO_FIT_SCRIPT() @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);"
-
 extern unsigned long long LSFileContentLengthUnknown;
 
-@interface PanBaiduNetdiskHelper : NSObject
+@interface DemoHelper : NSObject
 
 + (LSOnlineFile *)onlineFileForApiItem:(id)item
                        parentDirectory:(LSOnlineFile *)parentDirectory;
@@ -29,8 +27,6 @@ extern unsigned long long LSFileContentLengthUnknown;
 + (NSString *)uuidString;
 
 + (NSError *)unknownError;
-
-+ (PanBaiduNetdiskAPIClient *)createClientWithAuthData:(NSDictionary *)authData;
 
 + (NSString *)readableStringForByteSize:(NSNumber *)size;
 

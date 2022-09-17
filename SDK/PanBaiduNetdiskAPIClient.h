@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PanBaiduNetdiskAPIClient : NSObject
 
++ (nullable PanBaiduNetdiskAPIClient *)createNewOrLoadCachedClientWithAuthData:(NSDictionary *)clientAuthData;
+
 - (instancetype)initWithURLSessionConfiguration:(NSURLSessionConfiguration * _Nullable)URLSessionConfiguration
                                    authProvider:(PanBaiduAppAuthProvider *_Nullable)authProvider;
 
@@ -24,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)getAccessTokenWithCompletionBlock:(PanBaiduNetdiskAPIClientAccessTokenBlock _Nullable)completion;
 
-- (id<PanBaiduNetdiskAPIClientCancellableRequest>)updateAccessTokenWithCompletionBlock:(PanBaiduNetdiskAPIClientVoidBlock _Nullable)completion;
+- (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)updateAccessTokenWithCompletionBlock:(PanBaiduNetdiskAPIClientVoidBlock _Nullable)completion;
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)getUserInfoWithCompletionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion;
 
@@ -38,41 +40,41 @@ NS_ASSUME_NONNULL_BEGIN
                                                                        needmedia:(BOOL)needmedia
                                                                  completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion;
 
-- (id<PanBaiduNetdiskAPIClientCancellableRequest>)deleteFileAtPath:(NSString *)filePath
-                                                   completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion;
+- (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)deleteFileAtPath:(NSString *)filePath
+                                                             completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion;
 
-- (id<PanBaiduNetdiskAPIClientCancellableRequest>)renameFileAtPath:(NSString *)filePath
-                                                              name:(NSString *)name
-                                                   completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion;
+- (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)renameFileAtPath:(NSString *)filePath
+                                                                        name:(NSString *)name
+                                                             completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion;
 
-- (id<PanBaiduNetdiskAPIClientCancellableRequest>)moveFileAtPath:(NSString *)filePath
-                                                          toPath:(NSString *)toPath
-                                                 completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion;
+- (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)moveFileAtPath:(NSString *)filePath
+                                                                    toPath:(NSString *)toPath
+                                                           completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion;
 
-- (id<PanBaiduNetdiskAPIClientCancellableRequest>)copyFileAtPath:(NSString *)filePath
-                                                          toPath:(NSString *)toPath
-                                                 completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion;
+- (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)copyFileAtPath:(NSString *)filePath
+                                                                    toPath:(NSString *)toPath
+                                                           completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion;
 
 - (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)createFolderAtPath:(NSString *)path
                                                                completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completion;
 
-- (id<PanBaiduNetdiskAPIClientCancellableRequest>)getContentForFileWithID:(NSString *)fileID
-                                                        additionalHeaders:(NSDictionary *)additionalHeaders
-                                                      didReceiveDataBlock:(PanBaiduNetdiskAPIClientDidReceiveDataBlock _Nullable)didReceiveData
-                                                  didReceiveResponseBlock:(PanBaiduNetdiskAPIClientDidReceiveResponseBlock _Nullable)didReceiveResponse
-                                                          completionBlock:(PanBaiduNetdiskAPIClientErrorBlock _Nullable)completion;
+- (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)getContentForFileWithID:(NSString *)fileID
+                                                                  additionalHeaders:(NSDictionary *)additionalHeaders
+                                                                didReceiveDataBlock:(PanBaiduNetdiskAPIClientDidReceiveDataBlock _Nullable)didReceiveData
+                                                            didReceiveResponseBlock:(PanBaiduNetdiskAPIClientDidReceiveResponseBlock _Nullable)didReceiveResponse
+                                                                    completionBlock:(PanBaiduNetdiskAPIClientErrorBlock _Nullable)completion;
 
-- (id<PanBaiduNetdiskAPIClientCancellableRequest>)getDirectURLForFileWithID:(NSString *)fileID
-                                                            completionBlock:(PanBaiduNetdiskAPIClientURLBlock _Nullable)completion;
+- (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)getDirectURLForFileWithID:(NSString *)fileID
+                                                                      completionBlock:(PanBaiduNetdiskAPIClientURLBlock _Nullable)completion;
 
-- (id<PanBaiduNetdiskAPIClientCancellableRequest>)downloadContentForFileWithID:(NSString *)fileID
-                                                                 progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
-                                                               completionBlock:(PanBaiduNetdiskAPIClientURLBlock _Nullable)downloadCompletionBlock;
+- (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)downloadContentForFileWithID:(NSString *)fileID
+                                                                           progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
+                                                                         completionBlock:(PanBaiduNetdiskAPIClientURLBlock _Nullable)downloadCompletionBlock;
 
-- (id<PanBaiduNetdiskAPIClientCancellableRequest>)uploadFileFromLocalPath:(NSString *)localPath
-                                                             toRemotePath:(NSString *)remotePath
-                                                            progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
-                                                          completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completionBlock;
+- (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)uploadFileFromLocalPath:(NSString *)localPath
+                                                                       toRemotePath:(NSString *)remotePath
+                                                                      progressBlock:(PanBaiduNetdiskAPIClientProgressBlock _Nullable)progressBlock
+                                                                    completionBlock:(PanBaiduNetdiskAPIClientDictionaryBlock _Nullable)completionBlock;
 
 - (void)cancelAllRequests;
 

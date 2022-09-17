@@ -32,10 +32,11 @@ NSString * const PanBaiduAppAuthProviderDidChangeState = @"PanBaiduAppAuthProvid
                              state:(PanBaiduNetdiskAuthState *)authState
 {
     NSParameterAssert(authState);
-    NSParameterAssert(identifier);
     if (authState == nil){
         return nil;
     }
+    
+    NSParameterAssert(identifier);
     if (identifier == nil){
         return nil;
     }
@@ -51,7 +52,6 @@ NSString * const PanBaiduAppAuthProviderDidChangeState = @"PanBaiduAppAuthProvid
 
 - (void)getAccessTokenWithCompletionBlock:(PanBaiduNetdiskAccessTokenGetBlock)completion{
     PanBaiduNetdiskAccessToken *token = self.authState.token;
-    
     NSError *tokenUpdateError = token.tokenUpdateError;
     NSDate *tokenExpireDate = token.tokenExpireDate;
     

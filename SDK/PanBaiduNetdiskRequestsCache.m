@@ -19,7 +19,7 @@
 
 @implementation PanBaiduNetdiskRequestsCache
 
-- (instancetype)init{
+- (instancetype)init {
     self = [super init];
     if(self){
         self.cancellableRequests = [NSMutableArray<PanBaiduNetdiskAPIClientCancellableRequest> new];
@@ -28,11 +28,13 @@
     return self;
 }
 
-- (PanBaiduNetdiskAPIClientRequest * _Nullable)cancellableRequestWithURLTaskIdentifier:(NSUInteger)URLTaskIdentifier{
+- (PanBaiduNetdiskAPIClientRequest * _Nullable)cancellableRequestWithURLTaskIdentifier:(NSUInteger)URLTaskIdentifier {
     __block PanBaiduNetdiskAPIClientRequest *clientRequest = nil;
     [self.stateLock lock];
     [self.cancellableRequests enumerateObjectsUsingBlock:^(id<PanBaiduNetdiskAPIClientCancellableRequest>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if([obj isKindOfClass:[PanBaiduNetdiskAPIClientRequest class]] && ((PanBaiduNetdiskAPIClientRequest *)obj).URLTaskIdentifier==URLTaskIdentifier){
+        if ([obj isKindOfClass:[PanBaiduNetdiskAPIClientRequest class]] &&
+            ((PanBaiduNetdiskAPIClientRequest *)obj).URLTaskIdentifier == URLTaskIdentifier)
+        {
             clientRequest = obj;
             *stop = YES;
         }
@@ -44,13 +46,13 @@
 - (NSArray<PanBaiduNetdiskAPIClientRequest *> * _Nullable)allCancellableRequestsWithURLTasks{
     NSMutableArray *result = [NSMutableArray new];
     [self.stateLock lock];
-    [self.cancellableRequests enumerateObjectsUsingBlock:^(id<PanBaiduNetdiskAPIClientCancellableRequest>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    for (id<PanBaiduNetdiskAPIClientCancellableRequest> obj in self.cancellableRequests) {
         if ([obj isKindOfClass:[PanBaiduNetdiskAPIClientRequest class]] &&
-           ((PanBaiduNetdiskAPIClientRequest *)obj).URLTaskIdentifier > 0)
+            ((PanBaiduNetdiskAPIClientRequest *)obj).URLTaskIdentifier > 0)
         {
             [result addObject:obj];
         }
-    }];
+    }
     [self.stateLock unlock];
     return result;
 }
@@ -68,16 +70,21 @@
 
 - (void)addCancellableRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
     NSParameterAssert([request conformsToProtocol:@protocol(PanBaiduNetdiskAPIClientCancellableRequest)]);
-    if ([request conformsToProtocol:@protocol(PanBaiduNetdiskAPIClientCancellableRequest)]) {
-        [self.stateLock lock];
-        [self.cancellableRequests addObject:request];
-        NSParameterAssert(self.cancellableRequests.count < 100);
-        [self.stateLock unlock];
+    if ([request conformsToProtocol:@protocol(PanBaiduNetdiskAPIClientCancellableRequest)] == NO) {
+        return;
     }
+    [self.stateLock lock];
+    [self.cancellableRequests addObject:request];
+    NSParameterAssert(self.cancellableRequests.count < 100);
+    [self.stateLock unlock];
 }
 
 - (void)removeCancellableRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nonnull)request{
-    NSParameterAssert(request==nil || [request conformsToProtocol:@protocol(PanBaiduNetdiskAPIClientCancellableRequest)]);
+    if ([request isKindOfClass:[PanBaiduNetdiskAPIClientRequest class]]) {
+        PanBaiduNetdiskAPIClientRequest *clientRequest = (PanBaiduNetdiskAPIClientRequest *)request;
+        [self removeCancellableRequest:clientRequest.internalRequest];
+    }
+    
     if ([request conformsToProtocol:@protocol(PanBaiduNetdiskAPIClientCancellableRequest)]) {
         [self.stateLock lock];
         [self.cancellableRequests removeObject:request];
@@ -88,19 +95,22 @@
 - (void)cancelAndRemoveAllRequests {
     [self.stateLock lock];
     for (id<PanBaiduNetdiskAPIClientCancellableRequest>request in self.cancellableRequests) {
-        [PanBaiduNetdiskRequestsCache cleanCancelBlockForRequest:request];
+        [PanBaiduNetdiskRequestsCache removeCancelBlockForRequest:request];
+        if ([request respondsToSelector:@selector(cancel)]) {
         [request cancel];
+        }
     }
     [self.cancellableRequests removeAllObjects];
     [self.stateLock unlock];
 }
 
-+ (void)cleanCancelBlockForRequest:(id)request {
-    if ([request isKindOfClass:[PanBaiduNetdiskAPIClientRequest class]]) {
-        PanBaiduNetdiskAPIClientRequest *clientRequest = (PanBaiduNetdiskAPIClientRequest *)request;
-        [clientRequest setCancelBlock:nil];
-        [PanBaiduNetdiskRequestsCache cleanCancelBlockForRequest:clientRequest.internalRequest];
++ (void)removeCancelBlockForRequest:(id)request {
+    if ([request isKindOfClass:[PanBaiduNetdiskAPIClientRequest class]] == NO) {
+        return;
     }
+    PanBaiduNetdiskAPIClientRequest *clientRequest = (PanBaiduNetdiskAPIClientRequest *)request;
+    [clientRequest setCancelBlock:nil];
+    [PanBaiduNetdiskRequestsCache removeCancelBlockForRequest:clientRequest.internalRequest];
 }
 
 @end

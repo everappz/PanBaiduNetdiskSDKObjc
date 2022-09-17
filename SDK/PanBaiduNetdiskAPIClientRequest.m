@@ -9,6 +9,7 @@
 
 @interface PanBaiduNetdiskAPIClientRequest(){
     BOOL _сancelled;
+    id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable _internalRequest;
 }
 
 @property (nonatomic, strong) NSRecursiveLock *stateLock;
@@ -34,6 +35,7 @@
     _сancelled = YES;
     [_internalRequest cancel];
     [self.stateLock unlock];
+    
     if (self.cancelBlock) {
         self.cancelBlock();
     }
@@ -47,10 +49,18 @@
     return flag;
 }
 
-- (void)setInternalRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest>)internalRequest {
+- (void)setInternalRequest:(id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)internalRequest {
     [self.stateLock lock];
     _internalRequest = internalRequest;
     [self.stateLock unlock];
+}
+
+- (id<PanBaiduNetdiskAPIClientCancellableRequest> _Nullable)internalRequest {
+    id<PanBaiduNetdiskAPIClientCancellableRequest> internalRequest = nil;
+    [self.stateLock lock];
+    internalRequest = _internalRequest;
+    [self.stateLock unlock];
+    return internalRequest;
 }
 
 @end

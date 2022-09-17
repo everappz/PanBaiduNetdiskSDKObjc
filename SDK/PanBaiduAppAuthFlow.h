@@ -21,10 +21,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSArray<NSString *> *scopes;
 
 @property (nonatomic,strong) WKWebView *webView;
-@property (nonatomic,copy) PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock webViewDidStartLoadingBlock;
-@property (nonatomic,copy) PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock webViewDidFinishLoadingBlock;
-@property (nonatomic,copy) PanBaiduNetdiskAuthorizationWebViewCoordinatorErrorBlock webViewDidFailWithErrorBlock;
-@property (nonatomic,copy) PanBaiduNetdiskAppAuthManagerAuthorizationBlock completionBlock;
+@property (nonatomic, copy) PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock webViewDidStartLoadingBlock;
+@property (nonatomic, copy) PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock webViewDidFinishLoadingBlock;
+@property (nonatomic, copy) PanBaiduNetdiskAuthorizationWebViewCoordinatorErrorBlock webViewDidFailWithErrorBlock;
+@property (nonatomic, copy) PanBaiduNetdiskAppAuthManagerAuthorizationBlock completionBlock;
 
 - (void)start;
 - (void)cancel;

@@ -7,10 +7,11 @@
 //
 
 #import "PanBaiduNetdiskAuthViewController.h"
-#import "PanBaiduNetdiskHelper.h"
+#import "DemoHelper.h"
 #import <WebKit/WebKit.h>
 #import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
 
+#define LS_WEB_VIEW_SCALE_TO_FIT_SCRIPT() @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);"
 
 @interface PanBaiduNetdiskAuthViewController ()
 
@@ -77,7 +78,7 @@
                                                                     completionBlock:^(PanBaiduNetdiskAuthState * _Nullable authState, NSError * _Nullable error) {
         if (authState) {
             PanBaiduAppAuthProvider *authProvider =
-            [[PanBaiduAppAuthProvider alloc] initWithIdentifier:[PanBaiduNetdiskHelper uuidString] state:authState];
+            [[PanBaiduAppAuthProvider alloc] initWithIdentifier:[DemoHelper uuidString] state:authState];
             
             weakSelf.apiClient =
             [[PanBaiduNetdiskAPIClient alloc] initWithURLSessionConfiguration:nil authProvider:authProvider];

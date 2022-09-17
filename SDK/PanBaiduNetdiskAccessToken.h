@@ -22,14 +22,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, strong, nullable) NSError *tokenUpdateError;
 
 + (instancetype)accessTokenWithClientID:(NSString * _Nullable)clientID
-                    clientSecret:(NSString * _Nullable)clientSecret
-                     redirectURI:(NSString * _Nullable)redirectURI
-                           scope:(NSString * _Nullable)scope
-                     accessToken:(NSString * _Nullable)accessToken
-                    refreshToken:(NSString * _Nullable)refreshToken
-                       expiresIn:(NSNumber * _Nullable)expiresIn
-                 tokenExpireDate:(NSDate * _Nullable)tokenExpireDate
-                tokenUpdateError:(NSError * _Nullable)tokenUpdateError;
+                           clientSecret:(NSString * _Nullable)clientSecret
+                            redirectURI:(NSString * _Nullable)redirectURI
+                                  scope:(NSString * _Nullable)scope
+                            accessToken:(NSString * _Nullable)accessToken
+                           refreshToken:(NSString * _Nullable)refreshToken
+                              expiresIn:(NSNumber * _Nullable)expiresIn
+                        tokenExpireDate:(NSDate * _Nullable)tokenExpireDate
+                       tokenUpdateError:(NSError * _Nullable)tokenUpdateError;
 
 @end
 

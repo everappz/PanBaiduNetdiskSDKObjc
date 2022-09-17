@@ -9,10 +9,9 @@
 #import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
 #import "ViewController.h"
 #import "PanBaiduNetdiskAuthViewController.h"
-#import "PanBaiduNetdiskHelper.h"
+#import "DemoHelper.h"
 #import "FolderContentViewController.h"
 #import "LSOnlineFile.h"
-
 
 NSString * const kViewControllerPanBaiduNetdiskAuthKey = @"kViewControllerPanBaiduNetdiskAuthKey";
 
@@ -87,7 +86,6 @@ NSString * const kViewControllerPanBaiduNetdiskAuthKey = @"kViewControllerPanBai
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
     [self.stackView removeFromSuperview];
     
     UIStackView *stackView = [[UIStackView alloc] init];
@@ -183,7 +181,7 @@ NSString * const kViewControllerPanBaiduNetdiskAuthKey = @"kViewControllerPanBai
         __weak typeof (self) weakSelf = self;
         [self dismissViewControllerAnimated:YES completion:^{
             NSString *userID = [auth objectForKey:PanBaiduNetdiskUserIDKey];
-            PanBaiduNetdiskAPIClient *client = [PanBaiduNetdiskHelper createClientWithAuthData:auth];
+            PanBaiduNetdiskAPIClient *client = [PanBaiduNetdiskAPIClient createNewOrLoadCachedClientWithAuthData:auth];
             
             FolderContentViewController *contentViewController = [FolderContentViewController new];
             contentViewController.client = client;

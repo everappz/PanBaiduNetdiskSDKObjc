@@ -7,7 +7,7 @@
 //
 
 #import "FolderContentViewController.h"
-#import "PanBaiduNetdiskHelper.h"
+#import "DemoHelper.h"
 #import "LSOnlineFile.h"
 #import "LSPreviewItem.h"
 #import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
@@ -114,7 +114,7 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
         }
         else if(array!=nil && [array isKindOfClass:[NSArray class]]==NO){
             if(completion){
-                completion(nil,[PanBaiduNetdiskHelper unknownError]);
+                completion(nil,[DemoHelper unknownError]);
             }
         }
         else{
@@ -126,7 +126,7 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
                 }
             }];
             LSOnlineFile *parentDirectory = weakSelf.rootDirectory;
-            NSArray<LSOnlineFile *> *resultFiles = [PanBaiduNetdiskHelper onlineFilesFromApiFiles:files parentDirectory:parentDirectory];
+            NSArray<LSOnlineFile *> *resultFiles = [DemoHelper onlineFilesFromApiFiles:files parentDirectory:parentDirectory];
             if(completion){
                 completion(resultFiles,nil);
             }
@@ -162,11 +162,11 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
     LSOnlineFile *file = [self.files objectAtIndex:indexPath.row];
     cell.textLabel.text = file.name;
     if(file.directory == NO){
-        cell.imageView.image = [PanBaiduNetdiskHelper imageWithImage:[UIImage imageNamed:@"file.png"] scaledToSize:CGSizeMake(32.0, 32.0)];
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@, %@", file.createdAt, [PanBaiduNetdiskHelper readableStringForByteSize:@(file.contentLength)]];
+        cell.imageView.image = [DemoHelper imageWithImage:[UIImage imageNamed:@"file.png"] scaledToSize:CGSizeMake(32.0, 32.0)];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@, %@", file.createdAt, [DemoHelper readableStringForByteSize:@(file.contentLength)]];
     }
     else{
-        cell.imageView.image = [PanBaiduNetdiskHelper imageWithImage:[UIImage imageNamed:@"folder.png"] scaledToSize:CGSizeMake(32.0, 32.0)];
+        cell.imageView.image = [DemoHelper imageWithImage:[UIImage imageNamed:@"folder.png"] scaledToSize:CGSizeMake(32.0, 32.0)];
         cell.detailTextLabel.text = nil;
     }
     UIButton *actionButton =  [UIButton buttonWithType:UIButtonTypeInfoLight];

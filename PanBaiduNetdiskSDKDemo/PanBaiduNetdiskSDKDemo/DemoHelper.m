@@ -6,13 +6,13 @@
 //  Copyright © 2020 Everappz. All rights reserved.
 //
 
-#import "PanBaiduNetdiskHelper.h"
+#import "DemoHelper.h"
 #import "LSOnlineFile.h"
 #import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
 
 unsigned long long LSFileContentLengthUnknown = -1;
 
-@implementation PanBaiduNetdiskHelper
+@implementation DemoHelper
 
 + (LSOnlineFile *)onlineFileForApiItem:(id)item
                        parentDirectory:(LSOnlineFile *)parentDirectory
@@ -86,34 +86,6 @@ unsigned long long LSFileContentLengthUnknown = -1;
 
 + (NSError *)unknownError{
     return [[NSError alloc] initWithDomain:@"PanBaiduNetdiskAPIClientErrorDomain" code:-1 userInfo:nil];
-}
-
-+ (PanBaiduNetdiskAPIClient *)createClientWithAuthData:(NSDictionary *)clientAuthData{
-    PanBaiduNetdiskAPIClient *apiClient = nil;
-    id accessTokenDataObj = [clientAuthData objectForKey:PanBaiduNetdiskAccessTokenDataKey];
-    NSString *userID = [clientAuthData objectForKey:PanBaiduNetdiskUserIDKey];
-    if ([accessTokenDataObj isKindOfClass:[NSData class]] && userID.length > 0) {
-        NSData *authData = (NSData *)accessTokenDataObj;
-        NSParameterAssert(authData.length>0);
-        if (authData.length > 0) {
-            id obj = [NSKeyedUnarchiver unarchivedObjectOfClass:[PanBaiduNetdiskAccessToken class] fromData:authData error:nil];
-            NSParameterAssert([obj isKindOfClass:[PanBaiduNetdiskAccessToken class]]);
-            if([obj isKindOfClass:[PanBaiduNetdiskAccessToken class]]){
-                PanBaiduNetdiskAuthState *authState = [[PanBaiduNetdiskAuthState alloc] initWithToken:obj];
-                apiClient = [[PanBaiduNetdiskAPIClientCache sharedCache] clientForIdentifier:userID];
-                if (apiClient == nil) {
-                    apiClient = [[PanBaiduNetdiskAPIClientCache sharedCache] createClientForIdentifier:userID
-                                                                                             authState:authState
-                                                                                  sessionConfiguration:nil];
-                }
-            }
-        }
-    }
-    else {
-        NSParameterAssert(NO);
-    }
-    NSParameterAssert(apiClient);
-    return apiClient;
 }
 
 + (NSString *)readableStringForByteSize:(NSNumber *)size{

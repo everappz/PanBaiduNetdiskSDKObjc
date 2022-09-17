@@ -63,7 +63,24 @@ NSString * const PanBaiduNetdiskAPIErrorDictionary = @"PanBaiduNetdiskAPIErrorDi
 }
 
 - (BOOL)isPanBaiduNetdiskTooManyRequestsError{
-    return [self.domain isEqualToString:NSURLErrorDomain] && self.code == 429;
+    if ([self.domain isEqualToString:PanBaiduNetdiskErrorDomain] && self.code == PanBaiduNetdiskErrorCodeTooManyRequests) {
+        return YES;
+    }
+    
+    if ([self.domain isEqualToString:NSURLErrorDomain] && self.code == 429) {
+        return YES;
+    }
+    
+    NSError *underlyingError = [self.userInfo objectForKey:NSUnderlyingErrorKey];
+    if ([underlyingError.domain isEqualToString:NSURLErrorDomain] && self.code == 429) {
+        return YES;
+    }
+    
+    const BOOL isUnderlyingErrorNetDiskHitInterfaceFrequencyControl =
+    [underlyingError.domain isEqualToString:PanBaiduNetdiskAPIErrorDomain] &&
+    (underlyingError.code == PanBaiduNetdiskPublicAPIErrorCodeHitInterfaceFrequencyControl);
+    
+    return isUnderlyingErrorNetDiskHitInterfaceFrequencyControl;
 }
 
 - (BOOL)isPanBaiduNetdiskAuthError{

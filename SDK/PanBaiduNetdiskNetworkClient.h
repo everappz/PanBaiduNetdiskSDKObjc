@@ -22,11 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) PanBaiduNetdiskRequestsCache *requestsCache;
 
 - (NSMutableURLRequest *_Nullable)GETRequestWithURL:(NSURL *)requestURL
-                                        contentType:(NSString *_Nullable)contentType
                                         accessToken:(PanBaiduNetdiskAccessToken * _Nullable)accessToken;
 
 - (NSMutableURLRequest *_Nullable)DELETERequestWithURL:(NSURL *)requestURL
-                                           contentType:(NSString *_Nullable)contentType
                                            accessToken:(PanBaiduNetdiskAccessToken * _Nullable)accessToken;
 
 - (NSMutableURLRequest *_Nullable)POSTRequestWithURL:(NSURL *)requestURL
@@ -42,16 +40,16 @@ NS_ASSUME_NONNULL_BEGIN
                                      contentType:(NSString *_Nullable)contentType
                                      accessToken:(PanBaiduNetdiskAccessToken * _Nullable)accessToken;
 
-- (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request
+- (NSURLSessionDataTask *_Nullable)dataTaskWithRequest:(NSURLRequest *)request
                             completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
 
-- (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request;
+- (NSURLSessionDataTask *_Nullable)dataTaskWithRequest:(NSURLRequest *)request;
 
-- (NSURLSessionDownloadTask *)downloadTaskWithRequest:(NSURLRequest *)request;
+- (NSURLSessionDownloadTask *_Nullable)downloadTaskWithRequest:(NSURLRequest *)request;
 
-- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request fromFile:(NSURL *)fileURL;
+- (NSURLSessionUploadTask *_Nullable)uploadTaskWithRequest:(NSURLRequest *)request fromFile:(NSURL *)fileURL;
 
-- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request
+- (NSURLSessionUploadTask *_Nullable)uploadTaskWithRequest:(NSURLRequest *)request
                                          fromData:(nullable NSData *)bodyData
                                 completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
 
@@ -76,11 +74,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)URLEncodedPath:(NSString *)string;
 
 + (NSDictionary *_Nullable)queryDictionaryFromURL:(NSURL *)URL;
-
-+ (NSData *)createJSONBodyWithParameters:(NSDictionary<NSString *,NSString *> *)parameters;
-
-+ (NSData *)createMultipartRelatedBodyWithBoundary:(NSString *)boundary
-                                        parameters:(NSDictionary<NSString *,NSString *> *)parameters;
 
 + (NSData *)createMultipartFormDataBodyWithBoundary:(NSString *)boundary
                                       parameterName:(NSString *)parameterName

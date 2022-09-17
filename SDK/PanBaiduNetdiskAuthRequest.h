@@ -61,12 +61,12 @@ NS_ASSUME_NONNULL_BEGIN
                        responseType:(NSString *)responseType
                             display:(NSString *)display;
 
-@property (nonatomic,copy,readonly)NSString *clientID;
-@property (nonatomic,copy,readonly)NSString *scope;//Fixed value, the value must be basic, netdisk.
-@property (nonatomic,copy,readonly)NSString *redirectURI;
-@property (nonatomic,copy,readonly)NSString *deviceID;
-@property (nonatomic,copy,readonly)NSString *responseType;
-@property (nonatomic,copy,readonly)NSString *display;
+@property (nonatomic, copy,readonly)NSString *clientID;
+@property (nonatomic, copy,readonly)NSString *scope;//Fixed value, the value must be basic, netdisk.
+@property (nonatomic, copy,readonly)NSString *redirectURI;
+@property (nonatomic, copy,readonly)NSString *deviceID;
+@property (nonatomic, copy,readonly)NSString *responseType;
+@property (nonatomic, copy,readonly)NSString *display;
 
 @end
 
@@ -110,11 +110,11 @@ NS_ASSUME_NONNULL_BEGIN
                           grantType:(NSString *)grantType
                                code:(NSString *)code;
 
-@property (nonatomic,copy,readonly)NSString *clientID;
-@property (nonatomic,copy,readonly)NSString *clientSecret;
-@property (nonatomic,copy,readonly)NSString *redirectURI;
-@property (nonatomic,copy,readonly)NSString *grantType;
-@property (nonatomic,copy,readonly)NSString *code;
+@property (nonatomic, copy,readonly)NSString *clientID;
+@property (nonatomic, copy,readonly)NSString *clientSecret;
+@property (nonatomic, copy,readonly)NSString *redirectURI;
+@property (nonatomic, copy,readonly)NSString *grantType;
+@property (nonatomic, copy,readonly)NSString *code;
 
 @end
 
@@ -146,10 +146,10 @@ NS_ASSUME_NONNULL_BEGIN
                           grantType:(NSString *)grantType
                        refreshToken:(NSString *)refreshToken;
 
-@property (nonatomic,copy,readonly)NSString *clientID;
-@property (nonatomic,copy,readonly)NSString *clientSecret;
-@property (nonatomic,copy,readonly)NSString *grantType;
-@property (nonatomic,copy,readonly)NSString *refreshToken;
+@property (nonatomic, copy,readonly)NSString *clientID;
+@property (nonatomic, copy,readonly)NSString *clientSecret;
+@property (nonatomic, copy,readonly)NSString *grantType;
+@property (nonatomic, copy,readonly)NSString *refreshToken;
 
 @end
 

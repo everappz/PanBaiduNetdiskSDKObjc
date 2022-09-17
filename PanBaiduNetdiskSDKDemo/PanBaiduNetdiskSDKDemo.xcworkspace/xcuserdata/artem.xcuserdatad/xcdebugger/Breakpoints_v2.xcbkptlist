@@ -89,57 +89,10 @@
             filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAPIClient.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
+            startingLineNumber = "223"
+            endingLineNumber = "223"
             landmarkName = "-_getUserInfoWithCompletionBlock:"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "E2170C36-1A29-4C81-89B2-494C83C55B90 - a89f7d3f4f122fba"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__60-[PanBaiduNetdiskAPIClient _getUserInfoWithCompletionBlock:]_block_invoke"
-                  moduleName = "PanBaiduNetdiskSDKObjc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAPIClient.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "179"
-                  endingLineNumber = "179"
-                  offsetFromSymbolStart = "601">
-               </Location>
-               <Location
-                  uuid = "E2170C36-1A29-4C81-89B2-494C83C55B90 - a89f7d3f4f122fba"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__60-[PanBaiduNetdiskAPIClient _getUserInfoWithCompletionBlock:]_block_invoke"
-                  moduleName = "PanBaiduNetdiskSDKObjc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAPIClient.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "179"
-                  endingLineNumber = "179"
-                  offsetFromSymbolStart = "558">
-               </Location>
-               <Location
-                  uuid = "E2170C36-1A29-4C81-89B2-494C83C55B90 - a89f7d3f4f122fba"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__60-[PanBaiduNetdiskAPIClient _getUserInfoWithCompletionBlock:]_block_invoke"
-                  moduleName = "PanBaiduNetdiskSDKObjc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAPIClient.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "179"
-                  endingLineNumber = "179"
-                  offsetFromSymbolStart = "468">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -152,57 +105,10 @@
             filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAPIClient.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "190"
-            endingLineNumber = "190"
+            startingLineNumber = "234"
+            endingLineNumber = "234"
             landmarkName = "-_getUserInfoWithCompletionBlock:"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "ED584A56-38D5-41CE-9BC8-2866D737E375 - f051da9c65855cab"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__60-[PanBaiduNetdiskAPIClient _getUserInfoWithCompletionBlock:]_block_invoke_3"
-                  moduleName = "PanBaiduNetdiskSDKObjc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAPIClient.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "190"
-                  endingLineNumber = "190"
-                  offsetFromSymbolStart = "89">
-               </Location>
-               <Location
-                  uuid = "ED584A56-38D5-41CE-9BC8-2866D737E375 - f051da9c65855cab"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__60-[PanBaiduNetdiskAPIClient _getUserInfoWithCompletionBlock:]_block_invoke_3"
-                  moduleName = "PanBaiduNetdiskSDKObjc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAPIClient.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "190"
-                  endingLineNumber = "190"
-                  offsetFromSymbolStart = "74">
-               </Location>
-               <Location
-                  uuid = "ED584A56-38D5-41CE-9BC8-2866D737E375 - f051da9c65855cab"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__60-[PanBaiduNetdiskAPIClient _getUserInfoWithCompletionBlock:]_block_invoke_3"
-                  moduleName = "PanBaiduNetdiskSDKObjc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAPIClient.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "190"
-                  endingLineNumber = "190"
-                  offsetFromSymbolStart = "64">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -215,8 +121,8 @@
             filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskNetworkClient.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "365"
-            endingLineNumber = "365"
+            startingLineNumber = "359"
+            endingLineNumber = "359"
             landmarkName = "+processResponse:withData:error:completion:"
             landmarkType = "7">
             <Locations>
@@ -264,6 +170,21 @@
                   startingLineNumber = "365"
                   endingLineNumber = "365"
                   offsetFromSymbolStart = "800">
+               </Location>
+               <Location
+                  uuid = "C5CAF1F5-8CA0-4309-9912-55C79707B055 - ac1c3f9576043c0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "+[PanBaiduNetdiskNetworkClient processResponse:withData:error:completion:]"
+                  moduleName = "PanBaiduNetdiskSDKObjc"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskNetworkClient.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "359"
+                  endingLineNumber = "359"
+                  offsetFromSymbolStart = "889">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -341,8 +262,8 @@
             filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAuthState.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "90"
-            endingLineNumber = "90"
+            startingLineNumber = "85"
+            endingLineNumber = "85"
             landmarkName = "-completeTokenUpdateWithResponse:error:"
             landmarkType = "7">
             <Locations>
@@ -391,6 +312,21 @@
                   endingLineNumber = "90"
                   offsetFromSymbolStart = "380">
                </Location>
+               <Location
+                  uuid = "3F706E77-7500-46DF-BCAC-430F5ADCAA82 - ab43c399692640c7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[PanBaiduNetdiskAuthState completeTokenUpdateWithResponse:error:]"
+                  moduleName = "PanBaiduNetdiskSDKObjc"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskAuthState.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "85"
+                  endingLineNumber = "85"
+                  offsetFromSymbolStart = "388">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -404,8 +340,8 @@
             filePath = "PanBaiduNetdiskSDKDemo/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "209"
-            endingLineNumber = "209"
+            startingLineNumber = "207"
+            endingLineNumber = "207"
             landmarkName = "-saveAuth:"
             landmarkType = "7">
          </BreakpointContent>
@@ -420,8 +356,8 @@
             filePath = "PanBaiduNetdiskSDKDemo/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "61"
-            endingLineNumber = "61"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
             landmarkName = "-authProviderDidChangeNotification:"
             landmarkType = "7">
          </BreakpointContent>
@@ -436,8 +372,8 @@
             filePath = "PanBaiduNetdiskSDKDemo/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "176"
-            endingLineNumber = "176"
+            startingLineNumber = "174"
+            endingLineNumber = "174"
             landmarkName = "-panBaiduNetdiskAuthViewController:didSuccessWithAuth:"
             landmarkType = "7">
          </BreakpointContent>
@@ -452,8 +388,8 @@
             filePath = "PanBaiduNetdiskSDKDemo/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "161"
-            endingLineNumber = "161"
+            startingLineNumber = "159"
+            endingLineNumber = "159"
             landmarkName = "-panBaiduNetdiskAuthViewController:didFailWithError:"
             landmarkType = "7">
          </BreakpointContent>
@@ -468,25 +404,9 @@
             filePath = "PanBaiduNetdiskSDKDemo/PanBaiduNetdiskAuthViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "141"
-            endingLineNumber = "141"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
             landmarkName = "-completeWithAuthState:userModelDictionary:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "65EFDEF8-BE85-4415-8CE5-ABB5F4585304"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PanBaiduNetdiskSDKDemo/FolderContentViewController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "293"
-            endingLineNumber = "293"
-            landmarkName = "-actionCreateFolder:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -500,8 +420,8 @@
             filePath = "Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskRequestsCache.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "63"
-            endingLineNumber = "63"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
             landmarkName = "-createAndAddCancellableRequest"
             landmarkType = "7">
             <Locations>
@@ -533,6 +453,21 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "63"
                   endingLineNumber = "63"
+                  offsetFromSymbolStart = "20">
+               </Location>
+               <Location
+                  uuid = "36F41A30-E74A-4FC5-B7B2-DDCA810954A6 - 56182d3896a190a9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__62-[PanBaiduNetdiskRequestsCache createAndAddCancellableRequest]_block_invoke"
+                  moduleName = "PanBaiduNetdiskSDKObjc"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/artem/Documents/projects/PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKDemo/Pods/PanBaiduNetdiskSDKObjc/SDK/PanBaiduNetdiskRequestsCache.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "65"
+                  endingLineNumber = "65"
                   offsetFromSymbolStart = "20">
                </Location>
             </Locations>

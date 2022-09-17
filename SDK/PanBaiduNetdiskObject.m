@@ -24,11 +24,13 @@
 @implementation PanBaiduNetdiskObject
 
 - (instancetype)initWithDictionary:(NSDictionary *_Nonnull)dictionary{
-    if(dictionary==nil){
+    NSParameterAssert(dictionary);
+    if (dictionary == nil) {
         return nil;
     }
+    
     self = [super init];
-    if(self){
+    if (self) {
         self.dictionary = dictionary;
     }
     return self;

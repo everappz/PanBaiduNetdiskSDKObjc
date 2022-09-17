@@ -14,11 +14,10 @@
 @interface PanBaiduNetdiskAuthState()
 
 @property (nonatomic, nullable, strong) PanBaiduNetdiskAccessToken *token;
-@property (nonatomic, strong) NSRecursiveLock *tokenAccessLock;
+@property (nonatomic, strong) NSRecursiveLock *stateLock;
 @property (nonatomic, strong) PanBaiduNetdiskNetworkClient *networkClient;
 @property (nonatomic, weak) NSURLSessionDataTask *tokenUpdateTask;
-@property (nonatomic, strong) NSMutableArray<PanBaiduNetdiskAccessTokenUpdateBlock> *tokenCompletionBlocks;
-@property (nonatomic, strong) NSRecursiveLock *tokenUpdateLock;
+@property (nonatomic, strong) NSMutableArray<PanBaiduNetdiskAccessTokenUpdateBlock> *tokenUpdateCompletionBlocks;
 
 @end
 
@@ -31,9 +30,8 @@
     self = [super init];
     if (self) {
         _token = token;
-        self.tokenUpdateLock = [NSRecursiveLock new];
-        self.tokenAccessLock = [NSRecursiveLock new];
-        self.tokenCompletionBlocks = [NSMutableArray<PanBaiduNetdiskAccessTokenUpdateBlock> new];
+        self.stateLock = [NSRecursiveLock new];
+        self.tokenUpdateCompletionBlocks = [NSMutableArray<PanBaiduNetdiskAccessTokenUpdateBlock> new];
         self.networkClient = [[PanBaiduNetdiskNetworkClient alloc] initWithURLSessionConfiguration:nil];
     }
     return self;
@@ -45,16 +43,16 @@
         return;
     }
     PanBaiduNetdiskAccessTokenUpdateBlock copiedBlock = [block copy];
-    [self.tokenUpdateLock lock];
-    [self.tokenCompletionBlocks addObject:copiedBlock];
-    [self.tokenUpdateLock unlock];
+    [self.stateLock lock];
+    [self.tokenUpdateCompletionBlocks addObject:copiedBlock];
+    [self.stateLock unlock];
 }
 
 - (PanBaiduNetdiskAccessToken *)token {
     PanBaiduNetdiskAccessToken *token = nil;
-    [self.tokenUpdateLock lock];
+    [self.stateLock lock];
     token = _token;
-    [self.tokenUpdateLock unlock];
+    [self.stateLock unlock];
     return token;
 }
 
@@ -62,17 +60,14 @@
     NSString *accessToken = nil;
     NSError *tokenUpdateError = nil;
     
-    [self.tokenAccessLock lock];
+    [self.stateLock lock];
     accessToken = [_token.accessToken copy];
     tokenUpdateError = [_token.tokenUpdateError copy];
-    [self.tokenAccessLock unlock];
-    
-    [self.tokenUpdateLock lock];
-    for (PanBaiduNetdiskAccessTokenUpdateBlock block in self.tokenCompletionBlocks){
+    for (PanBaiduNetdiskAccessTokenUpdateBlock block in self.tokenUpdateCompletionBlocks){
         block(accessToken,tokenUpdateError);
     }
-    [self.tokenCompletionBlocks removeAllObjects];
-    [self.tokenUpdateLock unlock];
+    [self.tokenUpdateCompletionBlocks removeAllObjects];
+    [self.stateLock unlock];
 }
 
 #pragma mark - Token Update
@@ -92,8 +87,7 @@
         tokenExpireDate = [NSDate dateWithTimeIntervalSinceNow:expires_in.longLongValue];
     }
     
-    [self.tokenAccessLock lock];
-    
+    [self.stateLock lock];
     PanBaiduNetdiskAccessToken *tokenUpdated =
     [PanBaiduNetdiskAccessToken
      accessTokenWithClientID:_token.clientID
@@ -105,9 +99,8 @@
      expiresIn:expires_in
      tokenExpireDate:tokenExpireDate
      tokenUpdateError:error];
-    
     _token = tokenUpdated;
-    [self.tokenAccessLock unlock];
+    [self.stateLock unlock];
     
     [self processTokenUpdateCompletionBlocks];
     
@@ -120,9 +113,9 @@
     [self addTokenUpdateCompletionBlock:completion];
     
     NSURLSessionDataTask *existingTokenUpdateTask = nil;
-    [self.tokenUpdateLock lock];
+    [self.stateLock lock];
     existingTokenUpdateTask = self.tokenUpdateTask;
-    [self.tokenUpdateLock unlock];
+    [self.stateLock unlock];
     
     if (existingTokenUpdateTask) {
         return existingTokenUpdateTask;
@@ -132,11 +125,11 @@
     NSString *clientSecret = nil;
     NSString *refreshToken = nil;
     
-    [self.tokenAccessLock lock];
+    [self.stateLock lock];
     clientID = [_token.clientID copy];
     clientSecret = [_token.clientSecret copy];
     refreshToken = [_token.refreshToken copy];
-    [self.tokenAccessLock unlock];
+    [self.stateLock unlock];
     
     NSParameterAssert(clientID);
     NSParameterAssert(clientSecret);
@@ -169,9 +162,9 @@
         }];
     }];
     
-    [self.tokenUpdateLock lock];
+    [self.stateLock lock];
     self.tokenUpdateTask = tokenUpdateTask;
-    [self.tokenUpdateLock unlock];
+    [self.stateLock unlock];
     
     [tokenUpdateTask resume];
     return tokenUpdateTask;

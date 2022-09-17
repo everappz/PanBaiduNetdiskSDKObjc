@@ -24,7 +24,7 @@
 		AC580778248E7F4900A5D75A /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC580777248E7F4900A5D75A /* WebKit.framework */; };
 		AC58077A248E7F5000A5D75A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC580779248E7F5000A5D75A /* Foundation.framework */; };
 		AC58077F248E882900A5D75A /* FolderContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC58077E248E882900A5D75A /* FolderContentViewController.m */; };
-		AC580782248E942800A5D75A /* PanBaiduNetdiskHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AC580781248E942800A5D75A /* PanBaiduNetdiskHelper.m */; };
+		AC580782248E942800A5D75A /* DemoHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AC580781248E942800A5D75A /* DemoHelper.m */; };
 		AC580785248E94B400A5D75A /* LSOnlineFile.m in Sources */ = {isa = PBXBuildFile; fileRef = AC580784248E94B400A5D75A /* LSOnlineFile.m */; };
 		AC580789248EE38800A5D75A /* file.png in Resources */ = {isa = PBXBuildFile; fileRef = AC580787248EE38800A5D75A /* file.png */; };
 		AC58078A248EE38800A5D75A /* folder.png in Resources */ = {isa = PBXBuildFile; fileRef = AC580788248EE38800A5D75A /* folder.png */; };
@@ -57,8 +57,8 @@
 		AC580779248E7F5000A5D75A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		AC58077D248E882900A5D75A /* FolderContentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderContentViewController.h; sourceTree = "<group>"; };
 		AC58077E248E882900A5D75A /* FolderContentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FolderContentViewController.m; sourceTree = "<group>"; };
-		AC580780248E942800A5D75A /* PanBaiduNetdiskHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PanBaiduNetdiskHelper.h; sourceTree = "<group>"; };
-		AC580781248E942800A5D75A /* PanBaiduNetdiskHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PanBaiduNetdiskHelper.m; sourceTree = "<group>"; };
+		AC580780248E942800A5D75A /* DemoHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoHelper.h; sourceTree = "<group>"; };
+		AC580781248E942800A5D75A /* DemoHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoHelper.m; sourceTree = "<group>"; };
 		AC580783248E94B400A5D75A /* LSOnlineFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LSOnlineFile.h; sourceTree = "<group>"; };
 		AC580784248E94B400A5D75A /* LSOnlineFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LSOnlineFile.m; sourceTree = "<group>"; };
 		AC580787248EE38800A5D75A /* file.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = file.png; sourceTree = "<group>"; };
@@ -135,8 +135,8 @@
 				AC58075F248E7DF300A5D75A /* SceneDelegate.m */,
 				AC580761248E7DF300A5D75A /* ViewController.h */,
 				AC580762248E7DF300A5D75A /* ViewController.m */,
-				AC580780248E942800A5D75A /* PanBaiduNetdiskHelper.h */,
-				AC580781248E942800A5D75A /* PanBaiduNetdiskHelper.m */,
+				AC580780248E942800A5D75A /* DemoHelper.h */,
+				AC580781248E942800A5D75A /* DemoHelper.m */,
 				AC580783248E94B400A5D75A /* LSOnlineFile.h */,
 				AC580784248E94B400A5D75A /* LSOnlineFile.m */,
 				AC053BFA28D22AD8008984BF /* LSPreviewItem.h */,
@@ -286,7 +286,7 @@
 				AC58077F248E882900A5D75A /* FolderContentViewController.m in Sources */,
 				AC053BFC28D22AD8008984BF /* LSPreviewItem.m in Sources */,
 				AC580763248E7DF300A5D75A /* ViewController.m in Sources */,
-				AC580782248E942800A5D75A /* PanBaiduNetdiskHelper.m in Sources */,
+				AC580782248E942800A5D75A /* DemoHelper.m in Sources */,
 				AC58075D248E7DF300A5D75A /* AppDelegate.m in Sources */,
 				AC58076E248E7DF600A5D75A /* main.m in Sources */,
 				AC580785248E94B400A5D75A /* LSOnlineFile.m in Sources */,
@@ -367,7 +367,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -419,7 +419,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -435,6 +435,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2Z797QJNH7;
 				INFOPLIST_FILE = PanBaiduNetdiskSDKDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -454,6 +455,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2Z797QJNH7;
 				INFOPLIST_FILE = PanBaiduNetdiskSDKDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

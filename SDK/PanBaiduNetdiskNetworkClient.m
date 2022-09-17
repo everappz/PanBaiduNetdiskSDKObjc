@@ -33,7 +33,7 @@ NSURLSessionDownloadDelegate
 
 - (instancetype)initWithURLSessionConfiguration:(NSURLSessionConfiguration * _Nullable)URLSessionConfiguration{
     self = [super init];
-    if (self){
+    if (self) {
         NSURLSessionConfiguration *resultConfiguration = URLSessionConfiguration;
         if (resultConfiguration == nil) {
             resultConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -45,33 +45,31 @@ NSURLSessionDownloadDelegate
         
         NSOperationQueue *callbackQueue = [[NSOperationQueue alloc] init];
         callbackQueue.maxConcurrentOperationCount = 1;
-        
         NSURLSession *session = [NSURLSession sessionWithConfiguration:resultConfiguration
                                                               delegate:self
                                                          delegateQueue:callbackQueue];
         self.session = session;
+        
         self.requestsCache = [PanBaiduNetdiskRequestsCache new];
     }
     return self;
 }
 
 - (NSMutableURLRequest *_Nullable)GETRequestWithURL:(NSURL *)requestURL
-                                        contentType:(NSString * _Nullable)contentType
                                         accessToken:(PanBaiduNetdiskAccessToken * _Nullable)accessToken
 {
     return [self requestWithURL:requestURL
                          method:@"GET"
-                    contentType:contentType
+                    contentType:nil
                     accessToken:accessToken];
 }
 
 - (NSMutableURLRequest *_Nullable)DELETERequestWithURL:(NSURL *)requestURL
-                                           contentType:(NSString *_Nullable)contentType
                                            accessToken:(PanBaiduNetdiskAccessToken * _Nullable)accessToken
 {
     return [self requestWithURL:requestURL
                          method:@"DELETE"
-                    contentType:contentType
+                    contentType:nil
                     accessToken:accessToken];
 }
 
@@ -105,7 +103,11 @@ NSURLSessionDownloadDelegate
         return nil;
     }
     
-    //    NSString *type = nil;
+    NSParameterAssert(method);
+    if (method == nil) {
+        return nil;
+    }
+    
     NSString *token = nil;
     NSString *authorizationHeader = nil;
     NSURL *requestURLModified = requestURL;
@@ -113,10 +115,6 @@ NSURLSessionDownloadDelegate
     if (accessToken) {
         token = accessToken.accessToken;
         NSParameterAssert(token);
-        //        if (type == nil || type.length == 0) {
-        //            type = @"Bearer";
-        //        }
-        //        authorizationHeader = [NSString stringWithFormat:@"%@ %@",type,token];
     }
     
     NSString *accessTokenStringFromComponents = [PanBaiduNetdiskNetworkClient accessTokenFromURL:requestURL];
@@ -133,10 +131,6 @@ NSURLSessionDownloadDelegate
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:requestURLModified];
     [request setHTTPMethod:method];
     
-    if (authorizationHeader) {
-        [request addValue:authorizationHeader forHTTPHeaderField:@"Authorization"];
-    }
-    
     if (contentType) {
         [request addValue:contentType forHTTPHeaderField:@"Content-Type"];
     }
@@ -148,7 +142,7 @@ NSURLSessionDownloadDelegate
     return request;
 }
 
-- (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request
+- (NSURLSessionDataTask *_Nullable)dataTaskWithRequest:(NSURLRequest *)request
                             completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler{
     NSParameterAssert(self.session);
     NSParameterAssert(request);
@@ -161,7 +155,7 @@ NSURLSessionDownloadDelegate
     return nil;
 }
 
-- (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request{
+- (NSURLSessionDataTask *_Nullable)dataTaskWithRequest:(NSURLRequest *)request{
     NSParameterAssert(self.session);
     NSParameterAssert(request);
     if (self.session && request) {
@@ -170,7 +164,7 @@ NSURLSessionDownloadDelegate
     return nil;
 }
 
-- (NSURLSessionDownloadTask *)downloadTaskWithRequest:(NSURLRequest *)request{
+- (NSURLSessionDownloadTask *_Nullable)downloadTaskWithRequest:(NSURLRequest *)request{
     NSParameterAssert(self.session);
     NSParameterAssert(request);
     if (self.session && request) {
@@ -179,7 +173,7 @@ NSURLSessionDownloadDelegate
     return nil;
 }
 
-- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request fromFile:(NSURL *)fileURL{
+- (NSURLSessionUploadTask *_Nullable)uploadTaskWithRequest:(NSURLRequest *)request fromFile:(NSURL *)fileURL{
     NSParameterAssert(self.session);
     NSParameterAssert(request);
     if (self.session && request) {
@@ -188,7 +182,7 @@ NSURLSessionDownloadDelegate
     return nil;
 }
 
-- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request
+- (NSURLSessionUploadTask *_Nullable)uploadTaskWithRequest:(NSURLRequest *)request
                                          fromData:(nullable NSData *)bodyData
                                 completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler
 {
@@ -217,12 +211,12 @@ willPerformHTTPRedirection:(NSHTTPURLResponse *)response
 didBecomeInvalidWithError:(nullable NSError *)error
 {
     NSArray *tasks = [self allCancellableRequestsWithURLTasks];
-    [tasks enumerateObjectsUsingBlock:^(PanBaiduNetdiskAPIClientRequest * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    for (PanBaiduNetdiskAPIClientRequest *obj in tasks) {
         if (obj.errorCompletionBlock) {
             obj.errorCompletionBlock(error);
         }
         [self removeCancellableRequest:obj];
-    }];
+    }
 }
 
 - (void)URLSession:(NSURLSession *)session
@@ -383,7 +377,7 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
     if(error){
         resultError = error;
     }
-    else if([response isKindOfClass:[NSHTTPURLResponse class]] && ([HTTPResponse statusCode]>=300 || [HTTPResponse statusCode]<200)){
+    else if([response isKindOfClass:[NSHTTPURLResponse class]] && ([HTTPResponse statusCode] >= 300 || [HTTPResponse statusCode] < 200)){
         resultError = [NSError errorWithDomain:NSURLErrorDomain code:[HTTPResponse statusCode] userInfo:nil];
     }
     if(completion){
@@ -402,23 +396,6 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
     return url;
 }
 
-+ (NSData *)createMultipartRelatedBodyWithBoundary:(NSString *)boundary
-                                        parameters:(NSDictionary<NSString *,NSString *> *)parameters
-{
-    NSMutableData *httpBody = [NSMutableData data];
-    [httpBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    [httpBody appendData:[@"{" dataUsingEncoding:NSUTF8StringEncoding]];
-    __block NSUInteger index = 0;
-    [parameters enumerateKeysAndObjectsUsingBlock:^(NSString *parameterKey, NSString *parameterValue, BOOL *stop) {
-        NSString *separator = (index<(parameters.count-1))?@",":@"";
-        [httpBody appendData:[[NSString stringWithFormat:@"\"%@\":\"%@\"%@", parameterKey, parameterValue,separator] dataUsingEncoding:NSUTF8StringEncoding]];
-        index++;
-    }];
-    [httpBody appendData:[@"}" dataUsingEncoding:NSUTF8StringEncoding]];
-    [httpBody appendData:[[NSString stringWithFormat:@"\r\n--%@--", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    return httpBody;
-}
-
 + (NSData *)createMultipartFormDataBodyWithBoundary:(NSString *)boundary
                                       parameterName:(NSString *)parameterName
                                            fileName:(NSString *)fileName
@@ -431,19 +408,6 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
     [httpBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n\r\n", mimeType] dataUsingEncoding:NSUTF8StringEncoding]];
     [httpBody appendData:fileData];
     [httpBody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    return httpBody;
-}
-
-+ (NSData *)createJSONBodyWithParameters:(NSDictionary<NSString *,NSString *> *)parameters {
-    NSMutableData *httpBody = [NSMutableData data];
-    [httpBody appendData:[@"{" dataUsingEncoding:NSUTF8StringEncoding]];
-    __block NSUInteger index = 0;
-    [parameters enumerateKeysAndObjectsUsingBlock:^(NSString *parameterKey, NSString *parameterValue, BOOL *stop) {
-        NSString *separator = (index<(parameters.count-1))?@",":@"";
-        [httpBody appendData:[[NSString stringWithFormat:@"\"%@\":\"%@\"%@", parameterKey, parameterValue,separator] dataUsingEncoding:NSUTF8StringEncoding]];
-        index++;
-    }];
-    [httpBody appendData:[@"}" dataUsingEncoding:NSUTF8StringEncoding]];
     return httpBody;
 }
 
