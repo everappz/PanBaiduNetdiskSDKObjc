@@ -1,22 +1,16 @@
 PODS:
-  - PanBaiduNetdiskSDKObjc (0.0.2)
+  - PanBaiduNetdiskSDKObjc (1.0.5)
 
 DEPENDENCIES:
-  - PanBaiduNetdiskSDKObjc (from `https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc`, commit `06e8c3b6107282b921a19dfc48ea57965b795b40`)
+  - PanBaiduNetdiskSDKObjc
 
-EXTERNAL SOURCES:
-  PanBaiduNetdiskSDKObjc:
-    :commit: 06e8c3b6107282b921a19dfc48ea57965b795b40
-    :git: https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc
-
-CHECKOUT OPTIONS:
-  PanBaiduNetdiskSDKObjc:
-    :commit: 06e8c3b6107282b921a19dfc48ea57965b795b40
-    :git: https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - PanBaiduNetdiskSDKObjc
 
 SPEC CHECKSUMS:
-  PanBaiduNetdiskSDKObjc: a5f159ec7c27bd2867debcb6c7a08fe509bfccb8
+  PanBaiduNetdiskSDKObjc: 4ffdb262e52faf566b232aae4763234d0d3dda78
 
-PODFILE CHECKSUM: 04362adda8fe38a6b34594b2cdd9134dc0b05f89
+PODFILE CHECKSUM: 0676784376913b54e32e3099fa3fa4074750054b
 
 COCOAPODS: 1.11.3

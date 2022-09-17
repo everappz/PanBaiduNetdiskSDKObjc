@@ -1,5 +1,6 @@
 # Uncomment the next line to define a global platform for your project
 platform :ios, '9.0'
+source 'https://github.com/CocoaPods/Specs.git'
 
 target 'PanBaiduNetdiskSDKDemo' do
   # Comment the next line if you don't want to use dynamic frameworks
@@ -7,6 +8,6 @@ target 'PanBaiduNetdiskSDKDemo' do
 
   # Pods for PanBaiduNetdiskSDKDemo
 
-  pod 'PanBaiduNetdiskSDKObjc', :git => 'https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc', :commit => '06e8c3b6107282b921a19dfc48ea57965b795b40'
+  pod 'PanBaiduNetdiskSDKObjc'
   
 end
