@@ -36,7 +36,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
 
 @implementation PanBaiduNetdiskAPIClient
 
-+ (nullable PanBaiduNetdiskAPIClient *)createNewOrGetCachedClientWithAuthData:(NSDictionary *)clientAuthData{
++ (nullable PanBaiduNetdiskAPIClient *)createNewOrGetCachedClientWithAuthData:(NSDictionary *)clientAuthData {
     id dataObj = [clientAuthData objectForKey:PanBaiduNetdiskAccessTokenDataKey];
     NSString *userID = [clientAuthData objectForKey:PanBaiduNetdiskUserIDKey];
     
@@ -74,6 +74,30 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         apiClient = [[PanBaiduNetdiskAPIClientCache sharedCache] createClientForIdentifier:userID
                                                                                  authState:authState
                                                                       sessionConfiguration:nil];
+    }
+    
+    return apiClient;
+}
+
++ (nullable PanBaiduNetdiskAPIClient *)createNewOrGetCachedClientWithUserID:(NSString *)userID
+                                                                      token:(PanBaiduNetdiskAccessToken *)token
+                                                       sessionConfiguration:(NSURLSessionConfiguration * _Nullable)URLSessionConfiguration
+{
+    NSParameterAssert(userID);
+    if (userID == nil) {
+        return nil;
+    }
+    NSParameterAssert(token);
+    if (token == nil) {
+        return nil;
+    }
+    
+    PanBaiduNetdiskAuthState *authState = [[PanBaiduNetdiskAuthState alloc] initWithToken:token];
+    PanBaiduNetdiskAPIClient *apiClient = [[PanBaiduNetdiskAPIClientCache sharedCache] clientForIdentifier:userID];
+    if (apiClient == nil) {
+        apiClient = [[PanBaiduNetdiskAPIClientCache sharedCache] createClientForIdentifier:userID
+                                                                                 authState:authState
+                                                                      sessionConfiguration:URLSessionConfiguration];
     }
     
     return apiClient;

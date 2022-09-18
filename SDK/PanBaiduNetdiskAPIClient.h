@@ -19,6 +19,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable PanBaiduNetdiskAPIClient *)createNewOrGetCachedClientWithAuthData:(NSDictionary *)clientAuthData;
 
++ (nullable PanBaiduNetdiskAPIClient *)createNewOrGetCachedClientWithUserID:(NSString *)userID
+                                                                      token:(PanBaiduNetdiskAccessToken *)token
+                                                       sessionConfiguration:(NSURLSessionConfiguration * _Nullable)URLSessionConfiguration;
+
 - (instancetype)initWithURLSessionConfiguration:(NSURLSessionConfiguration * _Nullable)URLSessionConfiguration
                                    authProvider:(PanBaiduAppAuthProvider *_Nullable)authProvider;
 
