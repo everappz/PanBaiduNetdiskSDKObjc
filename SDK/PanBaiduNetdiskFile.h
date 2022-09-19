@@ -35,7 +35,7 @@ thumbs    array    This field only exists when the parameter web=1 is requested 
 
 - (NSString * _Nullable)path;
 
-- (NSString * _Nullable)filename;
+- (NSString * _Nullable)name;
 
 - (NSNumber * _Nullable)size;
 

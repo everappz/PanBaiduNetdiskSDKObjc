@@ -18,13 +18,21 @@
     return [self.class stringForKey:@"path" inDictionary:self.dictionary];
 }
 
-- (NSString * _Nullable)filename{
+- (NSString * _Nullable)name{
     NSString *filename = [self.class stringForKey:@"filename" inDictionary:self.dictionary];
     if (filename.length > 0) {
-        return filename;
+        return filename.lastPathComponent;
     }
     NSString *server_filename = [self.class stringForKey:@"server_filename" inDictionary:self.dictionary];
-    return server_filename;
+    if (server_filename.length > 0) {
+        return server_filename.lastPathComponent;
+    }
+    NSString *name = [self.class stringForKey:@"name" inDictionary:self.dictionary];
+    if (name.length > 0) {
+        return name.lastPathComponent;
+    }
+    NSParameterAssert(NO);
+    return self.path.lastPathComponent;
 }
 
 - (NSNumber * _Nullable)size{
