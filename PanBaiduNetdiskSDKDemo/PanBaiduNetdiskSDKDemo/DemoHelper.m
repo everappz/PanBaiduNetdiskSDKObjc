@@ -23,7 +23,7 @@ unsigned long long LSFileContentLengthUnknown = -1;
     if(item && rootPath){
         if([item isKindOfClass:[PanBaiduNetdiskFile class]]){
             PanBaiduNetdiskFile *apiFile = (PanBaiduNetdiskFile *)item;
-            NSString *title = apiFile.filename;
+            NSString *title = apiFile.name;
             NSParameterAssert(title);
             BOOL isDirectory = [apiFile.isdir boolValue];
             title = [title stringByReplacingOccurrencesOfString:@"/" withString:@"_"];

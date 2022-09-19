@@ -1,5 +1,5 @@
 PODS:
-  - PanBaiduNetdiskSDKObjc (1.0.5)
+  - PanBaiduNetdiskSDKObjc (1.0.7)
 
 DEPENDENCIES:
   - PanBaiduNetdiskSDKObjc
@@ -9,7 +9,7 @@ SPEC REPOS:
     - PanBaiduNetdiskSDKObjc
 
 SPEC CHECKSUMS:
-  PanBaiduNetdiskSDKObjc: 4ffdb262e52faf566b232aae4763234d0d3dda78
+  PanBaiduNetdiskSDKObjc: f8f8646abf4c32900f7638e5759efa313228e951
 
 PODFILE CHECKSUM: 0676784376913b54e32e3099fa3fa4074750054b
 
