@@ -18,8 +18,13 @@
     return [self.class stringForKey:@"path" inDictionary:self.dictionary];
 }
 
-- (NSString * _Nullable)server_filename{
-    return [self.class stringForKey:@"server_filename" inDictionary:self.dictionary];
+- (NSString * _Nullable)filename{
+    NSString *filename = [self.class stringForKey:@"filename" inDictionary:self.dictionary];
+    if (filename.length > 0) {
+        return filename;
+    }
+    NSString *server_filename = [self.class stringForKey:@"server_filename" inDictionary:self.dictionary];
+    return server_filename;
 }
 
 - (NSNumber * _Nullable)size{
@@ -58,8 +63,20 @@
     return [self.class numberForKey:@"dir_empty" inDictionary:self.dictionary];
 }
 
+- (NSNumber * _Nullable)share{
+    return [self.class numberForKey:@"share" inDictionary:self.dictionary];
+}
+
+- (NSNumber * _Nullable)duration{
+    return [self.class numberForKey:@"duration" inDictionary:self.dictionary];
+}
+
 - (NSArray * _Nullable)thumbs{
     return [self.class arrayForKey:@"thumbs" inDictionary:self.dictionary];
+}
+
+- (NSString * _Nullable)dlink{
+    return [self.class stringForKey:@"dlink" inDictionary:self.dictionary];
 }
 
 @end

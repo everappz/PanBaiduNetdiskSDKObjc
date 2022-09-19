@@ -16,7 +16,7 @@ Parameter name    Type    Description
  
 fs_id    uint64    The unique identification ID of the file in the cloud
 path    string    Absolute path of the file
-server_filename    string    File name
+filename    string    File name
 size    uint    File size, unit B
 server_mtime    uint    File modification time on the server
 server_ctime    uint    The time when the file was created on the server
@@ -35,7 +35,7 @@ thumbs    array    This field only exists when the parameter web=1 is requested 
 
 - (NSString * _Nullable)path;
 
-- (NSString * _Nullable)server_filename;
+- (NSString * _Nullable)filename;
 
 - (NSNumber * _Nullable)size;
 
@@ -55,7 +55,13 @@ thumbs    array    This field only exists when the parameter web=1 is requested 
 
 - (NSNumber * _Nullable)dir_empty;
 
+- (NSNumber * _Nullable)share;
+
 - (NSArray * _Nullable)thumbs;
+
+- (NSNumber * _Nullable)duration;
+
+- (NSString * _Nullable)dlink;
 
 @end
 

@@ -23,7 +23,8 @@ unsigned long long LSFileContentLengthUnknown = -1;
     if(item && rootPath){
         if([item isKindOfClass:[PanBaiduNetdiskFile class]]){
             PanBaiduNetdiskFile *apiFile = (PanBaiduNetdiskFile *)item;
-            NSString *title = apiFile.server_filename;
+            NSString *title = apiFile.filename;
+            NSParameterAssert(title);
             BOOL isDirectory = [apiFile.isdir boolValue];
             title = [title stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
             unsigned long long size = apiFile.size?apiFile.size.unsignedIntegerValue:LSFileContentLengthUnknown;
@@ -37,7 +38,7 @@ unsigned long long LSFileContentLengthUnknown = -1;
             file.directory = isDirectory;
             file.readOnly = NO;
             file.name = title;
-            file.shared = NO;
+            file.shared = [apiFile.share boolValue];
             file.identifier = apiFile.identifier;
             file.md5 = apiFile.md5;
             return file;
