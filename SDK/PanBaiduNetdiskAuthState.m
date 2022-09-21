@@ -75,30 +75,55 @@
 - (void)completeTokenUpdateWithResponse:(NSDictionary *_Nullable)dictionary
                                   error:(NSError *_Nullable)error
 {
-    NSString *access_token = [PanBaiduNetdiskObject stringForKey:@"access_token" inDictionary:dictionary];
-    NSNumber *expires_in = [PanBaiduNetdiskObject numberForKey:@"expires_in" inDictionary:dictionary];
-    NSString *refresh_token = [PanBaiduNetdiskObject stringForKey:@"refresh_token" inDictionary:dictionary];
-    NSString *scope = [PanBaiduNetdiskObject stringForKey:@"scope" inDictionary:dictionary];
+    NSString *accessTokenUpdated = nil;
+    NSNumber *expiresInUpdated = nil;
+    NSString *refreshTokenUpdated = nil;
+    NSString *scopeUpdated = nil;
     
-    NSParameterAssert(access_token);
-    
-    NSDate *tokenExpireDate = nil;
-    if (expires_in && expires_in.longLongValue > 0){
-        tokenExpireDate = [NSDate dateWithTimeIntervalSinceNow:expires_in.longLongValue];
+    if (dictionary.count > 0) {
+        accessTokenUpdated = [PanBaiduNetdiskObject stringForKey:@"access_token" inDictionary:dictionary];
+        expiresInUpdated = [PanBaiduNetdiskObject numberForKey:@"expires_in" inDictionary:dictionary];
+        refreshTokenUpdated = [PanBaiduNetdiskObject stringForKey:@"refresh_token" inDictionary:dictionary];
+        scopeUpdated = [PanBaiduNetdiskObject stringForKey:@"scope" inDictionary:dictionary];
+    }
+    NSDate *tokenExpireDateUpdated = nil;
+    if (expiresInUpdated && expiresInUpdated.longLongValue > 0) {
+        tokenExpireDateUpdated = [NSDate dateWithTimeIntervalSinceNow:expiresInUpdated.longLongValue];
     }
     
+    NSError *tokenUpdateError = error;
+    
     [self.stateLock lock];
-    PanBaiduNetdiskAccessToken *tokenUpdated =
-    [PanBaiduNetdiskAccessToken
-     accessTokenWithClientID:_token.clientID
-     clientSecret:_token.clientSecret
-     redirectURI:_token.redirectURI
-     scope:scope
-     accessToken:access_token
-     refreshToken:refresh_token
-     expiresIn:expires_in
-     tokenExpireDate:tokenExpireDate
-     tokenUpdateError:error];
+    
+    PanBaiduNetdiskAccessToken *tokenUpdated = nil;
+    
+    if (tokenUpdateError) {
+        tokenUpdated =
+        [PanBaiduNetdiskAccessToken
+         accessTokenWithClientID:_token.clientID
+         clientSecret:_token.clientSecret
+         redirectURI:_token.redirectURI
+         scope:_token.scope
+         accessToken:_token.accessToken
+         refreshToken:_token.refreshToken
+         expiresIn:_token.expiresIn
+         tokenExpireDate:_token.tokenExpireDate
+         tokenUpdateError:tokenUpdateError];
+    }
+    else {
+        tokenUpdated =
+        [PanBaiduNetdiskAccessToken
+         accessTokenWithClientID:_token.clientID
+         clientSecret:_token.clientSecret
+         redirectURI:_token.redirectURI
+         scope:scopeUpdated
+         accessToken:accessTokenUpdated
+         refreshToken:refreshTokenUpdated
+         expiresIn:expiresInUpdated
+         tokenExpireDate:tokenExpireDateUpdated
+         tokenUpdateError:nil];
+    }
+   
     _token = tokenUpdated;
     [self.stateLock unlock];
     
@@ -144,7 +169,9 @@
     NSURLRequest *tokenRefreshURLRequest = [tokenRefreshRequest URLRequest];
     if (tokenRefreshURLRequest == nil) {
         NSParameterAssert(NO);
-        [self completeTokenUpdateWithResponse:nil error:[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeCannotUpdateAccessToken]];
+        NSError *cannotUpdateAccessTokenError =
+        [NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeCannotUpdateAccessToken];
+        [self completeTokenUpdateWithResponse:nil error:cannotUpdateAccessTokenError];
         return nil;
     }
     

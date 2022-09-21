@@ -68,8 +68,9 @@ NSString * const PanBaiduAppAuthProviderDidChangeState = @"PanBaiduAppAuthProvid
     }
     
     if (tokenUpdateError) {
+        NSError *tokenUpdateErrorExternal = [NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeAccessTokenInvalid internalError:tokenUpdateError];
         if (completion){
-            completion(nil,tokenUpdateError);
+            completion(nil,tokenUpdateErrorExternal);
         }
         return;
     }
