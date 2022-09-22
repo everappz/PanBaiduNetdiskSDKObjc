@@ -79,12 +79,12 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     return apiClient;
 }
 
-+ (nullable PanBaiduNetdiskAPIClient *)createNewOrGetCachedClientWithUserID:(NSString *)userID
-                                                                      token:(PanBaiduNetdiskAccessToken *)token
-                                                       sessionConfiguration:(NSURLSessionConfiguration * _Nullable)URLSessionConfiguration
++ (nullable PanBaiduNetdiskAPIClient *)createNewOrGetCachedClientWithIdentifier:(NSString *)identifier
+                                                                          token:(PanBaiduNetdiskAccessToken *)token
+                                                           sessionConfiguration:(NSURLSessionConfiguration * _Nullable)URLSessionConfiguration
 {
-    NSParameterAssert(userID);
-    if (userID == nil) {
+    NSParameterAssert(identifier);
+    if (identifier == nil) {
         return nil;
     }
     NSParameterAssert(token);
@@ -93,9 +93,9 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
     }
     
     PanBaiduNetdiskAuthState *authState = [[PanBaiduNetdiskAuthState alloc] initWithToken:token];
-    PanBaiduNetdiskAPIClient *apiClient = [[PanBaiduNetdiskAPIClientCache sharedCache] clientForIdentifier:userID];
+    PanBaiduNetdiskAPIClient *apiClient = [[PanBaiduNetdiskAPIClientCache sharedCache] clientForIdentifier:identifier];
     if (apiClient == nil) {
-        apiClient = [[PanBaiduNetdiskAPIClientCache sharedCache] createClientForIdentifier:userID
+        apiClient = [[PanBaiduNetdiskAPIClientCache sharedCache] createClientForIdentifier:identifier
                                                                                  authState:authState
                                                                       sessionConfiguration:URLSessionConfiguration];
     }

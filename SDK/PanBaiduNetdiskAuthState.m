@@ -79,20 +79,34 @@
     NSNumber *expiresInUpdated = nil;
     NSString *refreshTokenUpdated = nil;
     NSString *scopeUpdated = nil;
+    NSString *internalErrorDescription = nil;
+    NSString *internalError = nil;
     
     if (dictionary.count > 0) {
         accessTokenUpdated = [PanBaiduNetdiskObject stringForKey:@"access_token" inDictionary:dictionary];
         expiresInUpdated = [PanBaiduNetdiskObject numberForKey:@"expires_in" inDictionary:dictionary];
         refreshTokenUpdated = [PanBaiduNetdiskObject stringForKey:@"refresh_token" inDictionary:dictionary];
         scopeUpdated = [PanBaiduNetdiskObject stringForKey:@"scope" inDictionary:dictionary];
+        internalErrorDescription = [dictionary objectForKey:@"error_description"];
+        internalError = [dictionary objectForKey:@"error"];
     }
     NSDate *tokenExpireDateUpdated = nil;
     if (expiresInUpdated && expiresInUpdated.longLongValue > 0) {
         tokenExpireDateUpdated = [NSDate dateWithTimeIntervalSinceNow:expiresInUpdated.longLongValue];
     }
     
-    NSError *tokenUpdateError = error;
-    
+    NSError *tokenUpdateError = nil;
+    if (error) {
+        NSDictionary *errorUserInfo = nil;
+        if (internalErrorDescription != nil) {
+            errorUserInfo = @{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"%@: %@",internalError,internalErrorDescription]};
+        }
+        else {
+            errorUserInfo = error.userInfo;
+        }
+        tokenUpdateError = [NSError errorWithDomain:error.domain code:error.code userInfo:errorUserInfo];
+    }
+  
     [self.stateLock lock];
     
     PanBaiduNetdiskAccessToken *tokenUpdated = nil;
