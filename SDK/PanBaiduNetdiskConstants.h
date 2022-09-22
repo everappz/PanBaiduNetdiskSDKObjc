@@ -41,23 +41,12 @@ return (value); \
 #define kPanBaiduNetdiskMultimediaURL [kPanBaiduNetdiskXpanURL URLByAppendingPathComponent:@"multimedia"]
 #define kPanBaiduNetdiskSuperFileURL [NSURL URLWithString:@"https://d.pcs.baidu.com/rest/2.0/pcs/superfile2"]
 
-
-//DEBUG PREPROCESSOR MACROS
 #ifdef DEBUG
-
 #define PanBaiduNetdiskLog(...)                                         NSLog(__VA_ARGS__)
-
-//RELEASE PREPROCESSOR MACROS
 #else
-
 //disable NSLog in release
 #define PanBaiduNetdiskLog(...)                                         {}
-
-//disable assert in release
-#define assert(e)                                                       ((void)0)
-
 #endif
-
 
 @class WKWebView;
 @class PanBaiduNetdiskAuthState;
