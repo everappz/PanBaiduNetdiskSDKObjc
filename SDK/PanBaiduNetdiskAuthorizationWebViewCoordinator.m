@@ -33,7 +33,7 @@ typedef BOOL(^PanBaiduNetdiskAuthorizationWebViewDecidePolicyBlock)(WKWebView *w
         PanBaiduNetdiskMakeWeakSelf;
         [self setWebViewDecidePolicyBlock:^BOOL(WKWebView * _Nonnull webView, WKNavigationAction * _Nonnull navigationAction) {
             NSURL *navigationActionURL = navigationAction.request.URL;
-            NSLog(@"navigationActionURL: %@",navigationActionURL);
+            PanBaiduNetdiskLog(@"navigationActionURL: %@",navigationActionURL);
             if ([navigationActionURL.scheme.lowercaseString isEqualToString:redirectURI.scheme.lowercaseString]) {
                 NSString *absoluteString = navigationActionURL.absoluteString;
                 absoluteString = [absoluteString stringByReplacingOccurrencesOfString:@"/?" withString:@"?"];

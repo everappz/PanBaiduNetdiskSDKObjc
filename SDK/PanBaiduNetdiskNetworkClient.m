@@ -496,7 +496,7 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 }
 
 + (void)printRequest:(NSURLRequest *)request{
-    NSLog(@"URL: %@\nHEADER_FIELDS:%@\nBODY: %@",request.URL.absoluteString,request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding]);
+    PanBaiduNetdiskLog(@"URL: %@\nHEADER_FIELDS:%@\nBODY: %@",request.URL.absoluteString,request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding]);
 }
 
 @end

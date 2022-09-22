@@ -148,7 +148,7 @@
     if(authState == nil || identifier == nil){
         return;
     }
-    NSLog(@"authStateChanged: %@ forIdentifier: %@",authState.token.accessToken,identifier);
+    PanBaiduNetdiskLog(@"authStateChanged: %@ forIdentifier: %@",authState.token.accessToken,identifier);
     PanBaiduAppAuthProvider *authProvider = [[PanBaiduAppAuthProvider alloc] initWithIdentifier:identifier
                                                                                           state:authState];
     NSParameterAssert(authProvider);
@@ -164,7 +164,7 @@
     PanBaiduAppAuthProvider *provider = notification.object;
     NSParameterAssert([provider isKindOfClass:[PanBaiduAppAuthProvider class]]);
     if([provider isKindOfClass:[PanBaiduAppAuthProvider class]]){
-        NSLog(@"authProviderDidChangeNotification: %@ forIdentifier: %@",provider.authState.token.accessToken,provider.identifier);
+        PanBaiduNetdiskLog(@"authProviderDidChangeNotification: %@ forIdentifier: %@",provider.authState.token.accessToken,provider.identifier);
     }
 }
 
