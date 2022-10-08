@@ -9,10 +9,10 @@
 #import "AppDelegate.h"
 #import <PanBaiduNetdiskSDKObjc/PanBaiduNetdiskSDKObjc.h>
 
-#define PAN_BAIDU_NET_DISK_CLIENT_ID                                   @"fs8iRdRa98T1GPG9YNXFBDMzXYkAFuzB"
-#define PAN_BAIDU_NET_DISK_CLIENT_SECRET                               @"0sKYFhi3ahvMXX0Or9K8DnnIewfw1Tua"
-#define PAN_BAIDU_NET_DISK_CALLBACK_URL                                @"pan-baidu-app-27353164://auth_success"
-#define PAN_BAIDU_NET_DISK_APP_ID                                      @"27353164"
+#define PAN_BAIDU_NET_DISK_CLIENT_ID                                   @"8jsiGYqouvlbttFNtQI1qDYN1yKmuDDA"
+#define PAN_BAIDU_NET_DISK_CLIENT_SECRET                               @"0pBo7Sh2gzrjNQ6E0rfCryUjG0pnpeai"
+#define PAN_BAIDU_NET_DISK_CALLBACK_URL                                @"pan-baidu-app-27808539://auth_success"
+#define PAN_BAIDU_NET_DISK_APP_ID                                      @"27808539"
 
 @interface AppDelegate ()
 
