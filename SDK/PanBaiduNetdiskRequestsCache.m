@@ -68,9 +68,17 @@
     if ([request conformsToProtocol:@protocol(PanBaiduNetdiskAPIClientCancellableRequest)] == NO) {
         return;
     }
+    
     [self.stateLock lock];
+    
+    if (self.cancellableRequests.count >= 1000) {
+        @try{NSParameterAssert(NO);}@catch(NSException *exc){}
+        [self.cancellableRequests makeObjectsPerformSelector:@selector(cancel)];
+        [self.cancellableRequests removeAllObjects];
+    }
+    
     [self.cancellableRequests addObject:request];
-    NSParameterAssert(self.cancellableRequests.count < 100);
+    
     PanBaiduNetdiskMakeWeakSelf;
     PanBaiduNetdiskMakeWeakReference(request);
     if ([request isKindOfClass:[PanBaiduNetdiskAPIClientRequest class]]) {
@@ -78,6 +86,7 @@
             [weakSelf removeCancellableRequestFromCache:weak_request];
         }];
     }
+    
     [self.stateLock unlock];
 }
 
