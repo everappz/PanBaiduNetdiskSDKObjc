@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = 'PanBaiduNetdiskSDKObjc'
-  s.version      = '1.0.11'
+  s.version      = '1.0.12'
   s.summary      = 'A pleasant wrapper around the Pan Baidu Netdisk API.'
   s.homepage     = 'https://github.com/leshkoapps/PanBaiduNetdiskSDKObjc.git'
   s.author       = { 'Everappz' => 'https://everapz.com' }
@@ -9,5 +9,5 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '9.0'
   s.source_files = 'SDK/*.{h,m}'
   s.license      = 'MIT'
-  s.framework    = 'Foundation', 'WebKit', 'MobileCoreServices'
+  s.framework    = 'Foundation', 'WebKit', 'MobileCoreServices', 'SafariServices', 'AuthenticationServices'
 end
