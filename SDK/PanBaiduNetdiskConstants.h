@@ -68,7 +68,7 @@ typedef void(^PanBaiduNetdiskAPIClientAccessTokenBlock)(PanBaiduNetdiskAccessTok
 
 typedef void(^PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock)(WKWebView *webView);
 typedef void(^PanBaiduNetdiskAuthorizationWebViewCoordinatorErrorBlock)(WKWebView *webView, NSError *webViewError);
-typedef void(^PanBaiduNetdiskAuthorizationWebViewCoordinatorCompletionBlock)(WKWebView *webView, NSURL * _Nullable webViewRedirectURL, NSError * _Nullable error);
+typedef void(^PanBaiduNetdiskAuthorizationWebViewCoordinatorCompletionBlock)(NSURL * _Nullable webViewRedirectURL, NSError * _Nullable error);
 
 typedef void (^PanBaiduNetdiskAccessTokenUpdateBlock)(NSString *_Nullable accessToken, NSError *_Nullable error);
 typedef void (^PanBaiduNetdiskAccessTokenGetBlock)(PanBaiduNetdiskAccessToken *_Nullable accessToken, NSError *_Nullable error);

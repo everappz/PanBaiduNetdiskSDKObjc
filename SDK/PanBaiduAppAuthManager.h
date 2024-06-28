@@ -43,7 +43,12 @@ NS_ASSUME_NONNULL_BEGIN
                                               webViewDidFailWithErrorBlock:(PanBaiduNetdiskAuthorizationWebViewCoordinatorErrorBlock)webViewDidFailWithErrorBlock
                                                            completionBlock:(PanBaiduNetdiskAppAuthManagerAuthorizationBlock)completionBlock;
 
+- (PanBaiduAppAuthFlow *_Nullable)authFlowWithAutoCodeExchangeFromViewController:(UIViewController *)viewController
+                                                                 completionBlock:(PanBaiduNetdiskAppAuthManagerAuthorizationBlock)completionBlock;
+
 + (NSArray<NSString *> *)defaultScopes;
+
+- (void)handleRedirectURL:(NSURL *)url;
 
 @end
 

@@ -117,5 +117,33 @@ static PanBaiduAppAuthManager *_sharedAuthManager = nil;
     return flow;
 }
 
+- (PanBaiduAppAuthFlow *_Nullable)authFlowWithAutoCodeExchangeFromViewController:(UIViewController *)viewController
+                                                            completionBlock:(PanBaiduNetdiskAppAuthManagerAuthorizationBlock)completionBlock
+{
+    if (self.currentAuthorizationFlow) {
+        [self.currentAuthorizationFlow cancel];
+        self.currentAuthorizationFlow = nil;
+    }
+    
+    PanBaiduAppAuthFlow *flow = [PanBaiduAppAuthFlow new];
+    flow.clientID = self.clientID;
+    flow.clientSecret = self.clientSecret;
+    flow.appID = self.appID;
+    flow.redirectURI = self.redirectURI;
+    flow.scopes = self.scopes;
+    
+    flow.viewController = viewController;
+    flow.completionBlock = completionBlock;
+    
+    [flow start];
+    self.currentAuthorizationFlow = flow;
+    
+    return flow;
+}
+
+- (void)handleRedirectURL:(NSURL *)url{
+    [self.currentAuthorizationFlow handleRedirectURL:url];
+}
+
 @end
 

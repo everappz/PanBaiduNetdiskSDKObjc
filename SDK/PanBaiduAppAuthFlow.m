@@ -73,18 +73,28 @@
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        PanBaiduNetdiskAuthorizationWebViewCoordinator *coordinator =
-        [[PanBaiduNetdiskAuthorizationWebViewCoordinator alloc] initWithWebView:self.webView
-                                                                    redirectURI:[NSURL URLWithString:self.redirectURI]];
+       
+        PanBaiduNetdiskAuthorizationWebViewCoordinator *coordinator = nil;
+        
+        if (self.webView) {
+            coordinator = [[PanBaiduNetdiskAuthorizationWebViewCoordinator alloc] initWithWebView:self.webView redirectURI:[NSURL URLWithString:self.redirectURI]];
+        }
+        else {
+            coordinator = [[PanBaiduNetdiskAuthorizationWebViewCoordinator alloc] initWithViewController:self.viewController redirectURI:[NSURL URLWithString:self.redirectURI]];
+        }
+        
         coordinator.webViewDidStartLoadingBlock = self.webViewDidStartLoadingBlock;
         coordinator.webViewDidFinishLoadingBlock = self.webViewDidFinishLoadingBlock;
         coordinator.webViewDidFailWithErrorBlock = self.webViewDidFailWithErrorBlock;
         
         PanBaiduNetdiskMakeWeakSelf;
-        coordinator.completionBlock = ^(WKWebView *webView, NSURL * _Nullable webViewRedirectURL, NSError * _Nullable error)
+        coordinator.completionBlock = ^(NSURL * _Nullable webViewRedirectURL, NSError * _Nullable error)
         {
             PanBaiduNetdiskMakeStrongSelf;
-            NSString *code = [PanBaiduAppAuthFlow codeFromURL:webViewRedirectURL];
+            NSString *code = nil;
+            if (webViewRedirectURL) {
+                code = [PanBaiduAppAuthFlow codeFromURL:webViewRedirectURL];
+            }
             if (code) {
                 [strongSelf getTokenUsingCode:code];
             }
@@ -98,6 +108,10 @@
             [self completeFlowWithAuthState:nil error:[NSError panBaiduNetdiskErrorWithCode:PanBaiduNetdiskErrorCodeCannotGetAuthURL]];
         }
     });
+}
+
+- (void)handleRedirectURL:(NSURL *)redirectURL{
+    [self.webViewCoordinator handleRedirectURL:redirectURL];
 }
 
 + (NSString *_Nullable)codeFromURL:(NSURL *)URL{

@@ -20,7 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *redirectURI;
 @property (nonatomic, copy) NSArray<NSString *> *scopes;
 
-@property (nonatomic,strong) WKWebView *webView;
+@property (nonatomic, weak, nullable) UIViewController *viewController;
+
+@property (nonatomic, strong, nullable) WKWebView *webView;
 @property (nonatomic, copy) PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock webViewDidStartLoadingBlock;
 @property (nonatomic, copy) PanBaiduNetdiskAuthorizationWebViewCoordinatorLoadingBlock webViewDidFinishLoadingBlock;
 @property (nonatomic, copy) PanBaiduNetdiskAuthorizationWebViewCoordinatorErrorBlock webViewDidFailWithErrorBlock;
@@ -28,6 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)start;
 - (void)cancel;
+
+- (void)handleRedirectURL:(NSURL *)redirectURL;
 
 @end
 
