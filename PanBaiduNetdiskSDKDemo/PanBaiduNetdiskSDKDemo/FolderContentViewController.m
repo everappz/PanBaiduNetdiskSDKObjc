@@ -422,38 +422,6 @@ NSString * const kTableViewCellIdentifier = @"kTableViewCellIdentifier";
         [weakSelf presentViewController:copyController animated:YES completion:nil];
     }]];
     
-    if (file.directory == NO) {
-        [actionsController addAction:[UIAlertAction actionWithTitle:@"Download File" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            UIProgressView *progressView = [weakSelf showProgressView];
-            [weakSelf.client downloadContentForFileWithID:file.identifier progressBlock:^(float progress) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    progressView.progress = progress;
-                });
-            } completionBlock:^(NSURL * _Nullable location, NSError * _Nullable error) {
-                if (location) {
-                    NSString *destinationPath = [[FolderContentViewController applicationDocumentsDirectory].path stringByAppendingPathComponent:file.name];
-                    [[NSFileManager defaultManager] removeItemAtPath:destinationPath error:nil];
-                    NSURL *fileURL = [NSURL fileURLWithPath:destinationPath];
-                    NSError *moveError = nil;
-                    [[NSFileManager defaultManager] moveItemAtURL:location toURL:fileURL error:&moveError];
-                    if (moveError) {
-                        [weakSelf processResultWithDictionary:nil error:moveError];
-                    } else {
-                        NSMutableDictionary *result = [NSMutableDictionary new];
-                        [result setObject:fileURL.path forKey:@"savedPath"];
-                        [result setObject:[DemoHelper readableStringForByteSize:@(file.contentLength)] forKey:@"fileSize"];
-                        [weakSelf processResultWithDictionary:result error:nil];
-                    }
-                } else {
-                    [weakSelf processResultWithDictionary:nil error:error];
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [weakSelf hideProgressView];
-                });
-            }];
-        }]];
-    }
-
     [actionsController addAction:[UIAlertAction actionWithTitle:@"Delete File" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         [weakSelf.client deleteFileAtPath:file.url.path completionBlock:^(NSDictionary * _Nullable dictionary, NSError * _Nullable error) {
             [weakSelf processResultWithDictionary:dictionary error:error];

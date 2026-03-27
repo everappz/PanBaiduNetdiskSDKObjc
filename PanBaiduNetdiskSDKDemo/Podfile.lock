@@ -1,37 +1,16 @@
 PODS:
-  - AFNetworking (4.0.1):
-    - AFNetworking/NSURLSession (= 4.0.1)
-    - AFNetworking/Reachability (= 4.0.1)
-    - AFNetworking/Security (= 4.0.1)
-    - AFNetworking/Serialization (= 4.0.1)
-    - AFNetworking/UIKit (= 4.0.1)
-  - AFNetworking/NSURLSession (4.0.1):
-    - AFNetworking/Reachability
-    - AFNetworking/Security
-    - AFNetworking/Serialization
-  - AFNetworking/Reachability (4.0.1)
-  - AFNetworking/Security (4.0.1)
-  - AFNetworking/Serialization (4.0.1)
-  - AFNetworking/UIKit (4.0.1):
-    - AFNetworking/NSURLSession
-  - PanBaiduNetdiskSDKObjc (2.0.0):
-    - AFNetworking (~> 4.0)
+  - PanBaiduNetdiskSDKObjc (1.0.7)
 
 DEPENDENCIES:
-  - PanBaiduNetdiskSDKObjc (from `../`)
+  - PanBaiduNetdiskSDKObjc
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
-    - AFNetworking
-
-EXTERNAL SOURCES:
-  PanBaiduNetdiskSDKObjc:
-    :path: "../"
+    - PanBaiduNetdiskSDKObjc
 
 SPEC CHECKSUMS:
-  AFNetworking: 3bd23d814e976cd148d7d44c3ab78017b744cd58
-  PanBaiduNetdiskSDKObjc: 9d0344d9f4fb027d13262994027654730460faef
+  PanBaiduNetdiskSDKObjc: f8f8646abf4c32900f7638e5759efa313228e951
 
-PODFILE CHECKSUM: 440dcb93a98016bb350b705c79638a0c8d49f126
+PODFILE CHECKSUM: 0676784376913b54e32e3099fa3fa4074750054b
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.11.3

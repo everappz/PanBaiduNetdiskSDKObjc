@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '13.0'
+platform :ios, '9.0'
 source 'https://github.com/CocoaPods/Specs.git'
 
 target 'PanBaiduNetdiskSDKDemo' do
@@ -8,6 +8,6 @@ target 'PanBaiduNetdiskSDKDemo' do
 
   # Pods for PanBaiduNetdiskSDKDemo
 
-  pod 'PanBaiduNetdiskSDKObjc', :path => '../'
-
+  pod 'PanBaiduNetdiskSDKObjc'
+  
 end
