@@ -3,7 +3,7 @@
 //  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 10/20/19.
-//  Copyright © 2022 Everappz. All rights reserved.
+//  Copyright © 2023 Everappz. All rights reserved.
 //
 
 #import "PanBaiduNetdiskAPIClientCache.h"

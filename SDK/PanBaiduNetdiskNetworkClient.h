@@ -1,8 +1,9 @@
 //
-//  MCHNetwork.h
+//  PanBaiduNetdiskNetworkClient.h
 //  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 3/2/21.
+//  Copyright © 2023 Everappz. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

@@ -3,6 +3,7 @@
 //  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 3/12/21.
+//  Copyright © 2023 Everappz. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

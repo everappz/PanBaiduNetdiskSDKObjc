@@ -1,9 +1,9 @@
 //
-//  NSError+MCHSDK.h
+//  NSError+PanBaiduNetdisk.h
 //  PanBaiduNetdiskSDKObjc
 //
 //  Created by Artem on 10/17/19.
-//  Copyright © 2022 Everappz. All rights reserved.
+//  Copyright © 2023 Everappz. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
