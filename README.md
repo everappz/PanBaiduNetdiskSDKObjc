@@ -263,7 +263,7 @@ NSString *localPath = [[NSBundle mainBundle] pathForResource:@"photo" ofType:@"j
 
 ## Screenshots
 
-<img src="https://raw.githubusercontent.com/leshkoapps/PanBaiduNetdiskSDKObjc/main/Screenshots/login_screen.png" width="300"><img src="https://raw.githubusercontent.com/leshkoapps/PanBaiduNetdiskSDKObjc/main/Screenshots/folder_content.png" width="300">
+<img src="https://raw.githubusercontent.com/everappz/PanBaiduNetdiskSDKObjc/main/Screenshots/login_screen.png" width="300"><img src="https://raw.githubusercontent.com/everappz/PanBaiduNetdiskSDKObjc/main/Screenshots/folder_content.png" width="300">
 
 ## Contacts
 
