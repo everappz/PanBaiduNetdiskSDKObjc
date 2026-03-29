@@ -579,7 +579,7 @@ NSTimeInterval const kBNDAPIClientRequestRetryTimeout = 2.0;
         }
         return nil;
     }
-    
+
     return [self _defaultFileManagerRequestWithMethod:@"delete"
                                             overwrite:NO
                                    fileListParameters:@{@"path":filePath}
